@@ -1,3 +1,5 @@
+package pl.edu.agh.io;
+
 import org.junit.Test;
 
 public class SimpleTest {
