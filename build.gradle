@@ -23,4 +23,15 @@ dependencies {
     implementation 'net.java.dev.jna:jna-platform:5.2.0'
 }
 
-mainClassName = 'App'
+mainClassName = 'pl.edu.agh.io.App'
+
+description = """
+Project for Software Engineering course at AGH UST 2019
+Authors:
+Wojciech Lewicki
+Patryk Sobczyk
+Patryk Węgrzyn
+Mateusz Monasterski
+Jakub Cieloch
+Piotr Ćwiklicki 
+"""
