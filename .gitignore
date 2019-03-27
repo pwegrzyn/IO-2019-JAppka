@@ -133,4 +133,6 @@ $RECYCLE.BIN/
 
 build/
 
+.gradle
+
 # End of https://www.gitignore.io/api/java,windows,intellij
