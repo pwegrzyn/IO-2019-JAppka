@@ -1,4 +1,4 @@
-package pl.edu.agh.io;
+package pl.edu.agh.io.jappka;
 
 import org.junit.Test;
 
