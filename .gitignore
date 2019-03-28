@@ -131,10 +131,10 @@ $RECYCLE.BIN/
 # Windows shortcuts
 *.lnk
 
+# End of https://www.gitignore.io/api/java,windows,intellij
+
 build/
 
 .gradle/
 
 data/
-
-# End of https://www.gitignore.io/api/java,windows,intellij
