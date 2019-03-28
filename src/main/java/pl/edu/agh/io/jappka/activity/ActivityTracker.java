@@ -1,21 +1,10 @@
 package pl.edu.agh.io.jappka.activity;
 
-import pl.edu.agh.io.jappka.os.OSTypeManager;
 
-public class ActivityTracker {
+public interface ActivityTracker {
 
-    private OSTypeManager.OsType OStype;
+    void track();
 
-    public ActivityTracker(OSTypeManager.OsType type) {
+    ActivityStream getActivityStream();
 
-        this.OStype = type;
-
-    }
-
-    public void init() {
-
-    }
-
-    public void track() {
-    }
 }
