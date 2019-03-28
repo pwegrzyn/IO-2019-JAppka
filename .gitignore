@@ -135,8 +135,6 @@ $RECYCLE.BIN/
 
 build/
 
-.gradle/
-
 data/
 
 *.lock
