@@ -137,7 +137,5 @@ build/
 
 data/
 
-.gradle/
-
 *.lock
 *.bin
