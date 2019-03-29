@@ -2,7 +2,6 @@ package pl.edu.agh.io.jappka.activity;
 
 import java.io.Serializable;
 
-
 public class Heartbeat implements Serializable {
 
     final private long value;
