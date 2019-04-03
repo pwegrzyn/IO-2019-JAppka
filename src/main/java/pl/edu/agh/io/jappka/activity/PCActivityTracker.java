@@ -11,10 +11,12 @@ public class PCActivityTracker implements ActivityTracker {
     private String appStateFilePath = dataDirectoryPath + "appState.dat";
     private String activityDataDirectoryPath = dataDirectoryPath + "activity/";
     private ActivityState currentState;
+    private int refreshRateTickInSeconds;
     private Timer timer;
 
     public PCActivityTracker() {
         this.timer = new Timer(true);
+        this.refreshRateTickInSeconds = 1;
     }
 
     @Override
@@ -28,18 +30,7 @@ public class PCActivityTracker implements ActivityTracker {
             e.printStackTrace();
         }
 
-        int refreshRateTickInSeconds = 1;
-        timer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                try {
-                    persistState();
-                } catch (IOException e) {
-                    System.err.println("Error while persisting heartbeat!");
-                    e.printStackTrace();
-                }
-            }
-        }, 0, refreshRateTickInSeconds * 1000);
+        schedulePersistanceAction();
     }
 
     @Override
@@ -53,14 +44,14 @@ public class PCActivityTracker implements ActivityTracker {
     }
 
     private void initializeAppState() throws IOException {
+        createAppStateFile();
+        this.currentState = new ActivityState();
+        addActivityToState(System.currentTimeMillis(), StateTransitionEvent.Type.ON);
+    }
+
+    private void createAppStateFile() throws IOException {
         File file = new File(this.appStateFilePath);
         file.createNewFile();
-
-        this.currentState = new ActivityState();
-
-        long startTime = System.currentTimeMillis();
-        StateTransitionEvent newEvent = new StateTransitionEvent(StateTransitionEvent.Type.ON, startTime);
-        this.currentState.getActivityStream().appendEvent(newEvent);
     }
 
     private void persistState() throws IOException {
@@ -81,11 +72,28 @@ public class PCActivityTracker implements ActivityTracker {
         inputStream.close();
 
         long lastHeartbeatTime = this.currentState.getLastHeartbeat().getValue();
-        StateTransitionEvent closeEvent = new StateTransitionEvent(StateTransitionEvent.Type.OFF, lastHeartbeatTime);
-        this.currentState.getActivityStream().appendEvent(closeEvent);
+        addActivityToState(lastHeartbeatTime, StateTransitionEvent.Type.OFF);
 
         long currentTime = System.currentTimeMillis();
-        StateTransitionEvent openEvent = new StateTransitionEvent(StateTransitionEvent.Type.ON, currentTime);
-        this.currentState.getActivityStream().appendEvent(openEvent);
+        addActivityToState(currentTime, StateTransitionEvent.Type.ON);
+    }
+
+    private void schedulePersistanceAction() {
+        timer.scheduleAtFixedRate(new TimerTask() {
+            @Override
+            public void run() {
+                try {
+                    persistState();
+                } catch (IOException e) {
+                    System.err.println("Error while persisting heartbeat!");
+                    e.printStackTrace();
+                }
+            }
+        }, 0, this.refreshRateTickInSeconds * 1000);
+    }
+
+    private void addActivityToState(long time, StateTransitionEvent.Type type) {
+        StateTransitionEvent newEvent = new StateTransitionEvent(type, time);
+        this.currentState.getActivityStream().appendEvent(newEvent);
     }
 }
