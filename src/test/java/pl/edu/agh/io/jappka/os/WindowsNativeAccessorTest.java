@@ -10,15 +10,11 @@ import static org.junit.Assert.assertFalse;
 
 public class WindowsNativeAccessorTest {
 
-    @BeforeClass
-    public static void checkIfOsIsWindows() throws UnsupportedOsException {
-        if (!OS.isFamilyWindows()) {
-            System.exit(0);
-        }
-    }
-
     @Test
     public void getActiveWindowTextTest() {
+        if (!OS.isFamilyWindows()) {
+            return;
+        }
         NativeAccessor windowsAccessor = new WindowsNativeAccessor();
         assertNotNull(windowsAccessor.getActiveWindowText());
         assertTrue(windowsAccessor.getActiveWindowText().length() > 0);
@@ -26,6 +22,9 @@ public class WindowsNativeAccessorTest {
 
     @Test
     public void getActiveWindowProcessNameTest() {
+        if (!OS.isFamilyWindows()) {
+            return;
+        }
         NativeAccessor windowsAccessor = new WindowsNativeAccessor();
         assertNotNull(windowsAccessor.getActiveWindowProcessName());
         assertTrue(windowsAccessor.getActiveWindowProcessName().length() > 0);
@@ -33,6 +32,9 @@ public class WindowsNativeAccessorTest {
 
     @Test
     public void getActiveProcessesNamesTest() {
+        if (!OS.isFamilyWindows()) {
+            return;
+        }
         NativeAccessor windowsAccessor = new WindowsNativeAccessor();
         assertNotNull(windowsAccessor.getActiveProcessesNames());
         assertFalse(windowsAccessor.getActiveProcessesNames().isEmpty());
