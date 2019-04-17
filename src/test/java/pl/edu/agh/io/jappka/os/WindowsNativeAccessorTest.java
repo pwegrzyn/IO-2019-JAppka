@@ -1,5 +1,7 @@
 package pl.edu.agh.io.jappka.os;
 
+import org.apache.commons.exec.OS;
+import org.junit.BeforeClass;
 import org.junit.Test;
 
 import static junit.framework.TestCase.assertNotNull;
@@ -7,6 +9,13 @@ import static junit.framework.TestCase.assertTrue;
 import static org.junit.Assert.assertFalse;
 
 public class WindowsNativeAccessorTest {
+
+    @BeforeClass
+    public static void checkIfOsIsWindows() throws UnsupportedOsException {
+        if (!OS.isFamilyWindows()) {
+            throw new UnsupportedOsException();
+        }
+    }
 
     @Test
     public void getActiveWindowTextTest() {
