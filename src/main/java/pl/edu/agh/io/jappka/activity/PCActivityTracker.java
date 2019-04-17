@@ -50,6 +50,7 @@ public class PCActivityTracker implements ActivityTracker {
     }
 
     private void createAppStateFile() throws IOException {
+        new File(this.activityDataDirectoryPath).mkdirs();
         File file = new File(this.appStateFilePath);
         file.createNewFile();
     }
