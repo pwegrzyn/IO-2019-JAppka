@@ -139,3 +139,5 @@ data/
 
 *.lock
 *.bin
+
+.gradle/
