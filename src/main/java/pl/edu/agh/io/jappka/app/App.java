@@ -1,9 +1,7 @@
 package pl.edu.agh.io.jappka.app;
 
-import pl.edu.agh.io.jappka.activity.ActivityTracker;
-import pl.edu.agh.io.jappka.activity.PCActivityTracker;
+import pl.edu.agh.io.jappka.activity.*;
 import org.apache.commons.exec.OS;
-import pl.edu.agh.io.jappka.activity.StateTransitionEvent;
 
 
 public class App {
@@ -18,13 +16,13 @@ public class App {
         ActivityTracker PCtracker = new PCActivityTracker();
         PCtracker.track();
 
-        // For PC Activity Tracking purpose
-        for (StateTransitionEvent ev : PCtracker.getActivityStream().getEvents()) {
-            System.out.println(ev);
-        }
-        System.out.println("Feel free to kill this program at any moment.");
+        ActivitySummary PCsummary = new PCActivitySummary(PCtracker.getActivityStream());
+        PCsummary.generate();
+        PCsummary.getAllPeriods().forEach(period -> System.out.println(period.generateInfo()));
+
+        System.out.println("Feel free to kill this program at any time - PC activity data will be stored automatically");
         try {
-            Thread.sleep(50000);
+            Thread.sleep(9000001);
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
