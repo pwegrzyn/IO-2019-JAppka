@@ -13,19 +13,24 @@ public class AppController {
     @FXML
     private BarChart barChart;
 
-    public void setPrimaryStage(Stage primaryStage) {
+    public void setPrimaryStageElements(Stage primaryStage) {
         this.primaryStage = primaryStage;
         prepareBarChart();
     }
 
     @FXML
     private void handleAddApplicationAction(ActionEvent event)  {
-        System.out.println("Works");
+        System.out.println("Add App");
     }
 
     @FXML
-    private void handleGenerateRaport(ActionEvent event){
-        System.out.println("Works too");
+    private void handleGenerateReport(ActionEvent event){
+        System.out.println("Generate Report");
+    }
+
+    @FXML
+    private void handleShowCharts(ActionEvent event){
+        System.out.println("Show charts");
     }
 
     private void prepareBarChart() {
@@ -34,5 +39,7 @@ public class AppController {
         barChart.setTitle("Usage state");
         barChart.setAnimated(false);
         barChart.getXAxis().setTickLabelRotation(90);
+        barChart.getXAxis().setLabel("Time");
+        barChart.getYAxis().setLabel("Applications");
     }
 }

@@ -46,8 +46,7 @@ public class App extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
         AppController controller = loader.getController();
-        controller.setPrimaryStage(primaryStage);
-
+        controller.setPrimaryStageElements(primaryStage);
     }
 
     public static void quit() {

@@ -35,14 +35,22 @@
     <right>
         <AnchorPane prefHeight="539.0" prefWidth="121.0" BorderPane.alignment="CENTER">
          <children>
-            <Button layoutY="15.0" mnemonicParsing="false" onAction="#handleGenerateRaport" prefHeight="38.0" prefWidth="121.0" text="Generuj raport" AnchorPane.bottomAnchor="463.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="15.0" />
+            <Button layoutY="15.0" mnemonicParsing="false" onAction="#handleGenerateReport" prefHeight="38.0" prefWidth="121.0" text="Generate report" AnchorPane.bottomAnchor="463.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="15.0">
+               <font>
+                  <Font size="13.0" />
+               </font></Button>
+            <Button layoutX="28.0" layoutY="464.0" mnemonicParsing="false" onAction="#handleShowCharts" prefHeight="31.0" prefWidth="121.0" text="Show charts" textAlignment="CENTER" AnchorPane.bottomAnchor="13.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="464.0">
+               <font>
+                  <Font size="13.0" />
+               </font>
+            </Button>
          </children></AnchorPane>
     </right>
     <left>
         <AnchorPane prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
          <children>
             <VBox alignment="TOP_CENTER" layoutY="32.0" prefHeight="372.0" prefWidth="100.0" AnchorPane.bottomAnchor="112.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="32.0" />
-          <Button alignment="CENTER" layoutY="477.0" mnemonicParsing="false" onAction="#handleAddApplicationAction" prefHeight="34.0" prefWidth="100.0" text="Dodaj aplikację" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="477.0">
+          <Button alignment="CENTER" layoutY="464.0" mnemonicParsing="false" onAction="#handleAddApplicationAction" prefHeight="29.0" prefWidth="100.0" text="Add app" textAlignment="CENTER" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="464.0">
                <font>
                   <Font size="12.0" />
                </font></Button>
