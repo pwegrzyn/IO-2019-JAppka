@@ -1,12 +1,19 @@
 package pl.edu.agh.io.jappka.app;
 
 import javafx.application.Application;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
+import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import pl.edu.agh.io.jappka.activity.*;
 import org.apache.commons.exec.OS;
+import pl.edu.agh.io.jappka.controller.AppController;
+
+import java.io.IOException;
 
 
 public class App extends Application {
+    private Stage primaryStage;
 
     public static void main(String[] args) {
         launch(args);
@@ -26,12 +33,21 @@ public class App extends Application {
         PCsummary.generate();
         PCsummary.getAllPeriods().forEach(period -> System.out.println(period.generateInfo()));
 
-        System.out.println("Feel free to kill this program at any time - PC activity data will be stored automatically");
-        try {
-            Thread.sleep(9000001);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+        this.primaryStage = primaryStage;
+        initApplication();
+    }
+
+    private void initApplication() throws IOException {
+        FXMLLoader loader = new FXMLLoader();
+        loader.setLocation(getClass().getClassLoader().getResource("Jappka/view/mainView.fxml"));
+        BorderPane rootLayout = loader.load();
+
+        Scene scene = new Scene(rootLayout);
+        primaryStage.setScene(scene);
+        primaryStage.show();
+        AppController controller = loader.getController();
+        controller.setPrimaryStage(primaryStage);
+
     }
 
     public static void quit() {
