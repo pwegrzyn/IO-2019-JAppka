@@ -1,13 +1,19 @@
 package pl.edu.agh.io.jappka.app;
 
+import javafx.application.Application;
+import javafx.stage.Stage;
 import pl.edu.agh.io.jappka.activity.*;
 import org.apache.commons.exec.OS;
 
 
-public class App {
+public class App extends Application {
 
     public static void main(String[] args) {
+        launch(args);
+    }
 
+    @Override
+    public void start(Stage primaryStage) throws Exception {
         if (!OS.isFamilyWindows()) {
             System.err.println("Unsupported Operating System found!");
             quit();
@@ -26,7 +32,6 @@ public class App {
         } catch (InterruptedException e) {
             e.printStackTrace();
         }
-
     }
 
     public static void quit() {
