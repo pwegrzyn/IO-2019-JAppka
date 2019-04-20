@@ -8,6 +8,8 @@ import javafx.stage.Stage;
 import pl.edu.agh.io.jappka.activity.*;
 import org.apache.commons.exec.OS;
 import pl.edu.agh.io.jappka.controller.AppController;
+import pl.edu.agh.io.jappka.os.WindowsNativeAccessor;
+import pl.edu.agh.io.jappka.util.Utils;
 
 import java.io.IOException;
 
@@ -29,12 +31,15 @@ public class App extends Application {
         ActivityTracker PCtracker = new PCActivityTracker();
         PCtracker.track();
 
-        ActivitySummary PCsummary = new PCActivitySummary(PCtracker.getActivityStream());
-        PCsummary.generate();
-        PCsummary.getAllPeriods().forEach(period -> System.out.println(period.generateInfo()));
+        ActivityTracker chromeTracker = new AppActivityTracker("chrome");
+        chromeTracker.track();
+
+        ActivitySummary chromeSummary = new AppActivitySummary(chromeTracker.getActivityStream(), "chrome");
+        chromeSummary.generate();
+        chromeSummary.getAllPeriods().forEach(period -> System.out.println(period.generateInfo()));
 
         this.primaryStage = primaryStage;
-        initApplication();
+        //initApplication();
     }
 
     private void initApplication() throws IOException {

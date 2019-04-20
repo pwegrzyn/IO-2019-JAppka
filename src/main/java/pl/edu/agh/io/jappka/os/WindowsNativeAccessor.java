@@ -1,7 +1,11 @@
 package pl.edu.agh.io.jappka.os;
 
+import com.sun.jna.Library;
 import com.sun.jna.Native;
 import com.sun.jna.Pointer;
+import com.sun.jna.platform.win32.Kernel32;
+import com.sun.jna.platform.win32.WinBase;
+import com.sun.jna.platform.win32.WinBase.FILETIME;
 import com.sun.jna.platform.win32.WinDef;
 import com.sun.jna.ptr.PointerByReference;
 import com.sun.jna.win32.StdCallLibrary;
@@ -12,6 +16,11 @@ import java.util.List;
 public class WindowsNativeAccessor implements NativeAccessor {
 
     private static final int MAX_TITLE_LENGTH = 1024;
+
+    private static long time(FILETIME ft) {
+        long t = (((long)ft.dwHighDateTime) << 32) + ft.dwLowDateTime;
+        return t;
+    }
 
     private interface Psapi extends StdCallLibrary {
         Psapi INSTANCE = (Psapi) Native.load("Psapi", Psapi.class);
@@ -26,6 +35,8 @@ public class WindowsNativeAccessor implements NativeAccessor {
         int GetLastError();
         Pointer OpenProcess(int dwDesiredAccess, boolean bInheritHandle, Pointer pointer);
         Pointer OpenProcess(int dwDesiredAccess, boolean bInheritHandle, int dwProcessId);
+        boolean GetProcessTimes(int processHdl, FILETIME creation, FILETIME exit, FILETIME kernel, FILETIME user);
+        int GetCurrentProcess();
         boolean CloseHandle(Pointer hObject);
     }
 

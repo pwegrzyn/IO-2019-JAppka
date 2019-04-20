@@ -17,6 +17,8 @@ public abstract class AbstractActivityPeriod {
     public enum Type {
         ON,
         OFF,
+        FOCUSED,
+        NONFOCUSED,
         OTHER
     }
 
