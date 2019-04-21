@@ -39,7 +39,7 @@ public class App extends Application {
         chromeSummary.getAllPeriods().forEach(period -> System.out.println(period.generateInfo()));
 
         this.primaryStage = primaryStage;
-        //initApplication();
+        initApplication();
     }
 
     private void initApplication() throws IOException {
@@ -51,7 +51,7 @@ public class App extends Application {
         primaryStage.setScene(scene);
         primaryStage.show();
         AppController controller = loader.getController();
-        controller.setPrimaryStageElements(primaryStage);
+        controller.setPrimaryStageElements(primaryStage, scene);
     }
 
     public static void quit() {
