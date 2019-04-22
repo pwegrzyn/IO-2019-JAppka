@@ -6,6 +6,7 @@ import javafx.fxml.FXMLLoader;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.chart.BarChart;
+import javafx.scene.chart.StackedBarChart;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 
@@ -18,7 +19,7 @@ public class AppController {
     private Scene graphScene;
 
     @FXML
-    private BarChart barChart;
+    private StackedBarChart mainChart;
 
     public void setPrimaryStageElements(Stage primaryStage, Scene primaryScene) {
         this.primaryStage = primaryStage;
@@ -63,12 +64,12 @@ public class AppController {
     }
 
     private void prepareBarChart() {
-        this.barChart.getData().clear();
-        barChart.setCursor(Cursor.CROSSHAIR);
-        barChart.setTitle("Usage state");
-        barChart.setAnimated(false);
-        barChart.getXAxis().setTickLabelRotation(90);
-        barChart.getXAxis().setLabel("Time");
-        barChart.getYAxis().setLabel("Applications");
+        mainChart.getData().clear();
+        mainChart.setCursor(Cursor.CROSSHAIR);
+        mainChart.setTitle("Usage state");
+        mainChart.setAnimated(false);
+        mainChart.getXAxis().setTickLabelRotation(90);
+        mainChart.getXAxis().setLabel("Time");
+        mainChart.getYAxis().setLabel("Applications");
     }
 }
