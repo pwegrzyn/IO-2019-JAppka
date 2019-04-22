@@ -40,7 +40,6 @@ public class AppActivityTracker extends AbstractActivityTracker {
         StateTransitionEvent.Type currentType = isFocused() ? this.activeState : this.inactiveState;
         this.currentAppState = currentType;
         addActivityToState(System.currentTimeMillis(), currentType);
-        System.out.println(this.currentAppState);
     }
 
     @Override
@@ -62,14 +61,13 @@ public class AppActivityTracker extends AbstractActivityTracker {
         if(newAppState != this.currentAppState){
             long currentTime = System.currentTimeMillis();
             addActivityToState(currentTime, newAppState);
-            System.out.println(newAppState + " " + this.currentAppState);
             this.currentAppState = newAppState;
         }
     }
 
     private boolean isFocused(){
-        WindowsNativeAccessor accessor = new WindowsNativeAccessor();
-        String procName = Utils.removeExtensionFromFilename(accessor.getActiveWindowProcessName());
+        String activeWindow = new WindowsNativeAccessor().getActiveWindowProcessName();
+        String procName = activeWindow.isEmpty() ? "" : Utils.removeExtensionFromFilename(activeWindow);
 
         return procName.toLowerCase().equals(this.app_name.toLowerCase());
     }

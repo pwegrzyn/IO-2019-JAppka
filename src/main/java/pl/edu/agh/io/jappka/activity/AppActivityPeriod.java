@@ -40,6 +40,8 @@ public class AppActivityPeriod extends AbstractActivityPeriod {
         return notes;
     }
 
+    public String getAppName() {return appName; }
+
     public void setNotes(String notes) {
         this.notes = notes;
     }

@@ -27,6 +27,7 @@ public class AppActivitySummary implements ActivitySummary {
             return;
         }
 
+        this.periods.clear();
         boolean firstIter = true;
         long lastIterTime = -1;
         AbstractActivityPeriod newPeriod;
