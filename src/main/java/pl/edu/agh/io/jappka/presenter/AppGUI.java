@@ -1,18 +1,23 @@
 package pl.edu.agh.io.jappka.presenter;
 
+import javafx.collections.ObservableMap;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import pl.edu.agh.io.jappka.activity.AbstractActivityPeriod;
 import pl.edu.agh.io.jappka.controller.AppController;
 
 import java.io.IOException;
+import java.util.List;
 
 public class AppGUI {
     private Stage primaryStage;
+    private ObservableMap<String, List<AbstractActivityPeriod>> obData;
 
-    public AppGUI(Stage primaryStage){
+    public AppGUI(Stage primaryStage,ObservableMap<String, List<AbstractActivityPeriod>> obData){
         this.primaryStage = primaryStage;
+        this.obData=obData;
     }
 
     public void initApplication() throws IOException {
@@ -24,6 +29,7 @@ public class AppGUI {
         primaryStage.setScene(scene);
         primaryStage.show();
         AppController controller = loader.getController();
+        controller.setObData(obData);
         controller.setPrimaryStageElements(primaryStage, scene);
     }
 }
