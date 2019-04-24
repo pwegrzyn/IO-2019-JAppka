@@ -131,13 +131,15 @@ public class AppController {
             XYChart.Series series=s.get(s.size()-1);
             series.setName(categories[c]);
             c++;
+            int diff = 0;
             for (AbstractActivityPeriod a : e.getValue()){
                 String style="status-green";
-                int start=(int) (a.getStartTime()/600000);
+                int start=diff;
                 int time=(int) ((a.getEndTime()-a.getStartTime())/1000);
                 System.out.println(start+"damn"+time);
                 if (a.getType()==AbstractActivityPeriod.Type.NONFOCUSED) style="status-red";
                 series.getData().add(new XYChart.Data(start,series.getName(),new GanttChart.ExtraData(time,style)));
+                diff += time;
             }
         }
 
