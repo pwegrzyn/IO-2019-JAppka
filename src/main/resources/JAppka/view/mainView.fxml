@@ -9,19 +9,11 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<?import javafx.scene.chart.StackedBarChart?>
-<BorderPane prefHeight="500.0" prefWidth="720.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.edu.agh.io.jappka.controller.AppController">
+
+<BorderPane prefHeight="500.0" prefWidth="920.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.edu.agh.io.jappka.controller.AppController">
     <center>
-        <AnchorPane maxHeight="-1.0" maxWidth="-1.0" prefHeight="451.0" prefWidth="640.0" VBox.vgrow="ALWAYS">
+        <AnchorPane fx:id = "mainPane" maxHeight="-1.0" maxWidth="-1.0" prefHeight="451.0" prefWidth="640.0" VBox.vgrow="ALWAYS" >
             <children>
-            <StackedBarChart fx:id="mainChart" layoutY="22.0" prefHeight="405.0" prefWidth="500.0">
-              <xAxis>
-                <CategoryAxis side="BOTTOM" />
-              </xAxis>
-              <yAxis>
-                <NumberAxis side="LEFT" />
-              </yAxis>
-            </StackedBarChart>
             </children>
         </AnchorPane>
     </center>
