@@ -8,7 +8,7 @@
 
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.edu.agh.io.jappka.controller.ChartController">
    <children>
-      <Button layoutX="140.0" layoutY="329.0" mnemonicParsing="false" onAction="#testStuff" text="Button" />
+      <Button layoutX="140.0" layoutY="329.0" mnemonicParsing="false" onAction="#testStuff" text="Back to main view" />
       <BarChart fx:id="barChart" layoutX="40.0" layoutY="14.0" prefHeight="308.0" prefWidth="505.0">
           <xAxis>
               <CategoryAxis fx:id="xAxis" side="BOTTOM" />

@@ -47,11 +47,12 @@ public class App extends Application {
             @Override
             public void run() {
                 chromeSummary.generate();
-                data.replace("firefox", chromeSummary.getAllPeriods());
+                data.replace("chrome", chromeSummary.getAllPeriods());
             }
         }, 0, 1000);
 
         gui.initApplication();
+
     }
 
     public static void quit() {

@@ -8,7 +8,7 @@
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.edu.agh.io.jappka.controller.GenerateGraphController">
    <children>
       <DatePicker fx:id="dateStart" layoutX="31.0" layoutY="38.0" prefHeight="31.0" prefWidth="238.0" promptText="Please choose start date" />
-      <Button onAction="#handleBackButton" layoutX="526.0" layoutY="38.0" mnemonicParsing="false" text="Back" />
+      <Button onAction="#handleBackButton" layoutX="526.0" layoutY="38.0" mnemonicParsing="false" text="Back to main view" />
       <DatePicker fx:id="dateEnd" layoutX="281.0" layoutY="38.0" promptText="Please choose end date" />
       <Button onAction="#handleGenerateReportButton" layoutX="44.0" layoutY="99.0" mnemonicParsing="false" prefHeight="31.0" prefWidth="129.0" text="Generate" />
    </children>
