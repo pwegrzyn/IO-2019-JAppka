@@ -54,7 +54,6 @@ public class ChartController {
 
     @FXML
     private void testStuff(ActionEvent event){
-        System.out.println("napalmstrike");
-        drawGraph();
+        appController.backToMainView();
     }
 }
