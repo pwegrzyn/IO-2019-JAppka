@@ -136,7 +136,6 @@ public class AppController {
                 String style="status-green";
                 int start=diff;
                 int time=(int) ((a.getEndTime()-a.getStartTime())/1000);
-                System.out.println(start+"damn"+time);
                 if (a.getType()==AbstractActivityPeriod.Type.NONFOCUSED) style="status-red";
                 series.getData().add(new XYChart.Data(start,series.getName(),new GanttChart.ExtraData(time,style)));
                 diff += time;
