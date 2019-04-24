@@ -10,6 +10,7 @@ import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
@@ -17,8 +18,10 @@ import pl.edu.agh.io.jappka.activity.AbstractActivityPeriod;
 import pl.edu.agh.io.jappka.charts.GanttChart;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class AppController {
 
@@ -29,6 +32,7 @@ public class AppController {
 
 
     private GanttChart<Number,String> mainChart;
+    private String[] categories;
 
     @FXML
     private AnchorPane mainPane;
@@ -119,17 +123,41 @@ public class AppController {
         mainChart.setLayoutY(22.0);
         mainChart.setPrefHeight(405.0);
         mainChart.setPrefWidth(700.0);
+
+        ArrayList<XYChart.Series> s=new ArrayList<>();
+        int c=0;
+        for (Map.Entry<String,List<AbstractActivityPeriod>> e : obData.entrySet()){
+            s.add(new XYChart.Series());
+            XYChart.Series series=s.get(s.size()-1);
+            series.setName(categories[c]);
+            c++;
+            for (AbstractActivityPeriod a : e.getValue()){
+                String style="status-green";
+                int start=(int) (a.getStartTime()/600000);
+                int time=(int) ((a.getEndTime()-a.getStartTime())/1000);
+                System.out.println(start+"damn"+time);
+                if (a.getType()==AbstractActivityPeriod.Type.NONFOCUSED) style="status-red";
+                series.getData().add(new XYChart.Data(start,series.getName(),new GanttChart.ExtraData(time,style)));
+            }
+        }
+
+        for (int i=0; i<s.size(); i++){
+            mainChart.getData().add(s.get(i));
+        }
+        mainChart.getStylesheets().add(getClass().getResource("/ganttchart.css").toExternalForm());
     }
 
     private void configureAxis(NumberAxis xAxis, CategoryAxis yAxis){
         xAxis.setLabel("Time");
         xAxis.setTickLabelFill(Color.CHOCOLATE);
         xAxis.setMinorTickCount(4);
+        xAxis.setAutoRanging(true);
         yAxis.setLabel("Applications");
         yAxis.setTickLabelFill(Color.CHOCOLATE);
         yAxis.setTickLabelGap(10);
+        yAxis.setAutoRanging(true);
         //get initial category list
-        String[] categories = obData.keySet().toArray(new String[0]);
+        categories = obData.keySet().toArray(new String[0]);
         yAxis.setCategories(FXCollections.<String>observableArrayList(Arrays.asList(categories)));
     }
 
