@@ -141,4 +141,4 @@ data/
 *.bin
 
 .gradle/
-.idea/* 
+.idea/
