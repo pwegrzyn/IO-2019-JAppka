@@ -22,7 +22,6 @@ dependencies {
     implementation 'net.java.dev.jna:jna:5.2.0'
     implementation 'net.java.dev.jna:jna-platform:5.2.0'
     implementation 'org.kie.modules:org-apache-commons-exec:6.5.0.Final'
-    implementation 'org.openjfx:javafx:11'
 }
 
 mainClassName = 'pl.edu.agh.io.jappka.app.App'
