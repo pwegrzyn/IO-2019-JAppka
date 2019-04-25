@@ -7,8 +7,11 @@ import javafx.stage.Stage;
 import pl.edu.agh.io.jappka.activity.*;
 import org.apache.commons.exec.OS;
 import pl.edu.agh.io.jappka.presenter.AppGUI;
-;import java.io.IOException;
-import java.util.*;
+import java.util.Timer;
+import java.util.List;
+import java.util.Map;
+import java.util.HashMap;
+import java.util.TimerTask;
 
 
 public class App extends Application {

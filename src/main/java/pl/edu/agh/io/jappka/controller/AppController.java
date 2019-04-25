@@ -75,6 +75,7 @@ public class AppController {
 
     public void backToMainView() {
         primaryStage.setScene(primaryScene);
+        primaryStage.setTitle("Activity Tracker");
         primaryStage.show();
     }
 
@@ -113,7 +114,6 @@ public class AppController {
     }
 
     private void configureChart(){
-        mainChart.setTitle("Title TBD");
         mainChart.setLegendVisible(true);
         mainChart.setBlockHeight(50);
         mainChart.getData().clear();
