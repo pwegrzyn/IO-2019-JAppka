@@ -58,11 +58,12 @@ public class AppActivityTracker extends AbstractActivityTracker {
 
     private void refreshState(){
         StateTransitionEvent.Type newAppState = isFocused() ? this.activeState : this.inactiveState;
-        if(newAppState != this.currentAppState){
-            long currentTime = System.currentTimeMillis();
-            addActivityToState(currentTime, newAppState);
-            this.currentAppState = newAppState;
-        }
+//        if(newAppState != this.currentAppState){
+//            long currentTime = System.currentTimeMillis();
+//            addActivityToState(currentTime, newAppState);
+//            this.currentAppState = newAppState;
+//        }
+        addActivityToState(System.currentTimeMillis(), newAppState);
     }
 
     private boolean isFocused(){

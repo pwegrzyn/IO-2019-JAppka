@@ -26,6 +26,8 @@ public class App extends Application {
 
         Timer timer = new Timer();
 
+
+
         ActivityTracker PCtracker = new PCActivityTracker();
         PCtracker.track();
 
@@ -54,6 +56,12 @@ public class App extends Application {
             }
         }, 0, 1000);
 
+    }
+
+    @Override
+    public void stop() throws Exception {
+        super.stop();
+        System.exit(0);
     }
 
     public static void quit() {
