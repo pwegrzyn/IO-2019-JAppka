@@ -175,7 +175,6 @@ public class AppController {
                 if(this.wasLastAppTimeSet) {
                     String style="status-green";
                     int time = this.lastAppTime - diff;
-                    System.out.println(time);
                     series.getData().add(new XYChart.Data(diff,series.getName(),new GanttChart.ExtraData(time,style)));
                 }
             }
