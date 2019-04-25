@@ -1,18 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import javafx.scene.chart.BarChart?>
-<?import javafx.scene.chart.CategoryAxis?>
-<?import javafx.scene.chart.NumberAxis?>
-<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Menu?>
+<?import javafx.scene.control.MenuBar?>
+<?import javafx.scene.control.MenuItem?>
 <?import javafx.scene.layout.AnchorPane?>
 <?import javafx.scene.layout.BorderPane?>
 <?import javafx.scene.layout.VBox?>
-<?import javafx.scene.text.Font?>
 
-
-<BorderPane prefHeight="500.0" prefWidth="920.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.edu.agh.io.jappka.controller.AppController">
+<BorderPane prefHeight="500.0" prefWidth="807.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.edu.agh.io.jappka.controller.AppController">
     <center>
-        <AnchorPane fx:id = "mainPane" maxHeight="-1.0" maxWidth="-1.0" prefHeight="451.0" prefWidth="640.0" VBox.vgrow="ALWAYS" >
+        <AnchorPane fx:id="mainPane" maxHeight="-1.0" maxWidth="-1.0" prefHeight="450.0" prefWidth="699.0" VBox.vgrow="ALWAYS">
             <children>
             </children>
         </AnchorPane>
@@ -25,28 +22,25 @@
     <right>
 
     </right>
-    <right>
-        <AnchorPane prefHeight="539.0" prefWidth="121.0" BorderPane.alignment="CENTER">
-         <children>
-            <Button layoutY="15.0" mnemonicParsing="false" onAction="#handleGenerateReport" prefHeight="38.0" prefWidth="121.0" text="Generate report" AnchorPane.bottomAnchor="463.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="15.0">
-               <font>
-                  <Font size="13.0" />
-               </font></Button>
-            <Button layoutX="28.0" layoutY="464.0" mnemonicParsing="false" onAction="#handleShowCharts" prefHeight="31.0" prefWidth="121.0" text="Show charts" textAlignment="CENTER" AnchorPane.bottomAnchor="13.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="464.0">
-               <font>
-                  <Font size="13.0" />
-               </font>
-            </Button>
-         </children></AnchorPane>
-    </right>
-    <left>
-        <AnchorPane prefHeight="200.0" prefWidth="100.0" BorderPane.alignment="CENTER">
-         <children>
-            <VBox alignment="TOP_CENTER" layoutY="32.0" prefHeight="372.0" prefWidth="100.0" AnchorPane.bottomAnchor="112.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="32.0" />
-          <Button alignment="CENTER" layoutY="464.0" mnemonicParsing="false" onAction="#handleAddApplicationAction" prefHeight="29.0" prefWidth="100.0" text="Add app" textAlignment="CENTER" AnchorPane.bottomAnchor="14.0" AnchorPane.leftAnchor="0.0" AnchorPane.rightAnchor="0.0" AnchorPane.topAnchor="464.0">
-               <font>
-                  <Font size="12.0" />
-               </font></Button>
-         </children></AnchorPane>
-    </left>
+   <top>
+      <MenuBar BorderPane.alignment="CENTER">
+        <menus>
+          <Menu mnemonicParsing="false" text="Applications">
+            <items>
+              <MenuItem mnemonicParsing="false" onAction="#handleAddApplicationAction" text="Add app" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Statistics">
+            <items>
+              <MenuItem mnemonicParsing="false" onAction="#handleShowCharts" text="Show statistics" />
+            </items>
+          </Menu>
+          <Menu mnemonicParsing="false" text="Reports">
+            <items>
+              <MenuItem mnemonicParsing="false" onAction="#handleGenerateReport" text="Generate Report" />
+            </items>
+          </Menu>
+        </menus>
+      </MenuBar>
+   </top>
 </BorderPane>
