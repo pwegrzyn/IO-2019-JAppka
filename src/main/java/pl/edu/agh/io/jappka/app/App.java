@@ -38,8 +38,12 @@ public class App extends Application {
         ActivitySummary chromeSummary = new AppActivitySummary(chromeTracker.getActivityStream(), "chrome");
         chromeSummary.generate();
 
+        ActivitySummary PCSummary = new PCActivitySummary(PCtracker.getActivityStream());
+        PCSummary.generate();
+
         Map<String, List<AbstractActivityPeriod>> data = new HashMap<>();
         data.put("chrome", chromeSummary.getAllPeriods());
+        data.put("PC", PCSummary.getAllPeriods());
 
         ObservableMap<String, List<AbstractActivityPeriod>> obData = FXCollections.observableHashMap();
         obData.putAll(data);
@@ -52,7 +56,9 @@ public class App extends Application {
             @Override
             public void run() {
                 chromeSummary.generate();
+                PCSummary.generate();
                 obData.put("chrome", chromeSummary.getAllPeriods());
+                obData.put("PC", PCSummary.getAllPeriods());
                 gui.update();
             }
         }, 0, 1000);

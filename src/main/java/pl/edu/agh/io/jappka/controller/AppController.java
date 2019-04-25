@@ -30,6 +30,8 @@ public class AppController {
     private Scene graphScene;
     private ObservableMap<String, List<AbstractActivityPeriod>> obData;
 
+    private int lastAppTime = 0;
+    private boolean wasLastAppTimeSet = false;
 
     private GanttChart<Number,String> mainChart;
     private String[] categories;
@@ -158,8 +160,24 @@ public class AppController {
                 int start=diff;
                 int time=(int) ((a.getEndTime()-a.getStartTime())/1000);
                 if (a.getType()==AbstractActivityPeriod.Type.NONFOCUSED) style="status-red";
+                // For PC tracking?
+                if (a.getType()==AbstractActivityPeriod.Type.OFF) style="status-red";
                 series.getData().add(new XYChart.Data(start,series.getName(),new GanttChart.ExtraData(time,style)));
                 diff += time;
+            }
+            /*Workaround to simulate drawing the last active state for PC (since it's not available until we close
+            the app and reopen it again) - we add an artificial green strip which 'chases' the app strip*/
+            if(!e.getKey().equals("PC")) {
+                this.lastAppTime = diff;
+                this.wasLastAppTimeSet = true;
+            }
+            if(e.getKey().equals("PC")) {
+                if(this.wasLastAppTimeSet) {
+                    String style="status-green";
+                    int time = this.lastAppTime - diff;
+                    System.out.println(time);
+                    series.getData().add(new XYChart.Data(diff,series.getName(),new GanttChart.ExtraData(time,style)));
+                }
             }
         }
 

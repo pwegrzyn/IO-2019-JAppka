@@ -36,12 +36,12 @@ public class ChartController {
     }
 
     public void drawGraph(){
-        xAxis.setLabel("Apps");
+        xAxis.setLabel("Activities");
         yAxis.setLabel("Time active");
 
-        barChart.setTitle("App activity");
+        barChart.setTitle("Activity");
         XYChart.Series<String,Number> dataSeries=new XYChart.Series<>();
-        dataSeries.setName("App activity time (s)");
+        dataSeries.setName("Activity time (s)");
         for (Map.Entry<String,List<AbstractActivityPeriod>> e : data.entrySet()){
             for (AbstractActivityPeriod a : e.getValue()){
                 long time=(a.getEndTime()-a.getStartTime())/1000;
