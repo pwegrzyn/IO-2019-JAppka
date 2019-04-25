@@ -1,5 +1,6 @@
 package pl.edu.agh.io.jappka.presenter;
 
+import javafx.application.Platform;
 import javafx.collections.ObservableMap;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
@@ -15,6 +16,7 @@ import java.util.List;
 public class AppGUI {
     private Stage primaryStage;
     private ObservableMap<String, List<AbstractActivityPeriod>> obData;
+    private AppController controller;
 
     public AppGUI(Stage primaryStage,ObservableMap<String, List<AbstractActivityPeriod>> obData){
         this.primaryStage = primaryStage;
@@ -29,8 +31,14 @@ public class AppGUI {
         Scene scene = new Scene(rootLayout);
         primaryStage.setScene(scene);
         primaryStage.show();
-        AppController controller = loader.getController();
+        controller = loader.getController();
         controller.setObData(obData);
         controller.setPrimaryStageElements(primaryStage, scene);
+    }
+
+    public void update(){
+        Platform.runLater(()-> {
+            controller.update();
+        });
     }
 }

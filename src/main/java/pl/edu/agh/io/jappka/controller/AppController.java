@@ -123,7 +123,28 @@ public class AppController {
         mainChart.setLayoutY(22.0);
         mainChart.setPrefHeight(405.0);
         mainChart.setPrefWidth(700.0);
+        mainChart.getStylesheets().add(getClass().getResource("/ganttchart.css").toExternalForm());
+    }
 
+    private void configureAxis(NumberAxis xAxis, CategoryAxis yAxis){
+        xAxis.setLabel("Time");
+        xAxis.setTickLabelFill(Color.CHOCOLATE);
+        xAxis.setMinorTickCount(4);
+        xAxis.setAutoRanging(true);
+        yAxis.setLabel("Applications");
+        yAxis.setTickLabelFill(Color.CHOCOLATE);
+        yAxis.setTickLabelGap(10);
+        yAxis.setAutoRanging(true);
+        //get initial category list
+        categories = obData.keySet().toArray(new String[0]);
+        yAxis.setCategories(FXCollections.<String>observableArrayList(Arrays.asList(categories)));
+    }
+
+    public ObservableMap<String, List<AbstractActivityPeriod>> getObData() {
+        return obData;
+    }
+
+    public void update(){
         ArrayList<XYChart.Series> s=new ArrayList<>();
         int c=0;
         for (Map.Entry<String,List<AbstractActivityPeriod>> e : obData.entrySet()){
@@ -145,24 +166,5 @@ public class AppController {
         for (int i=0; i<s.size(); i++){
             mainChart.getData().add(s.get(i));
         }
-        mainChart.getStylesheets().add(getClass().getResource("/ganttchart.css").toExternalForm());
-    }
-
-    private void configureAxis(NumberAxis xAxis, CategoryAxis yAxis){
-        xAxis.setLabel("Time");
-        xAxis.setTickLabelFill(Color.CHOCOLATE);
-        xAxis.setMinorTickCount(4);
-        xAxis.setAutoRanging(true);
-        yAxis.setLabel("Applications");
-        yAxis.setTickLabelFill(Color.CHOCOLATE);
-        yAxis.setTickLabelGap(10);
-        yAxis.setAutoRanging(true);
-        //get initial category list
-        categories = obData.keySet().toArray(new String[0]);
-        yAxis.setCategories(FXCollections.<String>observableArrayList(Arrays.asList(categories)));
-    }
-
-    public ObservableMap<String, List<AbstractActivityPeriod>> getObData() {
-        return obData;
     }
 }

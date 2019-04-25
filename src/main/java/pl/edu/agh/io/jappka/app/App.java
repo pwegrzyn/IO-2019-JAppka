@@ -29,29 +29,30 @@ public class App extends Application {
         ActivityTracker PCtracker = new PCActivityTracker();
         PCtracker.track();
 
-        ActivityTracker chromeTracker = new AppActivityTracker("firefox");
+        ActivityTracker chromeTracker = new AppActivityTracker("chrome");
         chromeTracker.track();
 
-        ActivitySummary chromeSummary = new AppActivitySummary(chromeTracker.getActivityStream(), "firefox");
+        ActivitySummary chromeSummary = new AppActivitySummary(chromeTracker.getActivityStream(), "chrome");
         chromeSummary.generate();
 
         Map<String, List<AbstractActivityPeriod>> data = new HashMap<>();
-        data.put("firefox", chromeSummary.getAllPeriods());
+        data.put("chrome", chromeSummary.getAllPeriods());
 
         ObservableMap<String, List<AbstractActivityPeriod>> obData = FXCollections.observableHashMap();
         obData.putAll(data);
 
         AppGUI gui = new AppGUI(primaryStage,obData);
 
+        gui.initApplication();
+
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
                 chromeSummary.generate();
-                data.replace("chrome", chromeSummary.getAllPeriods());
+                obData.put("chrome", chromeSummary.getAllPeriods());
+                gui.update();
             }
         }, 0, 1000);
-
-        gui.initApplication();
 
     }
 
