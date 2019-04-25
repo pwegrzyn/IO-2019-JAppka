@@ -27,9 +27,7 @@ public class App extends Application {
             quit();
         }
 
-        Timer timer = new Timer();
-
-
+        Timer timer = new Timer(true);
 
         ActivityTracker PCtracker = new PCActivityTracker();
         PCtracker.track();
