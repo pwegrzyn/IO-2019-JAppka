@@ -150,8 +150,7 @@ public class AppController {
         ArrayList<XYChart.Series> s=new ArrayList<>();
         int c=0;
         for (Map.Entry<String,List<AbstractActivityPeriod>> e : obData.entrySet()){
-            s.add(new XYChart.Series());
-            XYChart.Series series=s.get(s.size()-1);
+            XYChart.Series series= new XYChart.Series();
             series.setName(categories[c]);
             c++;
             int diff = 0;
@@ -159,14 +158,15 @@ public class AppController {
                 String style="status-green";
                 int start=diff;
                 int time=(int) ((a.getEndTime()-a.getStartTime())/1000);
-                if (a.getType()==AbstractActivityPeriod.Type.NONFOCUSED) style="status-red";
-                // For PC tracking?
-                if (a.getType()==AbstractActivityPeriod.Type.OFF) style="status-red";
+                if (a.getType()==AbstractActivityPeriod.Type.NONFOCUSED || a.getType() == AbstractActivityPeriod.Type.OFF)
+                    style="status-red";
+
                 series.getData().add(new XYChart.Data(start,series.getName(),new GanttChart.ExtraData(time,style)));
                 diff += time;
             }
             /*Workaround to simulate drawing the last active state for PC (since it's not available until we close
             the app and reopen it again) - we add an artificial green strip which 'chases' the app strip*/
+            /*
             if(!e.getKey().equals("PC")) {
                 this.lastAppTime = diff;
                 this.wasLastAppTimeSet = true;
@@ -177,7 +177,9 @@ public class AppController {
                     int time = this.lastAppTime - diff;
                     series.getData().add(new XYChart.Data(diff,series.getName(),new GanttChart.ExtraData(time,style)));
                 }
-            }
+            }*/
+
+            s.add(series);
         }
 
         for (int i=0; i<s.size(); i++){

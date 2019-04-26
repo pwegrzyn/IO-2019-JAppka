@@ -38,16 +38,20 @@ public class AppActivitySummary implements ActivitySummary {
                 firstIter = false;
                 lastType = event.getType();
             } else {
-                if(lastType == StateTransitionEvent.Type.FOCUSED)
-                    newPeriod = new AppActivityPeriod(lastIterTime, event.getFiringTime(), AbstractActivityPeriod.Type.FOCUSED, this.appName);
-                else
-                    newPeriod = new AppActivityPeriod(lastIterTime, event.getFiringTime(), AbstractActivityPeriod.Type.NONFOCUSED, this.appName);
-
-                this.periods.add(newPeriod);
-                lastIterTime = event.getFiringTime();
-                lastType = event.getType();
+                if(lastType != event.getType()) {
+                    newPeriod = new AppActivityPeriod(lastIterTime, event.getFiringTime(), getPeriodType(lastType), this.appName);
+                    this.periods.add(newPeriod);
+                    lastIterTime = event.getFiringTime();
+                    lastType = event.getType();
+                }
             }
         }
+        if(!this.activityStream.getEvents().isEmpty()){
+            StateTransitionEvent lastEvent = this.activityStream.getEvents().get(this.activityStream.getEvents().size() - 1);
+            newPeriod = new AppActivityPeriod(lastIterTime, lastEvent.getFiringTime(), getPeriodType(lastEvent.getType()), this.appName);
+            this.periods.add(newPeriod);
+        }
+
         this.wasGenerated = true;
     }
 
@@ -86,6 +90,11 @@ public class AppActivitySummary implements ActivitySummary {
         }
         return this.periods.stream().filter(period -> period.startTime > startTime && period.endTime < endTime)
                 .collect(Collectors.toList());
+    }
+
+    public AbstractActivityPeriod.Type getPeriodType(StateTransitionEvent.Type type){
+        return type == StateTransitionEvent.Type.FOCUSED ? AbstractActivityPeriod.Type.FOCUSED :
+                AbstractActivityPeriod.Type.NONFOCUSED;
     }
 
 }
