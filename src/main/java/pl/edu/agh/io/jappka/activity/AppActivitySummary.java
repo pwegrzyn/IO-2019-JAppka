@@ -48,8 +48,10 @@ public class AppActivitySummary implements ActivitySummary {
         }
         if(!this.activityStream.getEvents().isEmpty()){
             StateTransitionEvent lastEvent = this.activityStream.getEvents().get(this.activityStream.getEvents().size() - 1);
-            newPeriod = new AppActivityPeriod(lastIterTime, lastEvent.getFiringTime(), getPeriodType(lastEvent.getType()), this.appName);
-            this.periods.add(newPeriod);
+            if(lastIterTime != lastEvent.getFiringTime()) {
+                newPeriod = new AppActivityPeriod(lastIterTime, lastEvent.getFiringTime(), getPeriodType(lastEvent.getType()), this.appName);
+                this.periods.add(newPeriod);
+            }
         }
 
         this.wasGenerated = true;

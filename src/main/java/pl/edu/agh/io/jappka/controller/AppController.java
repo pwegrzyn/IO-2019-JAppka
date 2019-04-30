@@ -14,8 +14,10 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
+import javafx.util.StringConverter;
 import pl.edu.agh.io.jappka.activity.AbstractActivityPeriod;
 import pl.edu.agh.io.jappka.charts.GanttChart;
+import pl.edu.agh.io.jappka.util.Utils;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -131,12 +133,28 @@ public class AppController {
     private void configureAxis(NumberAxis xAxis, CategoryAxis yAxis){
         xAxis.setLabel("Time");
         xAxis.setTickLabelFill(Color.CHOCOLATE);
-        xAxis.setMinorTickCount(4);
-        xAxis.setAutoRanging(true);
+        //xAxis.setMinorTickCount(10);
+        xAxis.setAutoRanging(false);
         yAxis.setLabel("Applications");
         yAxis.setTickLabelFill(Color.CHOCOLATE);
-        yAxis.setTickLabelGap(10);
+        //yAxis.setTickLabelGap(10);
         yAxis.setAutoRanging(true);
+        xAxis.setTickLabelFormatter(new StringConverter<Number>() {
+            @Override
+            public String toString(Number object) {
+                return Utils.millisecondsToStringDate(object.longValue()*1000);
+            }
+
+            @Override
+            public Number fromString(String string) {
+                return null;
+            }
+        });
+
+        //timestamp of lower date bound
+        xAxis.setLowerBound(1556626800);
+        //timestamp of upper date bound
+        xAxis.setUpperBound(1556628000);
         //get initial category list
         categories = obData.keySet().toArray(new String[0]);
         yAxis.setCategories(FXCollections.<String>observableArrayList(Arrays.asList(categories)));
@@ -147,43 +165,29 @@ public class AppController {
     }
 
     public void update(){
-        ArrayList<XYChart.Series> s=new ArrayList<>();
+        ArrayList<XYChart.Series<Number, String>> s=new ArrayList<>();
         int c=0;
+
+
         for (Map.Entry<String,List<AbstractActivityPeriod>> e : obData.entrySet()){
             XYChart.Series series= new XYChart.Series();
             series.setName(categories[c]);
             c++;
-            int diff = 0;
+            long diff = e.getValue().get(0).getStartTime()/1000;
             for (AbstractActivityPeriod a : e.getValue()){
                 String style="status-green";
-                int start=diff;
-                int time=(int) ((a.getEndTime()-a.getStartTime())/1000);
+                long start = diff;
+                long time=(a.getEndTime()-a.getStartTime())/1000;
                 if (a.getType()==AbstractActivityPeriod.Type.NONFOCUSED || a.getType() == AbstractActivityPeriod.Type.OFF)
                     style="status-red";
 
-                series.getData().add(new XYChart.Data(start,series.getName(),new GanttChart.ExtraData(time,style)));
+                series.getData().add(new XYChart.Data<Number, String>(start,series.getName(),new GanttChart.ExtraData(time,style)));
                 diff += time;
             }
-            /*Workaround to simulate drawing the last active state for PC (since it's not available until we close
-            the app and reopen it again) - we add an artificial green strip which 'chases' the app strip*/
-            /*
-            if(!e.getKey().equals("PC")) {
-                this.lastAppTime = diff;
-                this.wasLastAppTimeSet = true;
-            }
-            if(e.getKey().equals("PC")) {
-                if(this.wasLastAppTimeSet) {
-                    String style="status-green";
-                    int time = this.lastAppTime - diff;
-                    series.getData().add(new XYChart.Data(diff,series.getName(),new GanttChart.ExtraData(time,style)));
-                }
-            }*/
 
             s.add(series);
         }
 
-        for (int i=0; i<s.size(); i++){
-            mainChart.getData().add(s.get(i));
-        }
+        mainChart.setData(FXCollections.observableArrayList(s));
     }
 }
