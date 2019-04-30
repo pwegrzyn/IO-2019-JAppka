@@ -166,7 +166,6 @@ public class AppController {
             }
             /*Workaround to simulate drawing the last active state for PC (since it's not available until we close
             the app and reopen it again) - we add an artificial green strip which 'chases' the app strip*/
-            /*
             if(!e.getKey().equals("PC")) {
                 this.lastAppTime = diff;
                 this.wasLastAppTimeSet = true;
@@ -175,9 +174,9 @@ public class AppController {
                 if(this.wasLastAppTimeSet) {
                     String style="status-green";
                     int time = this.lastAppTime - diff;
-                    series.getData().add(new XYChart.Data(diff,series.getName(),new GanttChart.ExtraData(time,style)));
+                    series.getData().add(new XYChart.Data(diff,series.getName(),new GanttChart.ExtraData(time+1,style)));
                 }
-            }*/
+            }
 
             s.add(series);
         }
