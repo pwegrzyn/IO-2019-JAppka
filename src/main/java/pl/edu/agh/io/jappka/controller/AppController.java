@@ -4,8 +4,8 @@ import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
-import javafx.fxml.FXML;
 import javafx.event.ActionEvent;
+import javafx.fxml.FXML;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
@@ -87,6 +87,21 @@ public class AppController {
         catch (IOException e){
             e.printStackTrace();
         }
+    }
+    @FXML
+    private void handleChangeGraphColors(ActionEvent event){
+        try{
+            AnchorPane colorPickerLayout = FXMLLoader.load(getClass().getClassLoader().getResource("JAppka/popups/gridColorPicker.fxml"));
+            Stage graphColorDialog = new Stage();
+            Scene colorPickerScene = new Scene(colorPickerLayout,500,300);
+            graphColorDialog.setScene(colorPickerScene);
+            graphColorDialog.setTitle("Grid's color scheme");
+            graphColorDialog .show();
+        }catch(IOException e){
+            System.out.println("Exception occurred when loading gridColorPicker's FXML file, Reason: ");
+            e.printStackTrace();
+        }
+
     }
 
     public void backToMainView() {
