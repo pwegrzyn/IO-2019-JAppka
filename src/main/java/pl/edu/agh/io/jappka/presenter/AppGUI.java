@@ -31,6 +31,7 @@ public class AppGUI {
         Scene scene = new Scene(rootLayout);
         primaryStage.setScene(scene);
         primaryStage.show();
+        primaryStage.setTitle("JAppka Activity Tracker");
         controller = loader.getController();
         controller.setObData(obData);
         controller.setPrimaryStageElements(primaryStage, scene);

@@ -14,6 +14,12 @@ public class Utils {
         return sdf.format(resultdate);
     }
 
+    public static String millisecondsToCustomStrDate(long timeInMilliseconds, String pattern) {
+        SimpleDateFormat sdf = new SimpleDateFormat(pattern);
+        Date resultdate = new Date(timeInMilliseconds);
+        return sdf.format(resultdate);
+    }
+
     public static String removeExtensionFromFilename(String filename){
         Pattern p = Pattern.compile("(.*)\\.[^.]+$");
         Matcher m = p.matcher(filename);

@@ -6,6 +6,8 @@ import javafx.collections.ObservableMap;
 import javafx.stage.Stage;
 import pl.edu.agh.io.jappka.activity.*;
 import org.apache.commons.exec.OS;
+import pl.edu.agh.io.jappka.os.NativeAccessor;
+import pl.edu.agh.io.jappka.os.WindowsNativeAccessor;
 import pl.edu.agh.io.jappka.presenter.AppGUI;
 import java.util.Timer;
 import java.util.List;
@@ -27,19 +29,25 @@ public class App extends Application {
             quit();
         }
 
+        NativeAccessor accessor = new WindowsNativeAccessor();
+        List<String> apps = accessor.getActiveProcessesNames();
+        for(String app : apps) {
+            System.out.println(app);
+        }
+
         Timer timer = new Timer(true);
 
         ActivityTracker PCtracker = new PCActivityTracker();
         PCtracker.track();
+
+        ActivitySummary PCSummary = new PCActivitySummary(PCtracker.getActivityStream());
+        PCSummary.generate();
 
         ActivityTracker chromeTracker = new AppActivityTracker("chrome");
         chromeTracker.track();
 
         ActivitySummary chromeSummary = new AppActivitySummary(chromeTracker.getActivityStream(), "chrome");
         chromeSummary.generate();
-
-        ActivitySummary PCSummary = new PCActivitySummary(PCtracker.getActivityStream());
-        PCSummary.generate();
 
         Map<String, List<AbstractActivityPeriod>> data = new HashMap<>();
         data.put("chrome", chromeSummary.getAllPeriods());
