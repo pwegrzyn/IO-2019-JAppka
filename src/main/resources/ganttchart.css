@@ -1,5 +1,5 @@
-.status-red {
-    -fx-background-color:rgba(128,0,0,0.7);
+.status-transparent{
+    -fx-background-color:rgba(0,0,0,0.0);
 }
 .status-green {
     -fx-background-color:rgba(0,128,0,0.7);

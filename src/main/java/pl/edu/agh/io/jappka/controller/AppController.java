@@ -179,7 +179,7 @@ public class AppController {
                 long start = diff;
                 long time=(a.getEndTime()-a.getStartTime())/1000;
                 if (a.getType()==AbstractActivityPeriod.Type.NONFOCUSED || a.getType() == AbstractActivityPeriod.Type.OFF)
-                    style="status-red";
+                    style="status-transparent";
 
                 series.getData().add(new XYChart.Data<Number, String>(start,series.getName(),new GanttChart.ExtraData(time,style)));
                 diff += time;
