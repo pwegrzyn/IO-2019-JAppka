@@ -23,10 +23,9 @@ import pl.edu.agh.io.jappka.charts.GanttChart;
 import pl.edu.agh.io.jappka.util.Utils;
 
 import java.io.IOException;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.text.ParseException;
+import java.text.SimpleDateFormat;
+import java.util.*;
 
 public class AppController {
 
@@ -44,6 +43,8 @@ public class AppController {
     private NumberAxis xAxis;
     private String currentlyDisplayedDate;
     private String dateFormat;
+    private String clockFormat;
+    private static final int MILLISECONDS_IN_DAY = 86400000;
 
     @FXML
     private AnchorPane mainPane;
@@ -52,8 +53,10 @@ public class AppController {
         this.primaryStage = primaryStage;
         this.primaryScene = primaryScene;
         this.dateFormat = "MMM dd,yyyy";
+        this.clockFormat = "HH:mm:ss";
         initGanttChart();
         initCurrentDateBar();
+        initGraphDataBoundaries();
     }
 
     public void setObData(ObservableMap<String, List<AbstractActivityPeriod>> obData){
@@ -95,10 +98,44 @@ public class AppController {
     @FXML
     private void handleGoBackwardsDayButton(ActionEvent event){
         ((Button) this.primaryScene.lookup("#GoForwardsDay")).setDisable(false);
+
+        String currentDateMidnight = this.currentlyDisplayedDate + " 00:00:00";
+        SimpleDateFormat formatter = new SimpleDateFormat(this.dateFormat + " " + this.clockFormat);
+        long startMilliseconds = 0;
+        long endMilliseconds = 0;
+        try {
+            Date date = formatter.parse(currentDateMidnight);
+            endMilliseconds = date.getTime() - 1;
+            startMilliseconds = date.getTime() - MILLISECONDS_IN_DAY;
+            this.currentlyDisplayedDate = Utils.millisecondsToCustomStrDate(startMilliseconds, this.dateFormat);
+            changeCurrentlyDisplayedDate();
+        } catch (ParseException e) {
+            System.err.println("Error while parsing date!");
+            e.printStackTrace();
+        }
+        this.xAxis.setLowerBound(startMilliseconds / 1000);
+        this.xAxis.setUpperBound(endMilliseconds / 1000);
     }
 
     @FXML
     private void handleGoForwardsDayButton(ActionEvent event){
+        String currentDateMidnight = this.currentlyDisplayedDate + " 00:00:00";
+        SimpleDateFormat formatter = new SimpleDateFormat(this.dateFormat + " " + this.clockFormat);
+        long startMilliseconds = 0;
+        long endMilliseconds = 0;
+        try {
+            Date date = formatter.parse(currentDateMidnight);
+            startMilliseconds = date.getTime() + MILLISECONDS_IN_DAY;
+            endMilliseconds = startMilliseconds + MILLISECONDS_IN_DAY - 1;
+            this.currentlyDisplayedDate = Utils.millisecondsToCustomStrDate(startMilliseconds, this.dateFormat);
+            changeCurrentlyDisplayedDate();
+        } catch (ParseException e) {
+            System.err.println("Error while parsing date!");
+            e.printStackTrace();
+        }
+        this.xAxis.setLowerBound(startMilliseconds / 1000);
+        this.xAxis.setUpperBound(endMilliseconds / 1000);
+
         long currentTimestamp = System.currentTimeMillis();
         String currentDate = Utils.millisecondsToCustomStrDate(currentTimestamp, this.dateFormat);
         if(currentDate.equals(this.currentlyDisplayedDate)) {
@@ -106,17 +143,31 @@ public class AppController {
         }
     }
 
-    private void changeCurrentlyDisplayedDate(String date) {
+    private void changeCurrentlyDisplayedDate() {
         ((Label) this.primaryScene.lookup("#CurrentlyDisplayedDate")).textProperty().bind(Bindings.format("%s",
-                date));
+                this.currentlyDisplayedDate));
     }
 
     private void initCurrentDateBar() {
         long currentTimestamp = System.currentTimeMillis();
         String currentDate = Utils.millisecondsToCustomStrDate(currentTimestamp, this.dateFormat);
         this.currentlyDisplayedDate = currentDate;
-        changeCurrentlyDisplayedDate(currentDate);
+        changeCurrentlyDisplayedDate();
         ((Button) this.primaryScene.lookup("#GoForwardsDay")).setDisable(true);
+    }
+
+    private void initGraphDataBoundaries() {
+        String currentDateMidnight = this.currentlyDisplayedDate + " 00:00:00";
+        SimpleDateFormat formatter = new SimpleDateFormat(this.dateFormat + " " + this.clockFormat);
+        long milliseconds = 0;
+        try {
+            Date date = formatter.parse(currentDateMidnight);
+            milliseconds = date.getTime();
+        } catch (ParseException e) {
+            System.err.println("Error while parsing date!");
+            e.printStackTrace();
+        }
+        this.xAxis.setLowerBound(milliseconds / 1000);
     }
 
     @FXML
@@ -177,7 +228,7 @@ public class AppController {
         xAxis.setTickLabelFormatter(new StringConverter<Number>() {
             @Override
             public String toString(Number object) {
-                return Utils.millisecondsToStringDate(object.longValue()*1000);
+                return Utils.millisecondsToCustomStrDate(object.longValue()*1000, AppController.this.clockFormat);
             }
 
             @Override
@@ -199,8 +250,8 @@ public class AppController {
         ArrayList<XYChart.Series<Number, String>> s=new ArrayList<>();
         int c=0;
 
+        // Need to somehow make this independent of chrome
         if (obData.get("chrome").size() > 0) {
-            this.xAxis.setLowerBound(obData.get("chrome").get(0).getStartTime() / 1000);
             this.xAxis.setUpperBound(obData.get("chrome").get(obData.get("chrome").size()-1).getEndTime() / 1000);
         }
 
@@ -208,7 +259,7 @@ public class AppController {
             XYChart.Series series= new XYChart.Series();
             series.setName(categories[c]);
             c++;
-            if(e.getValue().size() < 1) continue;;
+            if(e.getValue().size() < 1) continue;
             long diff = e.getValue().get(0).getStartTime()/1000;
             for (AbstractActivityPeriod a : e.getValue()){
                 String style="status-green";
@@ -231,7 +282,7 @@ public class AppController {
                 if(this.wasLastAppTimeSet) {
                     String style="status-green";
                     long time = this.lastAppTime - diff;
-                    series.getData().add(new XYChart.Data(diff,series.getName(),new GanttChart.ExtraData(time,style)));
+                    //series.getData().add(new XYChart.Data<Number,String>(diff,series.getName(),new GanttChart.ExtraData(time,style)));
                     series.getData().add(new XYChart.Data(diff,series.getName(),new GanttChart.ExtraData(time+1,style)));
                 }
             }
