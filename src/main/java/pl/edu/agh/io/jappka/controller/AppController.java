@@ -15,6 +15,7 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
@@ -89,16 +90,20 @@ public class AppController {
         }
     }
     @FXML
-    private void handleChangeGraphColors(ActionEvent event){
+    private void handleGraphColorPicker(ActionEvent event){
         try{
-            AnchorPane colorPickerLayout = FXMLLoader.load(getClass().getClassLoader().getResource("JAppka/popups/gridColorPicker.fxml"));
-            Stage graphColorDialog = new Stage();
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getClassLoader().getResource("JAppka/popups/graphColorPicker.fxml"));
+            GridPane colorPickerLayout = loader.load();
+            Stage colorPickerStage= new Stage();
             Scene colorPickerScene = new Scene(colorPickerLayout,500,300);
-            graphColorDialog.setScene(colorPickerScene);
-            graphColorDialog.setTitle("Grid's color scheme");
-            graphColorDialog .show();
+            colorPickerStage.setScene(colorPickerScene);
+            colorPickerStage.setTitle("Grid's color scheme");
+            GraphColorPickerController colorPickerController = loader.getController();
+            colorPickerController.setStage(colorPickerStage);
+            colorPickerStage.show();
         }catch(IOException e){
-            System.out.println("Exception occurred when loading gridColorPicker's FXML file, Reason: ");
+            System.out.println("Exception occurred when loading graph color picker's FXML file, Reason: ");
             e.printStackTrace();
         }
 
