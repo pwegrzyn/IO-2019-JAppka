@@ -66,7 +66,23 @@ public class AppController {
 
     @FXML
     private void handleAddApplicationAction(ActionEvent event)  {
-        System.out.println("Add App");
+        
+        try{
+            primaryStage.setTitle("Add app");
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getClassLoader().getResource("JAppka/view/addAppView.fxml"));
+            AnchorPane layout = loader.load();
+
+            AddAppController controller = loader.getController();
+            controller.initialize(this);
+            graphScene = new Scene(layout);
+            primaryStage.setScene(graphScene);
+            primaryStage.show();
+        }
+
+        catch (IOException e){
+            e.printStackTrace();
+        }
     }
 
     @FXML
