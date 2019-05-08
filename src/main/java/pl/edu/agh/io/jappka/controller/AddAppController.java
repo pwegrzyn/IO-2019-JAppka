@@ -54,12 +54,8 @@ public class AddAppController {
         ActivitySummary chromeSummary = new AppActivitySummary(appTracker.getActivityStream(), appName);
         chromeSummary.generate();
 
-        Map<String, List<AbstractActivityPeriod>> data = new HashMap<>();
-        data.put(appName, chromeSummary.getAllPeriods());
-
-        ObservableMap<String, List<AbstractActivityPeriod>> obData = FXCollections.observableHashMap();
-        obData.putAll(data);
-
+        ObservableMap<String, List<AbstractActivityPeriod>> obData = appController.getObData();
+        obData.put(appName, chromeSummary.getAllPeriods());
         appController.setObData(obData);
     }
 }
