@@ -39,7 +39,7 @@ public class AddAppController {
 
     @FXML
     public void handleOnClick(ActionEvent event) {
-        appName = comboBox.getSelectionModel().getSelectedItem().toString();
+        appName = comboBox.getSelectionModel().getSelectedItem().toString().replace(".exe", "");
         field.setText(appName);
     }
     @FXML
