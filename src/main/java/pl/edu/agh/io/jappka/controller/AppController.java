@@ -66,6 +66,7 @@ public class AppController {
 
     @FXML
     private MenuItem darkTheme;
+    private long firstLastAppTime;
 
     public void setPrimaryStageElements(Stage primaryStage, Scene primaryScene) {
         this.primaryStage = primaryStage;
@@ -159,7 +160,7 @@ public class AppController {
 
     public void backToMainView() {
         primaryStage.setScene(primaryScene);
-        primaryStage.setTitle("Activity Tracker");
+        primaryStage.setTitle("JAppka Activity Tracker");
         primaryStage.show();
     }
 
@@ -173,7 +174,7 @@ public class AppController {
         long endMilliseconds = 0;
         try {
             Date date = formatter.parse(currentDateMidnight);
-            endMilliseconds = date.getTime() - 1000;
+            endMilliseconds = date.getTime() - 1;
             startMilliseconds = date.getTime() - MILLISECONDS_IN_DAY;
             this.currentlyDisplayedDate = Utils.millisecondsToCustomStrDate(startMilliseconds, this.dateFormat);
             changeCurrentlyDisplayedDate();
@@ -194,7 +195,7 @@ public class AppController {
         try {
             Date date = formatter.parse(currentDateMidnight);
             startMilliseconds = date.getTime() + MILLISECONDS_IN_DAY;
-            endMilliseconds = startMilliseconds + MILLISECONDS_IN_DAY - 1000;
+            endMilliseconds = startMilliseconds + MILLISECONDS_IN_DAY - 1;
             this.currentlyDisplayedDate = Utils.millisecondsToCustomStrDate(startMilliseconds, this.dateFormat);
             changeCurrentlyDisplayedDate();
         } catch (ParseException e) {
@@ -212,8 +213,18 @@ public class AppController {
     }
 
     private void changeCurrentlyDisplayedDate() {
+        SimpleDateFormat sdf = new SimpleDateFormat("MMM dd,yyyy");
+        SimpleDateFormat sdfEnglish = new SimpleDateFormat("MMM dd,yyyy", Locale.ENGLISH);
+        Date date = null;
+        try {
+            date = sdf.parse(this.currentlyDisplayedDate);
+
+        } catch (ParseException e) {
+            System.err.println("Error while parsing date!");
+            e.printStackTrace();
+        }
         ((Label) this.primaryScene.lookup("#CurrentlyDisplayedDate")).textProperty().bind(Bindings.format("%s",
-                this.currentlyDisplayedDate));
+                sdfEnglish.format(date)));
     }
 
     private void initCurrentDateBar() {
@@ -232,7 +243,7 @@ public class AppController {
         try {
             Date date = formatter.parse(currentDateMidnight);
             startMilliseconds = date.getTime();
-            endMilliseconds = startMilliseconds + MILLISECONDS_IN_DAY - 1000;
+            endMilliseconds = startMilliseconds + MILLISECONDS_IN_DAY - 1;
         } catch (ParseException e) {
             System.err.println("Error while parsing date!");
             e.printStackTrace();
@@ -294,10 +305,8 @@ public class AppController {
         xAxis.setLabel("Time");
         xAxis.setTickLabelFill(Color.CHOCOLATE);
         xAxis.setAutoRanging(false);
-
         xAxis.setTickUnit(1000);
         xAxis.setMinorTickVisible(false);
-
         yAxis.setLabel("Applications");
         yAxis.setTickLabelFill(Color.CHOCOLATE);
         yAxis.setAutoRanging(true);
@@ -325,39 +334,48 @@ public class AppController {
     public void update(){
         ArrayList<XYChart.Series<Number, String>> s=new ArrayList<>();
         int c=0;
-
+        long diff = 0;
+        boolean skipBarChartDrawing = false;
         for (Map.Entry<String,List<AbstractActivityPeriod>> e : obData.entrySet()){
             XYChart.Series series= new XYChart.Series();
             series.setName(categories[c]);
             c++;
-            if(e.getValue().size() < 1) continue;
-            long diff = e.getValue().get(0).getStartTime()/1000;
-            for (AbstractActivityPeriod a : e.getValue()){
-                String style="status-green";
-                long start = diff;
-                long time=(a.getEndTime()-a.getStartTime())/1000;
-                if (a.getType()==AbstractActivityPeriod.Type.NONFOCUSED || a.getType() == AbstractActivityPeriod.Type.OFF)
-                    style="status-transparent";
-
-                series.getData().add(new XYChart.Data<Number, String>(start,series.getName(),new GanttChart.ExtraData(time,style)));
-                diff += time;
-            }
-
-            /*Workaround to simulate drawing the last active state for PC (since it's not available until we close
-            the app and reopen it again) - we add an artificial green strip which 'chases' the app strip*/
-            if(!e.getKey().equals("PC")) {
-                this.lastAppTime = diff;
-                this.wasLastAppTimeSet = true;
-            }
-            if(e.getKey().equals("PC")) {
-                if(this.wasLastAppTimeSet) {
+            if(e.getValue().size() < 1) skipBarChartDrawing = true;
+            boolean atLeastOnePeriodHappend = false;
+            if (!skipBarChartDrawing) {
+                diff = e.getValue().get(0).getStartTime()/1000;
+                for (AbstractActivityPeriod a : e.getValue()){
+                    atLeastOnePeriodHappend = true;
                     String style="status-green";
-                    long time = this.lastAppTime - diff;
-                    //series.getData().add(new XYChart.Data<Number,String>(diff,series.getName(),new GanttChart.ExtraData(time,style)));
-                    series.getData().add(new XYChart.Data(diff,series.getName(),new GanttChart.ExtraData(time+1,style)));
+                    long start = diff;
+                    long time=(a.getEndTime()-a.getStartTime())/1000;
+                    if (a.getType()==AbstractActivityPeriod.Type.NONFOCUSED || a.getType() == AbstractActivityPeriod.Type.OFF)
+                        style="status-transparent";
+                    series.getData().add(new XYChart.Data<Number, String>(start,series.getName(),new GanttChart.ExtraData(time,style)));
+                    diff += time;
                 }
             }
-
+            /*Workaround to simulate drawing the last active state for PC (since it's not available until we close
+            the app and reopen it again) - we add an artificial green strip which 'chases' the app strip*/
+            if(!e.getKey().equals("PC") && atLeastOnePeriodHappend && e.getValue().size() > 1) {
+                this.lastAppTime = diff;
+                this.wasLastAppTimeSet = true;
+            } else if (!e.getKey().equals("PC") && atLeastOnePeriodHappend && e.getValue().size() == 1) {
+                this.firstLastAppTime = diff;
+                this.wasLastAppTimeSet = true;
+            }
+            if(e.getKey().equals("PC") && e.getValue().size() > 0 && this.wasLastAppTimeSet) {
+                String style="status-green";
+                long time = this.lastAppTime - diff;
+                //series.getData().add(new XYChart.Data<Number,String>(diff,series.getName(),new GanttChart.ExtraData(time,style)));
+                series.getData().add(new XYChart.Data(diff,series.getName(),new GanttChart.ExtraData(time+1,style)));
+            } else if (e.getKey().equals("PC") && e.getValue().size() < 1 && this.wasLastAppTimeSet) {
+                String style="status-green";
+                long time = this.lastAppTime - this.firstLastAppTime;
+                //series.getData().add(new XYChart.Data<Number,String>(diff,series.getName(),new GanttChart.ExtraData(time,style)));
+                series.getData().add(new XYChart.Data(this.firstLastAppTime,series.getName(),new GanttChart.ExtraData(time+1,style)));
+            }
+            skipBarChartDrawing = false;
             s.add(series);
         }
 

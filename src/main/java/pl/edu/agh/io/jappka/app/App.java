@@ -29,12 +29,6 @@ public class App extends Application {
             quit();
         }
 
-        NativeAccessor accessor = new WindowsNativeAccessor();
-        List<String> apps = accessor.getActiveProcessesNames();
-        for(String app : apps) {
-            System.out.println(app);
-        }
-
         Timer timer = new Timer(true);
 
         ActivityTracker PCtracker = new PCActivityTracker();
