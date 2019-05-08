@@ -141,7 +141,7 @@ public class AppController {
         long endMilliseconds = 0;
         try {
             Date date = formatter.parse(currentDateMidnight);
-            endMilliseconds = date.getTime() - 1;
+            endMilliseconds = date.getTime() - 1000;
             startMilliseconds = date.getTime() - MILLISECONDS_IN_DAY;
             this.currentlyDisplayedDate = Utils.millisecondsToCustomStrDate(startMilliseconds, this.dateFormat);
             changeCurrentlyDisplayedDate();
@@ -162,7 +162,7 @@ public class AppController {
         try {
             Date date = formatter.parse(currentDateMidnight);
             startMilliseconds = date.getTime() + MILLISECONDS_IN_DAY;
-            endMilliseconds = startMilliseconds + MILLISECONDS_IN_DAY - 1;
+            endMilliseconds = startMilliseconds + MILLISECONDS_IN_DAY - 1000;
             this.currentlyDisplayedDate = Utils.millisecondsToCustomStrDate(startMilliseconds, this.dateFormat);
             changeCurrentlyDisplayedDate();
         } catch (ParseException e) {
@@ -195,15 +195,18 @@ public class AppController {
     private void initGraphDataBoundaries() {
         String currentDateMidnight = this.currentlyDisplayedDate + " 00:00:00";
         SimpleDateFormat formatter = new SimpleDateFormat(this.dateFormat + " " + this.clockFormat);
-        long milliseconds = 0;
+        long startMilliseconds = 0;
+        long endMilliseconds = 0;
         try {
             Date date = formatter.parse(currentDateMidnight);
-            milliseconds = date.getTime();
+            startMilliseconds = date.getTime();
+            endMilliseconds = startMilliseconds + MILLISECONDS_IN_DAY - 1000;
         } catch (ParseException e) {
             System.err.println("Error while parsing date!");
             e.printStackTrace();
         }
-        this.xAxis.setLowerBound(milliseconds / 1000);
+        this.xAxis.setLowerBound(startMilliseconds / 1000);
+        this.xAxis.setUpperBound(endMilliseconds / 1000);
     }
 
     @FXML
@@ -258,13 +261,17 @@ public class AppController {
         xAxis.setLabel("Time");
         xAxis.setTickLabelFill(Color.CHOCOLATE);
         xAxis.setAutoRanging(false);
+
+        xAxis.setTickUnit(1000);
+        xAxis.setMinorTickVisible(false);
+
         yAxis.setLabel("Applications");
         yAxis.setTickLabelFill(Color.CHOCOLATE);
         yAxis.setAutoRanging(true);
         xAxis.setTickLabelFormatter(new StringConverter<Number>() {
             @Override
             public String toString(Number object) {
-                return Utils.millisecondsToCustomStrDate(object.longValue()*1000, AppController.this.clockFormat);
+                return Utils.millisecondsToCustomStrDate(object.longValue()*1000, "HH:mm");
             }
 
             @Override
@@ -285,11 +292,6 @@ public class AppController {
     public void update(){
         ArrayList<XYChart.Series<Number, String>> s=new ArrayList<>();
         int c=0;
-
-        // Need to somehow make this independent of chrome
-        if (obData.get("chrome").size() > 0) {
-            this.xAxis.setUpperBound(obData.get("chrome").get(obData.get("chrome").size()-1).getEndTime() / 1000);
-        }
 
         for (Map.Entry<String,List<AbstractActivityPeriod>> e : obData.entrySet()){
             XYChart.Series series= new XYChart.Series();
