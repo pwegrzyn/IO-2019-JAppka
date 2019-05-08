@@ -1,19 +1,15 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
-<?import java.lang.*?>
-<?import java.util.*?>
-<?import javafx.scene.*?>
-<?import javafx.scene.control.*?>
-<?import javafx.scene.layout.*?>
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.ComboBox?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
 
-<AnchorPane xmlns="http://javafx.com/javafx"
-            xmlns:fx="http://javafx.com/fxml"
-            fx:controller="pl.edu.agh.io.jappka.controller.AddAppController"
-            prefHeight="400.0" prefWidth="600.0">
+<AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.edu.agh.io.jappka.controller.AddAppController">
     <children>
-        <Button onAction="#handleBackButton" layoutX="526.0" layoutY="38.0" mnemonicParsing="false" text="Back to main view" />
-        <Button onAction="#handleAddButton" prefHeight="15" layoutX="170" layoutY="38.0" mnemonicParsing="false" text="Add app" />
-        <ComboBox fx:id="comboBox" layoutX="10" layoutY="80" promptText="All apps" onAction="#handleOnClick"/>
-        <TextField fx:id="field" prefHeight="15" prefWidth="150" layoutX="10" layoutY="38.0" promptText="App name"/>
+        <Button layoutX="526.0" layoutY="38.0" mnemonicParsing="false" onAction="#handleBackButton" text="Back to main view" />
+        <Button layoutX="203.0" layoutY="38.0" mnemonicParsing="false" onAction="#handleAddButton" prefHeight="15" text="Add app" />
+        <ComboBox fx:id="comboBox" layoutX="24.0" layoutY="101.0" onAction="#handleOnClick" promptText="All apps" />
+        <TextField fx:id="field" layoutX="10" layoutY="38.0" prefHeight="43.0" prefWidth="182.0" promptText="App name" />
     </children>
 </AnchorPane>

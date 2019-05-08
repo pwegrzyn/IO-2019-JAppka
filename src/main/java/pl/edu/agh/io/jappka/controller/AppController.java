@@ -1,5 +1,7 @@
 package pl.edu.agh.io.jappka.controller;
 
+import com.sun.javafx.css.StyleManager;
+import javafx.application.Application;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -14,6 +16,8 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
+import javafx.scene.control.Menu;
+import javafx.scene.control.MenuItem;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
@@ -50,6 +54,19 @@ public class AppController {
     @FXML
     private AnchorPane mainPane;
 
+    private String currentTheme = "/defaulttheme.css";
+    private List<String> themesList = new LinkedList<String>(){
+        {
+            add("/defaulttheme.css");
+            add("/darktheme.css");
+        }
+    };
+    @FXML
+    private MenuItem defaultTheme;
+
+    @FXML
+    private MenuItem darkTheme;
+
     public void setPrimaryStageElements(Stage primaryStage, Scene primaryScene) {
         this.primaryStage = primaryStage;
         this.primaryScene = primaryScene;
@@ -58,6 +75,19 @@ public class AppController {
         initGanttChart();
         initCurrentDateBar();
         initGraphDataBoundaries();
+        this.primaryScene.getStylesheets().add(currentTheme);
+        this.defaultTheme.setOnAction(e->{
+            this.currentTheme = "/defaulttheme.css";
+            this.primaryScene.getStylesheets().removeAll(themesList);
+            this.primaryScene.getStylesheets().add(currentTheme);
+
+        });
+        this.darkTheme.setOnAction(e->{
+            this.currentTheme = "/darktheme.css";
+            this.primaryScene.getStylesheets().removeAll(themesList);
+            this.primaryScene.getStylesheets().add(currentTheme);
+
+        });
     }
 
     public void setObData(ObservableMap<String, List<AbstractActivityPeriod>> obData){
@@ -76,6 +106,7 @@ public class AppController {
             AddAppController controller = loader.getController();
             controller.initialize(this);
             graphScene = new Scene(layout);
+            graphScene.getStylesheets().add(currentTheme);
             primaryStage.setScene(graphScene);
             primaryStage.show();
         }
@@ -97,6 +128,7 @@ public class AppController {
             GenerateGraphController controller = loader.getController();
             controller.initialize(this);
             graphScene = new Scene(layout);
+            graphScene.getStylesheets().add(currentTheme);
             primaryStage.setScene(graphScene);
             primaryStage.show();
         }
@@ -219,6 +251,7 @@ public class AppController {
             controller.setData(obData);
             controller.drawGraph();
             graphScene = new Scene(layout);
+            graphScene.getStylesheets().add(currentTheme);
             primaryStage.setScene(graphScene);
             primaryStage.show();
         }

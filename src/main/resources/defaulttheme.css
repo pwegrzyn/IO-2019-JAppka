@@ -1,0 +1,13 @@
+.root {
+    -fx-background-color: rgb(230, 230, 230);
+}
+
+#GoBackwardsDay, #GoForwardsDay {
+    -fx-font-size: 20px;
+}
+
+.menu-button .label{
+    -fx-font-size: 15px;
+}
+
+
