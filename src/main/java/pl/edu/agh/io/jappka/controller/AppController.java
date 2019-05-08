@@ -305,7 +305,7 @@ public class AppController {
         xAxis.setLabel("Time");
         xAxis.setTickLabelFill(Color.CHOCOLATE);
         xAxis.setAutoRanging(false);
-        xAxis.setTickUnit(1000);
+        xAxis.setTickUnit(900);
         xAxis.setMinorTickVisible(false);
         yAxis.setLabel("Applications");
         yAxis.setTickLabelFill(Color.CHOCOLATE);
