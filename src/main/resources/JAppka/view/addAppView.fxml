@@ -5,11 +5,14 @@
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
 
+<?import javafx.scene.control.ListView?>
 <AnchorPane prefHeight="400.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.edu.agh.io.jappka.controller.AddAppController">
     <children>
         <Button layoutX="526.0" layoutY="38.0" mnemonicParsing="false" onAction="#handleBackButton" text="Back to main view" />
         <Button layoutX="203.0" layoutY="38.0" mnemonicParsing="false" onAction="#handleAddButton" prefHeight="15" text="Add app" />
-        <ComboBox fx:id="comboBox" layoutX="24.0" layoutY="101.0" onAction="#handleOnClick" promptText="All apps" />
-        <TextField fx:id="field" layoutX="10" layoutY="38.0" prefHeight="43.0" prefWidth="182.0" promptText="App name" />
+        <Button layoutX="290.0" layoutY="38.0" mnemonicParsing="false" text="Refresh" onAction="#handleRefreshButton" />
+        <ListView fx:id="listView" layoutX="24.0" layoutY="101.0" onMouseClicked="#handleOnClick" onKeyPressed="#handleSelectApp"/>
+        <TextField fx:id="field" layoutX="10" layoutY="38.0" prefHeight="43.0" prefWidth="182.0" promptText="App name" onKeyPressed="#handleOnTextChange"/>
     </children>
 </AnchorPane>
+
