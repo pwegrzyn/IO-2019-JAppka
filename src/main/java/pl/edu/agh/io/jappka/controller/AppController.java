@@ -100,12 +100,12 @@ public class AppController {
 
     @FXML
     private void handleSave(ActionEvent event){
-        actionsControllerHelper.handleSave(event, obData);
+        actionsControllerHelper.handleSave(event,currentTheme,this,true);
     }
 
     @FXML
-    private void handleLoad(ActionEvent event) throws Exception{
-        actionsControllerHelper.handleLoad(event, obData);
+    private void handleLoad(ActionEvent event){
+        actionsControllerHelper.handleSave(event,currentTheme,this,false);
     }
 
     @FXML
