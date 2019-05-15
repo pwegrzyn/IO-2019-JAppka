@@ -12,7 +12,7 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.text.Font?>
 
-<BorderPane prefHeight="800.0" prefWidth="1350.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.edu.agh.io.jappka.controller.AppController">
+<BorderPane prefHeight="900.0" prefWidth="1500.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.edu.agh.io.jappka.controller.AppController">
     <center>
         <AnchorPane fx:id="mainPane" maxHeight="-1.0" maxWidth="-1.0" prefHeight="850.0" prefWidth="1450.0" VBox.vgrow="ALWAYS" />
     </center>
@@ -24,62 +24,57 @@
     <right>
 
     </right>
-   <top>
-      <VBox prefHeight="80.0" prefWidth="1500.0" BorderPane.alignment="CENTER">
-         <children>
-            <MenuBar>
-              <menus>
-                <Menu mnemonicParsing="false" text="Applications">
-                  <items>
-                    <MenuItem mnemonicParsing="false" onAction="#handleAddApplicationAction" text="Add app" />
-                  </items>
-                </Menu>
-                <Menu mnemonicParsing="false" text="Statistics">
-                  <items>
-                    <MenuItem mnemonicParsing="false" onAction="#handleShowCharts" text="Show statistics" />
-                  </items>
-                </Menu>
-                <Menu mnemonicParsing="false" text="Reports">
-                  <items>
-                    <MenuItem mnemonicParsing="false" onAction="#handleGenerateReport" text="Generate Report" />
-                  </items>
-                </Menu>
-                  <Menu mnemonicParsing="false" text="Color Scheme">
-                      <items>
-                          <MenuItem mnemonicParsing="false" onAction="#handleGraphColorPicker" text="Change Graph's color scheme" />
-                      </items>
-                  </Menu>
-                  <Menu mnemonicParsing="false" text="Change app color theme">
-                    <items>
-                      <MenuItem fx:id="defaultTheme" mnemonicParsing="false" text="Default" />
-                        <MenuItem fx:id="darkTheme" mnemonicParsing="false" text="Dark" />
-                    </items>
-                  </Menu>
-              </menus>
-            </MenuBar>
-            <HBox prefHeight="100.0" spacing="500.0">
-               <children>
-                  <Button fx:id="GoBackwardsDay" mnemonicParsing="false" onAction="#handleGoBackwardsDayButton" prefHeight="50.0" prefWidth="59.0" text="⬅">
-                     <font>
-                        <Font size="23.0" />
-                     </font>
-                  </Button>
-                  <Label fx:id="CurrentlyDisplayedDate" alignment="CENTER" contentDisplay="CENTER" prefHeight="32.0" prefWidth="283.0" text="03.05.2019" textAlignment="CENTER">
-                     <font>
-                        <Font name="Calibri" size="28.0" />
-                     </font>
-                  </Label>
-                  <Button fx:id="GoForwardsDay" mnemonicParsing="false" onAction="#handleGoForwardsDayButton" prefHeight="50.0" prefWidth="101.0" text="➡">
-                     <font>
-                        <Font size="23.0" />
-                     </font>
-                  </Button>
-               </children>
-               <padding>
-                  <Insets left="20.0" right="20.0" top="20.0" />
-               </padding>
-            </HBox>
-         </children>
-      </VBox>
-   </top>
+    <top>
+        <VBox prefHeight="80.0" prefWidth="1500.0" BorderPane.alignment="CENTER">
+            <children>
+                <MenuBar>
+                    <menus>
+
+                        <Menu mnemonicParsing="false" text="Actions">
+                            <items>
+                                <MenuItem mnemonicParsing="false" onAction="#handleAddApplicationAction" text="Add app" />
+                                <MenuItem mnemonicParsing="false" onAction="#handleShowCharts" text="Show statistics" />
+                                <MenuItem mnemonicParsing="false" onAction="#handleGenerateReport" text="Generate Report" />
+                        <MenuItem mnemonicParsing="false" onAction="#handleSave" text="Save configuration" />
+                        <MenuItem mnemonicParsing="false" onAction="#handleLoad" text="Load configuration" />
+                            </items>
+                        </Menu>
+                        <Menu mnemonicParsing="false" text="Color themes">
+                            <items>
+                                <Menu mnemonicParsing="false" text="Change app color theme">
+                                    <items>
+                                        <MenuItem fx:id="defaultTheme" mnemonicParsing="false" text="Default" />
+                                        <MenuItem fx:id="darkTheme" mnemonicParsing="false" text="Dark" />
+                                    </items>
+                                </Menu>
+                                <MenuItem mnemonicParsing="false" onAction="#handleGraphColorPicker" text="Change Graph's color scheme" />
+                            </items>
+                        </Menu>
+                    </menus>
+                </MenuBar>
+                <HBox prefHeight="100.0" spacing="500.0">
+                    <children>
+                        <Button fx:id="GoBackwardsDay" mnemonicParsing="false" onAction="#handleGoBackwardsDayButton" prefHeight="50.0" prefWidth="100.0" text="⬅">
+                            <font>
+                                <Font size="23.0" />
+                            </font>
+                        </Button>
+                        <Label fx:id="CurrentlyDisplayedDate" alignment="CENTER" contentDisplay="CENTER" prefHeight="32.0" prefWidth="283.0" text="03.05.2019" textAlignment="CENTER">
+                            <font>
+                                <Font name="Calibri" size="28.0" />
+                            </font>
+                        </Label>
+                        <Button fx:id="GoForwardsDay" mnemonicParsing="false" onAction="#handleGoForwardsDayButton" prefHeight="50.0" prefWidth="101.0" text="➡">
+                            <font>
+                                <Font size="23.0" />
+                            </font>
+                        </Button>
+                    </children>
+                    <padding>
+                        <Insets left="20.0" right="20.0" top="20.0" />
+                    </padding>
+                </HBox>
+            </children>
+        </VBox>
+    </top>
 </BorderPane>

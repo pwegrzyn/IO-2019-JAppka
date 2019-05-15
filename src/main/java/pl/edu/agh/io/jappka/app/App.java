@@ -64,7 +64,6 @@ public class App extends Application {
                 gui.update();
             }
         }, 0, 1000);
-
     }
 
     @Override
