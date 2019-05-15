@@ -45,6 +45,10 @@ public class PCActivitySummary implements ActivitySummary {
                 }
             }
         }
+
+        newPeriod = new PCActivityPeriod(lastIterTime, System.currentTimeMillis(), AbstractActivityPeriod.Type.ON);
+        this.periods.add(newPeriod);
+
         this.wasGenerated = true;
     }
 

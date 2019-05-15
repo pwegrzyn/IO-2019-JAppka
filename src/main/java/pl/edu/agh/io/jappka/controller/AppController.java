@@ -278,7 +278,8 @@ public class AppController {
     }
 
     public void update(){
-        categories=obData.keySet().toArray(new String[0]);
+        categories=obData.keySet().stream().toArray(String[]::new);
+
         CategoryAxis yAxis=(CategoryAxis) mainChart.getYAxis();
         yAxis.setCategories(FXCollections.<String>observableArrayList(Arrays.asList(categories)));
 
@@ -291,11 +292,9 @@ public class AppController {
             series.setName(categories[c]);
             c++;
             if(e.getValue().size() < 1) skipBarChartDrawing = true;
-            boolean atLeastOnePeriodHappend = false;
             if (!skipBarChartDrawing) {
                 diff = e.getValue().get(0).getStartTime()/1000;
                 for (AbstractActivityPeriod a : e.getValue()){
-                    atLeastOnePeriodHappend = true;
                     String style="status-green";
                     long start = diff;
                     long time=(a.getEndTime()-a.getStartTime())/1000;
@@ -305,29 +304,9 @@ public class AppController {
                     diff += time;
                 }
             }
-            /*Workaround to simulate drawing the last active state for PC (since it's not available until we close
-            the app and reopen it again) - we add an artificial green strip which 'chases' the app strip*/
-            if(!e.getKey().equals("PC") && atLeastOnePeriodHappend && e.getValue().size() > 1) {
-                this.lastAppTime = diff;
-                this.wasLastAppTimeSet = true;
-            } else if (!e.getKey().equals("PC") && atLeastOnePeriodHappend && e.getValue().size() == 1) {
-                this.firstLastAppTime = diff;
-                this.wasLastAppTimeSet = true;
-            }
-            if(e.getKey().equals("PC") && e.getValue().size() > 0 && this.wasLastAppTimeSet) {
-                String style="status-green";
-                long time = this.lastAppTime - diff;
-                //series.getData().add(new XYChart.Data<Number,String>(diff,series.getName(),new GanttChart.ExtraData(time,style)));
-                series.getData().add(new XYChart.Data(diff,series.getName(),new GanttChart.ExtraData(time+1,style)));
-            } else if (e.getKey().equals("PC") && e.getValue().size() < 1 && this.wasLastAppTimeSet) {
-                String style="status-green";
-                long time = this.lastAppTime - this.firstLastAppTime;
-                //series.getData().add(new XYChart.Data<Number,String>(diff,series.getName(),new GanttChart.ExtraData(time,style)));
-                series.getData().add(new XYChart.Data(this.firstLastAppTime,series.getName(),new GanttChart.ExtraData(time+1,style)));
-            }
+
             skipBarChartDrawing = false;
             s.add(series);
-            s.get(c-1).getName();
         }
 
         mainChart.setData(FXCollections.observableArrayList(s));
