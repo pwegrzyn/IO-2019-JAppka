@@ -74,15 +74,15 @@ public class ActionsControllerHelper {
         }
     }
 
-    public void handleAddOwnEventAction(String currentTheme){
+    public void handleAddOwnEventAction(AppController appController, String currentTheme){
 
-        /*try{
-            primaryStage.setTitle("Add Custom Event");
+        try{
+            primaryStage.setTitle("Adding own event");
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getClassLoader().getResource("JAppka/view/generateGraphView.fxml"));
+            loader.setLocation(getClass().getClassLoader().getResource("JAppka/view/addOwnEventView.fxml"));
             AnchorPane layout = loader.load();
 
-            GenerateGraphController controller = loader.getController();
+            AddOwnEventController controller = loader.getController();
             controller.initialize(appController);
             graphScene = new Scene(layout);
             graphScene.getStylesheets().add(currentTheme);
@@ -92,7 +92,7 @@ public class ActionsControllerHelper {
 
         catch (IOException e){
             e.printStackTrace();
-        }*/
+        }
     }
 
     public void handleGenerateReport(String currentTheme){

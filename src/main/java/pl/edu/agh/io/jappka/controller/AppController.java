@@ -114,7 +114,7 @@ public class AppController {
 
     @FXML
     private void handleAddOwnEventAction(ActionEvent event){
-        helper.handleAddOwnEventAction(currentTheme);
+        helper.handleAddOwnEventAction(this, currentTheme);
     }
 
     @FXML
