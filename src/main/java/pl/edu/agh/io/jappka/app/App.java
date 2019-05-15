@@ -51,7 +51,6 @@ public class App extends Application {
         obData.putAll(data);
 
         AppGUI gui = new AppGUI(primaryStage,obData);
-
         gui.initApplication();
 
         timer.scheduleAtFixedRate(new TimerTask() {
