@@ -76,12 +76,12 @@ public class ActionsControllerHelper {
     public void handleAddOwnEventAction(ActionEvent event, AppController appController, String currentTheme){
 
         try{
-            primaryStage.setTitle("Report generation");
+            primaryStage.setTitle("Adding own event");
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getClassLoader().getResource("JAppka/view/generateGraphView.fxml"));
+            loader.setLocation(getClass().getClassLoader().getResource("JAppka/view/addOwnEventView.fxml"));
             AnchorPane layout = loader.load();
 
-            GenerateGraphController controller = loader.getController();
+            AddOwnEventController controller = loader.getController();
             controller.initialize(appController);
             graphScene = new Scene(layout);
             graphScene.getStylesheets().add(currentTheme);
