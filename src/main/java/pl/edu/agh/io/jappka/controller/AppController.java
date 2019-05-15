@@ -220,7 +220,6 @@ public class AppController {
     private void initGanttChart() {
         this.xAxis = new NumberAxis();
         mainChart = chartControllerHelper.initGanttChart(xAxis, mainPane, obData);
-
     }
 
     public ObservableMap<String, List<AbstractActivityPeriod>> getObData() {

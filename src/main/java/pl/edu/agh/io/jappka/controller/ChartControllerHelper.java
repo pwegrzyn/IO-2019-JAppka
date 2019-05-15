@@ -21,23 +21,22 @@ import java.util.Map;
 
 public class ChartControllerHelper {
 
-    private GanttChart<Number,String> mainChart;
 
     public GanttChart<Number,String> initGanttChart(NumberAxis xAxis, AnchorPane mainPane, ObservableMap<String, List<AbstractActivityPeriod>> obData) {
         CategoryAxis yAxis = new CategoryAxis();
-        mainChart = new GanttChart<>(xAxis,yAxis);
+        GanttChart<Number,String> mainChart = new GanttChart<>(xAxis,yAxis);
         configureAxis(xAxis,yAxis, obData);
-        configureChart();
+        configureChart(mainChart);
         //Add chart to the main pane
         ObservableList list = mainPane.getChildren();
         list.addAll(mainChart);
         return mainChart;
     }
 
-    public void update(ObservableMap<String, List<AbstractActivityPeriod>> obData, GanttChart<Number,String> chart){
+    public void update(ObservableMap<String, List<AbstractActivityPeriod>> obData, GanttChart<Number,String> mainChart){
         String[] categories=obData.keySet().stream().toArray(String[]::new);
 
-        CategoryAxis yAxis=(CategoryAxis) chart.getYAxis();
+        CategoryAxis yAxis=(CategoryAxis) mainChart.getYAxis();
         yAxis.setCategories(FXCollections.<String>observableArrayList(Arrays.asList(categories)));
 
         ArrayList<XYChart.Series<Number, String>> s=new ArrayList<>();
@@ -66,10 +65,10 @@ public class ChartControllerHelper {
             s.add(series);
         }
 
-        chart.setData(FXCollections.observableArrayList(s));
+        mainChart.setData(FXCollections.observableArrayList(s));
     }
 
-    private void configureChart(){
+    private void configureChart(GanttChart<Number,String> mainChart){
         mainChart.setLegendVisible(true);
         mainChart.setBlockHeight(50);
         mainChart.getData().clear();
