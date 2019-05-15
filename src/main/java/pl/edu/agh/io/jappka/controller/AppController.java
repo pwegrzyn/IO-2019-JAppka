@@ -17,7 +17,6 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
-import javafx.scene.control.Menu;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.GridPane;
@@ -167,7 +166,7 @@ public class AppController {
             loader.setLocation(getClass().getClassLoader().getResource("JAppka/view/generateGraphView.fxml"));
             AnchorPane layout = loader.load();
 
-            GenerateGraphController controller = loader.getController();
+            ReportGenerationController controller = loader.getController();
             controller.initialize(this);
             graphScene = new Scene(layout);
             graphScene.getStylesheets().add(currentTheme);
