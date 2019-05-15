@@ -142,3 +142,5 @@ data/
 
 .gradle/
 .idea/
+
+config.json
