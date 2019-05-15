@@ -1,11 +1,13 @@
 package pl.edu.agh.io.jappka.controller;
 
+import javafx.collections.ObservableMap;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import pl.edu.agh.io.jappka.activity.*;
 import pl.edu.agh.io.jappka.os.NativeAccessor;
 import pl.edu.agh.io.jappka.os.WindowsNativeAccessor;
 
@@ -36,7 +38,14 @@ public class AddAppController {
 
     @FXML
     public void handleAddButton(ActionEvent event) {
-        System.out.println(appName + ".exe");                //add process name (must be with + .exe) to chart
+        ObservableMap<String, List<AbstractActivityPeriod>> obData=this.appController.getObData();
+        ActivityTracker newTracker=new AppActivityTracker(appName);
+        newTracker.track();
+
+        ActivitySummary newSummary=new AppActivitySummary(newTracker.getActivityStream(),appName);
+        newSummary.generate();
+        obData.put(appName,newSummary.getAllPeriods());
+        this.appController.setObData(obData);
     }
 
     @FXML
@@ -50,7 +59,7 @@ public class AddAppController {
         field.setText(appName);
     }
 
-    public void handleOnTextChange(javafx.scene.input.KeyEvent keyEvent) {
+    public void handleOnTextChange(KeyEvent keyEvent) {
         if(!keyEvent.getCode().isLetterKey() && !keyEvent.getCode().isArrowKey() && !keyEvent.getCode().equals(KeyCode.BACK_SPACE)) return;
         if (keyEvent.getCode().equals(KeyCode.DOWN)){
             listView.getFocusModel().focus(0);

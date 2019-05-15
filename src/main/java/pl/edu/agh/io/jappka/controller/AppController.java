@@ -1,7 +1,8 @@
 package pl.edu.agh.io.jappka.controller;
 
-import com.sun.javafx.css.StyleManager;
-import javafx.application.Application;
+import com.google.gson.Gson;
+import com.google.gson.reflect.TypeToken;
+import com.google.gson.stream.JsonReader;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
@@ -23,11 +24,13 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
-import pl.edu.agh.io.jappka.activity.AbstractActivityPeriod;
+import pl.edu.agh.io.jappka.activity.*;
 import pl.edu.agh.io.jappka.charts.GanttChart;
 import pl.edu.agh.io.jappka.util.Utils;
 
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -67,6 +70,44 @@ public class AppController {
     @FXML
     private MenuItem darkTheme;
     private long firstLastAppTime;
+
+    public void handleSave(){
+        List<String> apps=new ArrayList<String>();
+        for (Map.Entry<String,List<AbstractActivityPeriod>> e : obData.entrySet()) apps.add(e.getKey());
+        String json=new Gson().toJson(apps);
+        try (PrintWriter out=new PrintWriter("config.json")){
+            out.println(json);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    public boolean containsApp(String name){
+        for (Map.Entry<String,List<AbstractActivityPeriod>> e : obData.entrySet()){
+            if (e.getKey().equals(name)) return true;
+        }
+        return false;
+    }
+
+    public void handleLoad() throws Exception{
+        Gson gson=new Gson();
+        JsonReader reader=new JsonReader(new FileReader("config.json"));
+        ArrayList<String> apps=gson.fromJson(reader,new TypeToken<List<String>>(){}.getType());
+
+        for (String e : apps){
+            if (!containsApp(e)){
+                /*ActivityTracker newTracker=new AppActivityTracker(e);
+                newTracker.track();
+
+                ActivitySummary newSummary=new AppActivitySummary(newTracker.getActivityStream(),e);
+                newSummary.generate();
+                obData.put(e,newSummary.getAllPeriods());*/
+                System.out.println(e);
+            }
+        }
+        //System.out.println(obData);
+    }
 
     public void setPrimaryStageElements(Stage primaryStage, Scene primaryScene) {
         this.primaryStage = primaryStage;
@@ -332,6 +373,10 @@ public class AppController {
     }
 
     public void update(){
+        categories=obData.keySet().toArray(new String[0]);
+        CategoryAxis yAxis=(CategoryAxis) mainChart.getYAxis();
+        yAxis.setCategories(FXCollections.<String>observableArrayList(Arrays.asList(categories)));
+
         ArrayList<XYChart.Series<Number, String>> s=new ArrayList<>();
         int c=0;
         long diff = 0;
@@ -377,6 +422,7 @@ public class AppController {
             }
             skipBarChartDrawing = false;
             s.add(series);
+            s.get(c-1).getName();
         }
 
         mainChart.setData(FXCollections.observableArrayList(s));
