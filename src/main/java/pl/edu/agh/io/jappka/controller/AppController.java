@@ -1,15 +1,11 @@
 package pl.edu.agh.io.jappka.controller;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.google.gson.stream.JsonReader;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.fxml.FXMLLoader;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.chart.CategoryAxis;
@@ -19,7 +15,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
@@ -27,9 +22,6 @@ import pl.edu.agh.io.jappka.activity.*;
 import pl.edu.agh.io.jappka.charts.GanttChart;
 import pl.edu.agh.io.jappka.util.Utils;
 
-import java.io.FileReader;
-import java.io.IOException;
-import java.io.PrintWriter;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -38,8 +30,8 @@ public class AppController {
 
     private Stage primaryStage;
     private Scene primaryScene;
-    private Scene graphScene;
     private ObservableMap<String, List<AbstractActivityPeriod>> obData;
+    private ActionsControllerHelper helper;
 
     private long lastAppTime = 0;
     private boolean wasLastAppTimeSet = false;
@@ -70,47 +62,12 @@ public class AppController {
     private MenuItem darkTheme;
     private long firstLastAppTime;
 
-    public void handleSave(){
-        List<String> apps=new ArrayList<String>();
-        for (Map.Entry<String,List<AbstractActivityPeriod>> e : obData.entrySet()) apps.add(e.getKey());
-        String json=new Gson().toJson(apps);
-        try (PrintWriter out=new PrintWriter("config.json")){
-            out.println(json);
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        }
-    }
 
-    public boolean containsApp(String name){
-        for (Map.Entry<String,List<AbstractActivityPeriod>> e : obData.entrySet()){
-            if (e.getKey().equals(name)) return true;
-        }
-        return false;
-    }
-
-    public void handleLoad() throws Exception{
-        Gson gson=new Gson();
-        JsonReader reader=new JsonReader(new FileReader("config.json"));
-        ArrayList<String> apps=gson.fromJson(reader,new TypeToken<List<String>>(){}.getType());
-
-        for (String e : apps){
-            if (!containsApp(e)){
-                /*ActivityTracker newTracker=new AppActivityTracker(e);
-                newTracker.track();
-
-                ActivitySummary newSummary=new AppActivitySummary(newTracker.getActivityStream(),e);
-                newSummary.generate();
-                obData.put(e,newSummary.getAllPeriods());*/
-                System.out.println(e);
-            }
-        }
-        //System.out.println(obData);
-    }
 
     public void setPrimaryStageElements(Stage primaryStage, Scene primaryScene) {
         this.primaryStage = primaryStage;
         this.primaryScene = primaryScene;
+        this.helper = new ActionsControllerHelper(primaryStage, primaryScene);
         this.dateFormat = "MMM dd,yyyy";
         this.clockFormat = "HH:mm:ss";
         initGanttChart();
@@ -137,65 +94,32 @@ public class AppController {
 
     @FXML
     private void handleAddApplicationAction(ActionEvent event)  {
-        
-        try{
-            primaryStage.setTitle("Add app");
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getClassLoader().getResource("JAppka/view/addAppView.fxml"));
-            AnchorPane layout = loader.load();
-
-            AddAppController controller = loader.getController();
-            controller.initialize(this);
-            graphScene = new Scene(layout);
-            graphScene.getStylesheets().add(currentTheme);
-            primaryStage.setScene(graphScene);
-            primaryStage.show();
-        }
-
-        catch (IOException e){
-            e.printStackTrace();
-        }
+        helper.handleAddApplicationAction(event, this, currentTheme);
     }
 
     @FXML
     private void handleGenerateReport(ActionEvent event){
-
-        try{
-            primaryStage.setTitle("Report generation");
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getClassLoader().getResource("JAppka/view/generateGraphView.fxml"));
-            AnchorPane layout = loader.load();
-
-            ReportGenerationController controller = loader.getController();
-            controller.initialize(this);
-            graphScene = new Scene(layout);
-            graphScene.getStylesheets().add(currentTheme);
-            primaryStage.setScene(graphScene);
-            primaryStage.show();
-        }
-
-        catch (IOException e){
-            e.printStackTrace();
-        }
+        helper.handleGenerateReport(event, this, currentTheme);
     }
+
+    @FXML
+    private void handleSave(ActionEvent event){
+        helper.handleSave(event, obData);
+    }
+
+    @FXML
+    private void handleLoad(ActionEvent event) throws Exception{
+        helper.handleLoad(event, obData);
+    }
+
+    @FXML
+    private void handleAddOwnEventAction(ActionEvent event){
+        helper.handleAddOwnEventAction(event, this, currentTheme);
+    }
+
     @FXML
     private void handleGraphColorPicker(ActionEvent event){
-        try{
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getClassLoader().getResource("JAppka/popups/graphColorPicker.fxml"));
-            GridPane colorPickerLayout = loader.load();
-            Stage colorPickerStage= new Stage();
-            Scene colorPickerScene = new Scene(colorPickerLayout,500,300);
-            colorPickerStage.setScene(colorPickerScene);
-            colorPickerStage.setTitle("Grid's color scheme");
-            GraphColorPickerController colorPickerController = loader.getController();
-            colorPickerController.setStage(colorPickerStage);
-            colorPickerStage.show();
-        }catch(IOException e){
-            System.out.println("Exception occurred when loading graph color picker's FXML file, Reason: ");
-            e.printStackTrace();
-        }
-
+        helper.handleGraphColorPicker(event);
     }
 
     public void backToMainView() {
@@ -294,25 +218,7 @@ public class AppController {
 
     @FXML
     private void handleShowCharts(ActionEvent event){
-        try{
-            primaryStage.setTitle("Chart generation");
-            FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getClassLoader().getResource("JAppka/view/chartView.fxml"));
-            AnchorPane layout = loader.load();
-
-            ChartController controller = loader.getController();
-            controller.initialize(this);
-            controller.setData(obData);
-            controller.drawGraph();
-            graphScene = new Scene(layout);
-            graphScene.getStylesheets().add(currentTheme);
-            primaryStage.setScene(graphScene);
-            primaryStage.show();
-        }
-
-        catch (IOException e){
-            e.printStackTrace();
-        }
+        helper.handleShowCharts(event, this, currentTheme, obData);
     }
 
     private void initGanttChart() {
@@ -336,8 +242,8 @@ public class AppController {
         mainChart.setTitle("Usage State");
         mainChart.setAnimated(false);
         mainChart.setLayoutY(22.0);
-        mainChart.setPrefHeight(770.0);
-        mainChart.setPrefWidth(1500.0);
+        mainChart.setPrefHeight(610.0);
+        mainChart.setPrefWidth(1200.0);
         mainChart.getStylesheets().add(getClass().getResource("/ganttchart.css").toExternalForm());
     }
 

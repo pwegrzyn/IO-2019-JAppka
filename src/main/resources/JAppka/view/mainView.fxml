@@ -37,6 +37,7 @@
                                 <MenuItem mnemonicParsing="false" onAction="#handleGenerateReport" text="Generate Report" />
                         <MenuItem mnemonicParsing="false" onAction="#handleSave" text="Save configuration" />
                         <MenuItem mnemonicParsing="false" onAction="#handleLoad" text="Load configuration" />
+                        <MenuItem mnemonicParsing="false" onAction="#handleAddOwnEventAction" text="Add own event" />
                             </items>
                         </Menu>
                         <Menu mnemonicParsing="false" text="Color themes">
