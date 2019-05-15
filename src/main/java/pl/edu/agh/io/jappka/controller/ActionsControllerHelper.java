@@ -51,7 +51,8 @@ public class ActionsControllerHelper {
         }
     }
 
-    public void handleShowCharts(ActionEvent event, AppController appController, String currentTheme, ObservableMap<String, List<AbstractActivityPeriod>> obData){
+    public void handleShowCharts(ActionEvent event, AppController appController, String currentTheme,
+                                 ObservableMap<String, List<AbstractActivityPeriod>> obData){
         try{
             primaryStage.setTitle("Chart generation");
             FXMLLoader loader = new FXMLLoader();
@@ -73,10 +74,10 @@ public class ActionsControllerHelper {
         }
     }
 
-    public void handleAddOwnEventAction(ActionEvent event, AppController appController, String currentTheme){
+    public void handleAddOwnEventAction(String currentTheme){
 
-        try{
-            primaryStage.setTitle("Report generation");
+        /*try{
+            primaryStage.setTitle("Add Custom Event");
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getClassLoader().getResource("JAppka/view/generateGraphView.fxml"));
             AnchorPane layout = loader.load();
@@ -91,23 +92,25 @@ public class ActionsControllerHelper {
 
         catch (IOException e){
             e.printStackTrace();
-        }
+        }*/
     }
 
-    public void handleGenerateReport(ActionEvent event, AppController appController, String currentTheme){
+    public void handleGenerateReport(String currentTheme){
 
         try{
-            primaryStage.setTitle("Report generation");
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getClassLoader().getResource("JAppka/view/generateGraphView.fxml"));
             AnchorPane layout = loader.load();
 
-            GenerateGraphController controller = loader.getController();
-            controller.initialize(appController);
-            graphScene = new Scene(layout);
-            graphScene.getStylesheets().add(currentTheme);
-            primaryStage.setScene(graphScene);
-            primaryStage.show();
+            ReportGenerationController controller = loader.getController();
+            Scene reportGenerationScene = new Scene(layout);
+            Stage reportGenerationStage = new Stage();
+            reportGenerationStage.setTitle("Report generation");
+            reportGenerationStage.setScene(reportGenerationScene);
+            reportGenerationScene.getStylesheets().add(currentTheme);
+            controller.setStage(reportGenerationStage);
+            controller.init();
+            reportGenerationStage.show();
         }
 
         catch (IOException e){

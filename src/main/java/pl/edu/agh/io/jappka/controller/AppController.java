@@ -99,7 +99,7 @@ public class AppController {
 
     @FXML
     private void handleGenerateReport(ActionEvent event){
-        helper.handleGenerateReport(event, this, currentTheme);
+        helper.handleGenerateReport(currentTheme);
     }
 
     @FXML
@@ -114,7 +114,7 @@ public class AppController {
 
     @FXML
     private void handleAddOwnEventAction(ActionEvent event){
-        helper.handleAddOwnEventAction(event, this, currentTheme);
+        helper.handleAddOwnEventAction(currentTheme);
     }
 
     @FXML
@@ -242,8 +242,8 @@ public class AppController {
         mainChart.setTitle("Usage State");
         mainChart.setAnimated(false);
         mainChart.setLayoutY(22.0);
-        mainChart.setPrefHeight(610.0);
-        mainChart.setPrefWidth(1200.0);
+        mainChart.setPrefHeight(780);
+        mainChart.setPrefWidth(1480.0);
         mainChart.getStylesheets().add(getClass().getResource("/ganttchart.css").toExternalForm());
     }
 
