@@ -6,6 +6,7 @@ import javafx.collections.ObservableMap;
 import javafx.scene.Cursor;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.util.StringConverter;
@@ -13,8 +14,10 @@ import pl.edu.agh.io.jappka.activity.AbstractActivityPeriod;
 import pl.edu.agh.io.jappka.charts.GanttChart;
 import pl.edu.agh.io.jappka.util.Utils;
 
+import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Map;
 
 public class ChartControllerHelper {
 
@@ -29,6 +32,41 @@ public class ChartControllerHelper {
         ObservableList list = mainPane.getChildren();
         list.addAll(mainChart);
         return mainChart;
+    }
+
+    public void update(ObservableMap<String, List<AbstractActivityPeriod>> obData, GanttChart<Number,String> chart){
+        String[] categories=obData.keySet().stream().toArray(String[]::new);
+
+        CategoryAxis yAxis=(CategoryAxis) chart.getYAxis();
+        yAxis.setCategories(FXCollections.<String>observableArrayList(Arrays.asList(categories)));
+
+        ArrayList<XYChart.Series<Number, String>> s=new ArrayList<>();
+        int c=0;
+        long diff = 0;
+        boolean skipBarChartDrawing = false;
+        for (Map.Entry<String,List<AbstractActivityPeriod>> e : obData.entrySet()){
+            XYChart.Series series= new XYChart.Series();
+            series.setName(categories[c]);
+            c++;
+            if(e.getValue().size() < 1) skipBarChartDrawing = true;
+            if (!skipBarChartDrawing) {
+                diff = e.getValue().get(0).getStartTime()/1000;
+                for (AbstractActivityPeriod a : e.getValue()){
+                    String style="status-green";
+                    long start = diff;
+                    long time=(a.getEndTime()-a.getStartTime())/1000;
+                    if (a.getType()==AbstractActivityPeriod.Type.NONFOCUSED || a.getType() == AbstractActivityPeriod.Type.OFF)
+                        style="status-transparent";
+                    series.getData().add(new XYChart.Data<Number, String>(start,series.getName(),new GanttChart.ExtraData(time,style)));
+                    diff += time;
+                }
+            }
+
+            skipBarChartDrawing = false;
+            s.add(series);
+        }
+
+        chart.setData(FXCollections.observableArrayList(s));
     }
 
     private void configureChart(){
@@ -69,4 +107,5 @@ public class ChartControllerHelper {
         String[] categories = obData.keySet().toArray(new String[0]);
         yAxis.setCategories(FXCollections.<String>observableArrayList(Arrays.asList(categories)));
     }
+
 }

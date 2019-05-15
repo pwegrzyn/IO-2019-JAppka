@@ -32,11 +32,7 @@ public class AppController {
     private ActionsControllerHelper actionsControllerHelper;
     private ChartControllerHelper chartControllerHelper;
 
-    private long lastAppTime = 0;
-    private boolean wasLastAppTimeSet = false;
-
     private GanttChart<Number,String> mainChart;
-    private String[] categories;
 
     private NumberAxis xAxis;
     private String currentlyDisplayedDate;
@@ -232,37 +228,6 @@ public class AppController {
     }
 
     public void update(){
-        categories=obData.keySet().stream().toArray(String[]::new);
-
-        CategoryAxis yAxis=(CategoryAxis) mainChart.getYAxis();
-        yAxis.setCategories(FXCollections.<String>observableArrayList(Arrays.asList(categories)));
-
-        ArrayList<XYChart.Series<Number, String>> s=new ArrayList<>();
-        int c=0;
-        long diff = 0;
-        boolean skipBarChartDrawing = false;
-        for (Map.Entry<String,List<AbstractActivityPeriod>> e : obData.entrySet()){
-            XYChart.Series series= new XYChart.Series();
-            series.setName(categories[c]);
-            c++;
-            if(e.getValue().size() < 1) skipBarChartDrawing = true;
-            if (!skipBarChartDrawing) {
-                diff = e.getValue().get(0).getStartTime()/1000;
-                for (AbstractActivityPeriod a : e.getValue()){
-                    String style="status-green";
-                    long start = diff;
-                    long time=(a.getEndTime()-a.getStartTime())/1000;
-                    if (a.getType()==AbstractActivityPeriod.Type.NONFOCUSED || a.getType() == AbstractActivityPeriod.Type.OFF)
-                        style="status-transparent";
-                    series.getData().add(new XYChart.Data<Number, String>(start,series.getName(),new GanttChart.ExtraData(time,style)));
-                    diff += time;
-                }
-            }
-
-            skipBarChartDrawing = false;
-            s.add(series);
-        }
-
-        mainChart.setData(FXCollections.observableArrayList(s));
+        chartControllerHelper.update(obData, mainChart);
     }
 }
