@@ -76,8 +76,8 @@ public class ChartControllerHelper {
         mainChart.setTitle("Usage State");
         mainChart.setAnimated(false);
         mainChart.setLayoutY(22.0);
-        mainChart.setPrefHeight(610.0);
-        mainChart.setPrefWidth(1200.0);
+        mainChart.setPrefHeight(780.0);
+        mainChart.setPrefWidth(1480.0);
         mainChart.getStylesheets().add(getClass().getResource("/ganttchart.css").toExternalForm());
     }
 

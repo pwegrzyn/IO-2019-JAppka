@@ -11,11 +11,13 @@ import javafx.scene.control.TextField;
 import javafx.stage.Stage;
 import pl.edu.agh.io.jappka.activity.*;
 
+import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 public class SaveController {
 
@@ -23,11 +25,9 @@ public class SaveController {
     public Button button;
 
     @FXML
-    TextArea sign;
-
-    @FXML
     TextField textField;
 
+    private static final Logger LOGGER = Logger.getLogger(SaveController.class.getName());
     private ObservableMap<String, List<AbstractActivityPeriod>> obData;
     private AppController appController;
     private boolean save;
@@ -65,7 +65,13 @@ public class SaveController {
 
     public void load() throws Exception{
         Gson gson=new Gson();
-        JsonReader reader=new JsonReader(new FileReader(textField.getText()+".json"));
+        JsonReader reader=null;
+        try {
+            reader=new JsonReader(new FileReader(textField.getText()+".json"));
+        } catch(FileNotFoundException e) {
+            LOGGER.severe("This file does not exists!");
+            return;
+        }
         ArrayList<String> apps=gson.fromJson(reader,new TypeToken<List<String>>(){}.getType());
 
         for (Map.Entry<String,List<AbstractActivityPeriod>> e : obData.entrySet()){

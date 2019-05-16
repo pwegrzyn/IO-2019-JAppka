@@ -3,8 +3,12 @@ package pl.edu.agh.io.jappka.activity;
 import java.io.*;
 import java.util.Timer;
 import java.util.TimerTask;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 public abstract class AbstractActivityTracker implements ActivityTracker {
+
+    private final static Logger LOGGER = Logger.getLogger(AbstractActivityTracker.class.getName());
     private String fileName;
     private String dataDirectoryPath = "data/";
     private String appStateFilePath;
@@ -50,18 +54,28 @@ public abstract class AbstractActivityTracker implements ActivityTracker {
         this.currentState.setLastHeartbeat(newHeartbeat);
         FileOutputStream fileOutputStream = new FileOutputStream(this.appStateFilePath);
         ObjectOutputStream outputStream = new ObjectOutputStream(fileOutputStream);
-        outputStream.writeObject(this.currentState);
-        outputStream.close();
-        fileOutputStream.close();
+        try {
+            outputStream.writeObject(this.currentState);
+        } catch(Exception e) {
+            LOGGER.log(Level.SEVERE,"Fatal error occurred while persisting app state!", e);
+            return;
+        } finally {
+            outputStream.close();
+            fileOutputStream.close();
+        }
     }
 
-    protected void recoverAppState() throws IOException, ClassNotFoundException {
+    protected void recoverAppState() throws IOException {
         FileInputStream inputStream = new FileInputStream(this.appStateFilePath);
         ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
-        this.currentState = (ActivityState) objectInputStream.readObject();
-        objectInputStream.close();
-        inputStream.close();
-
+        try {
+            this.currentState = (ActivityState) objectInputStream.readObject();
+        } catch(Exception e) {
+            LOGGER.log(Level.SEVERE, "Fatal error occurred while recovering app state!", e);
+        } finally {
+            objectInputStream.close();
+            inputStream.close();
+        }
         addRecoveryEvents();
     }
 
