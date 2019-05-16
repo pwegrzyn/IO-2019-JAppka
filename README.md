@@ -21,4 +21,6 @@ SonarQube
     `.\gradle.bat -Dsonar.host.url=http://myhost:9000 sonarqube`
 * Or you can just use the default host.url:
     * On Windows:
-        `gradle sonarqube`
+        `.\gradle.bat sonarqube`
+        
+Visit `http://localhost:9000/projects?sort=-analysis_date` to view the report
