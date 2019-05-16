@@ -20,6 +20,7 @@ import java.io.FileNotFoundException;
 import java.io.FileReader;
 import java.io.PrintWriter;
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -89,8 +90,11 @@ public class SaveController {
         ArrayList<String> apps=gson.fromJson(reader,new TypeToken<List<String>>(){}.getType());
 
         for (Map.Entry<String,List<AbstractActivityPeriod>> e : obData.entrySet()){
-            if (!apps.contains(e.getKey()) && (!e.getKey().equals("PC"))) obData.remove(e.getKey());
+            if ((!e.getKey().equals("PC"))) obData.remove(e.getKey());
         }
+
+        Map<String,ActivitySummary> activities=new HashMap<>();
+        activities.put("PC",appController.getActivities().get("PC"));
 
         for (String e : apps){
             if (!containsApp(e,obData)){
@@ -100,9 +104,11 @@ public class SaveController {
                 ActivitySummary newSummary=new AppActivitySummary(newTracker.getActivityStream(),e);
                 newSummary.generate();
                 obData.put(e,newSummary.getAllPeriods());
+                activities.put(e,newSummary);
             }
         }
         appController.setObData(obData);
+        appController.setActivities(activities);
         return;
     }
 

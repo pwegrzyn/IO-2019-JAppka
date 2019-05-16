@@ -1,5 +1,6 @@
 package pl.edu.agh.io.jappka.controller;
 
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.collections.ObservableMap;
 import javafx.event.ActionEvent;
@@ -12,9 +13,11 @@ import javafx.scene.control.MenuItem;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
 import pl.edu.agh.io.jappka.activity.AbstractActivityPeriod;
+import pl.edu.agh.io.jappka.activity.ActivitySummary;
 import pl.edu.agh.io.jappka.charts.GanttChart;
 import pl.edu.agh.io.jappka.util.Utils;
 
+import java.awt.event.ActionListener;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -34,6 +37,8 @@ public class AppController {
     private String dateFormat;
     private String clockFormat;
     private static final int MILLISECONDS_IN_DAY = 86400000;
+
+    private Map<String,ActivitySummary> activities;
 
     @FXML
     private AnchorPane mainPane;
@@ -78,6 +83,14 @@ public class AppController {
 
     public void setObData(ObservableMap<String, List<AbstractActivityPeriod>> obData){
         this.obData=obData;
+    }
+
+    public void setActivities(Map<String,ActivitySummary> activities){
+        this.activities=activities;
+    }
+
+    public Map<String,ActivitySummary> getActivities(){
+        return this.activities;
     }
 
     @FXML
@@ -220,5 +233,13 @@ public class AppController {
 
     public void update(){
         chartControllerHelper.update(obData, mainChart);
+    }
+
+    public void gatherData(){
+        for (Map.Entry<String,ActivitySummary> e : activities.entrySet()){
+            ActivitySummary a=e.getValue();
+            a.generate();
+            obData.put(e.getKey(),a.getAllPeriods());
+        }
     }
 }
