@@ -6,14 +6,9 @@ import javafx.collections.ObservableMap;
 import javafx.stage.Stage;
 import pl.edu.agh.io.jappka.activity.*;
 import org.apache.commons.exec.OS;
-import pl.edu.agh.io.jappka.os.NativeAccessor;
-import pl.edu.agh.io.jappka.os.WindowsNativeAccessor;
 import pl.edu.agh.io.jappka.presenter.AppGUI;
-import java.util.Timer;
-import java.util.List;
-import java.util.Map;
-import java.util.HashMap;
-import java.util.TimerTask;
+
+import java.util.*;
 
 
 public class App extends Application {
@@ -37,31 +32,22 @@ public class App extends Application {
         ActivitySummary PCSummary = new PCActivitySummary(PCtracker.getActivityStream());
         PCSummary.generate();
 
-        ActivityTracker chromeTracker = new AppActivityTracker("chrome");
-        chromeTracker.track();
-
-        ActivitySummary chromeSummary = new AppActivitySummary(chromeTracker.getActivityStream(), "chrome");
-        chromeSummary.generate();
-
         Map<String, List<AbstractActivityPeriod>> data = new HashMap<>();
-        data.put("chrome", chromeSummary.getAllPeriods());
         data.put("PC", PCSummary.getAllPeriods());
 
         ObservableMap<String, List<AbstractActivityPeriod>> obData = FXCollections.observableHashMap();
         obData.putAll(data);
 
-        AppGUI gui = new AppGUI(primaryStage,obData);
+        Map<String, ActivitySummary> activities=new HashMap<>();
+        activities.put("PC",PCSummary);
 
+        AppGUI gui = new AppGUI(primaryStage,obData,activities);
         gui.initApplication();
 
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
-                chromeSummary.generate();
-                PCSummary.generate();
-                obData.put("chrome", chromeSummary.getAllPeriods());
-                obData.put("PC", PCSummary.getAllPeriods());
-                gui.update();
+                gui.gatherData();
             }
         }, 0, 1000);
     }

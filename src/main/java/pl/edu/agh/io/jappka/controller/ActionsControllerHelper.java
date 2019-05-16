@@ -33,17 +33,19 @@ public class ActionsControllerHelper {
     public void handleAddApplicationAction(ActionEvent event, AppController appController, String currentTheme)  {
 
         try{
-            primaryStage.setTitle("Add app");
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getClassLoader().getResource("JAppka/view/addAppView.fxml"));
             AnchorPane layout = loader.load();
-
             AddAppController controller = loader.getController();
             controller.initialize(appController);
-            graphScene = new Scene(layout);
-            graphScene.getStylesheets().add(currentTheme);
-            primaryStage.setScene(graphScene);
-            primaryStage.show();
+            Scene scene = new Scene(layout);
+            Stage stage = new Stage();
+            stage.setTitle("Add Application");
+            stage.setScene(scene);
+            scene.getStylesheets().add(currentTheme);
+            controller.setStage(stage);
+            stage.setTitle("Add app");
+            stage.show();
         }
 
         catch (IOException e){
@@ -54,19 +56,20 @@ public class ActionsControllerHelper {
     public void handleShowCharts(ActionEvent event, AppController appController, String currentTheme,
                                  ObservableMap<String, List<AbstractActivityPeriod>> obData){
         try{
-            primaryStage.setTitle("Chart generation");
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getClassLoader().getResource("JAppka/view/chartView.fxml"));
             AnchorPane layout = loader.load();
-
             ChartController controller = loader.getController();
             controller.initialize(appController);
             controller.setData(obData);
             controller.drawGraph();
-            graphScene = new Scene(layout);
-            graphScene.getStylesheets().add(currentTheme);
-            primaryStage.setScene(graphScene);
-            primaryStage.show();
+            Stage stage = new Stage();
+            Scene scene = new Scene(layout);
+            scene.getStylesheets().add(currentTheme);
+            stage.setScene(scene);
+            stage.setTitle("Chart generation");
+            controller.setStage(stage);
+            stage.show();
         }
 
         catch (IOException e){
@@ -77,17 +80,18 @@ public class ActionsControllerHelper {
     public void handleAddOwnEventAction(AppController appController, String currentTheme){
 
         try{
-            primaryStage.setTitle("Adding own event");
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getClassLoader().getResource("JAppka/view/addOwnEventView.fxml"));
             AnchorPane layout = loader.load();
-
             AddOwnEventController controller = loader.getController();
             controller.initialize(appController);
-            graphScene = new Scene(layout);
-            graphScene.getStylesheets().add(currentTheme);
-            primaryStage.setScene(graphScene);
-            primaryStage.show();
+            Scene scene = new Scene(layout);
+            scene.getStylesheets().add(currentTheme);
+            Stage stage = new Stage();
+            stage.setScene(scene);
+            stage.setTitle("Adding own event");
+            controller.setStage(stage);
+            stage.show();
         }
 
         catch (IOException e){
@@ -119,35 +123,27 @@ public class ActionsControllerHelper {
         }
     }
 
-    public void handleSave(ActionEvent event, ObservableMap<String, List<AbstractActivityPeriod>> obData){
-        List<String> apps=new ArrayList<String>();
-        for (Map.Entry<String,List<AbstractActivityPeriod>> e : obData.entrySet()) apps.add(e.getKey());
-        String json=new Gson().toJson(apps);
-        try (PrintWriter out=new PrintWriter("config.json")){
-            out.println(json);
+    public void handleSave(ActionEvent event, String currentTheme, AppController appController, boolean save){
+        try{
+            FXMLLoader loader=new FXMLLoader();
+            loader.setLocation(getClass().getClassLoader().getResource("Jappka/view/save.fxml"));
+            AnchorPane layout=loader.load();
+            SaveController controller=loader.getController();
+            controller.initialize(appController,save);
+
+            Scene scene=new Scene(layout);
+            scene.getStylesheets().add(currentTheme);
+            Stage stage=new Stage();
+            if (save) stage.setTitle("Configuration saving");
+            else stage.setTitle("Configuration loading");
+            stage.setScene(scene);
+            controller.setStage(stage);
+            stage.show();
         }
-        catch (Exception e){
+
+        catch (IOException e){
             e.printStackTrace();
         }
-    }
-
-    public void handleLoad(ActionEvent event, ObservableMap<String, List<AbstractActivityPeriod>> obData) throws Exception{
-        Gson gson=new Gson();
-        JsonReader reader=new JsonReader(new FileReader("config.json"));
-        ArrayList<String> apps = gson.fromJson(reader,new TypeToken<List<String>>(){}.getType());
-
-        for (String e : apps){
-            if (!containsApp(e, obData)){
-                ActivityTracker newTracker=new AppActivityTracker(e);
-                newTracker.track();
-
-                ActivitySummary newSummary=new AppActivitySummary(newTracker.getActivityStream(),e);
-                newSummary.generate();
-                obData.put(e,newSummary.getAllPeriods());
-                System.out.println(e);
-            }
-        }
-        System.out.println(obData);
     }
 
     public void handleGraphColorPicker(ActionEvent event){
@@ -167,12 +163,5 @@ public class ActionsControllerHelper {
             e.printStackTrace();
         }
 
-    }
-
-    private boolean containsApp(String name, ObservableMap<String, List<AbstractActivityPeriod>> obData){
-        for (Map.Entry<String,List<AbstractActivityPeriod>> e : obData.entrySet()){
-            if (e.getKey().equals(name)) return true;
-        }
-        return false;
     }
 }

@@ -7,11 +7,14 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.stage.Stage;
 import pl.edu.agh.io.jappka.activity.*;
 import pl.edu.agh.io.jappka.os.NativeAccessor;
 import pl.edu.agh.io.jappka.os.WindowsNativeAccessor;
 
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 public class AddAppController {
@@ -23,6 +26,7 @@ public class AddAppController {
     private String appName;
     private List<String> apps;
     private NativeAccessor accessor = new WindowsNativeAccessor();
+    private Stage stage;
 
     @FXML
     public void initialize(AppController appController) {
@@ -36,21 +40,28 @@ public class AddAppController {
         listView.getItems().setAll(apps);
     }
 
+    public void setStage(Stage stage) {
+        this.stage = stage;
+    }
+
     @FXML
     public void handleAddButton(ActionEvent event) {
         ObservableMap<String, List<AbstractActivityPeriod>> obData=this.appController.getObData();
+        Map<String,ActivitySummary> activities=this.appController.getActivities();
         ActivityTracker newTracker=new AppActivityTracker(appName);
         newTracker.track();
 
         ActivitySummary newSummary=new AppActivitySummary(newTracker.getActivityStream(),appName);
+        activities.put(appName,newSummary);
         newSummary.generate();
         obData.put(appName,newSummary.getAllPeriods());
         this.appController.setObData(obData);
+        this.appController.setActivities(activities);
     }
 
     @FXML
     public void handleBackButton(ActionEvent event) {
-        appController.backToMainView();
+        this.stage.close();
     }
 
     @FXML

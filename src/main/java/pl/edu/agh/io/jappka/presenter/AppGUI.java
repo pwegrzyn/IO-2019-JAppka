@@ -8,19 +8,24 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import pl.edu.agh.io.jappka.activity.AbstractActivityPeriod;
+import pl.edu.agh.io.jappka.activity.ActivitySummary;
 import pl.edu.agh.io.jappka.controller.AppController;
 
 import java.io.IOException;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 
 public class AppGUI {
     private Stage primaryStage;
     private ObservableMap<String, List<AbstractActivityPeriod>> obData;
     private AppController controller;
+    private Map<String,ActivitySummary> activities;
 
-    public AppGUI(Stage primaryStage,ObservableMap<String, List<AbstractActivityPeriod>> obData){
+    public AppGUI(Stage primaryStage, ObservableMap<String, List<AbstractActivityPeriod>> obData, Map<String,ActivitySummary> activities){
         this.primaryStage = primaryStage;
         this.obData=obData;
+        this.activities=activities;
     }
 
     public void initApplication() throws IOException {
@@ -34,11 +39,13 @@ public class AppGUI {
         primaryStage.setTitle("JAppka Activity Tracker");
         controller = loader.getController();
         controller.setObData(obData);
+        controller.setActivities(activities);
         controller.setPrimaryStageElements(primaryStage, scene);
     }
 
-    public void update(){
+    public void gatherData(){
         Platform.runLater(()-> {
+            controller.gatherData();
             controller.update();
         });
     }

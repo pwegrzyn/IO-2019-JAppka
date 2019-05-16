@@ -6,6 +6,7 @@ import javafx.scene.chart.BarChart;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
+import javafx.stage.Stage;
 import pl.edu.agh.io.jappka.activity.AbstractActivityPeriod;
 
 import java.util.HashMap;
@@ -13,6 +14,9 @@ import java.util.List;
 import java.util.Map;
 
 public class ChartController {
+
+    private Stage stage;
+
     @FXML
     private NumberAxis yAxis=new NumberAxis();
 
@@ -52,8 +56,12 @@ public class ChartController {
         barChart.getData().addAll(dataSeries);
     }
 
+    public void setStage(Stage stage) {
+        this.stage = stage;
+    }
+
     @FXML
     private void testStuff(ActionEvent event){
-        appController.backToMainView();
+        this.stage.close();
     }
 }

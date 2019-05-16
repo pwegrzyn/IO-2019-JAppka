@@ -5,10 +5,12 @@ import javafx.fxml.FXML;
 import javafx.scene.control.DatePicker;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.stage.Stage;
 
 public class AddOwnEventController {
 
     private AppController appController;
+    private Stage stage;
 
     @FXML
     private DatePicker start;
@@ -27,9 +29,13 @@ public class AddOwnEventController {
         System.out.println(keyEvent.getText());
     }
 
+    public void setStage(Stage stage) {
+        this.stage = stage;
+    }
+
     @FXML
     private void handleBackButton(ActionEvent event){
-        appController.backToMainView();
+        this.stage.close();
     }
 
     @FXML

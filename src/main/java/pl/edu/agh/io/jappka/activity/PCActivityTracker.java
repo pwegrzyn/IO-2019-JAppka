@@ -18,7 +18,7 @@ public class PCActivityTracker extends AbstractActivityTracker {
                 recoverAppState();
             else
                 initializeAppState();
-        } catch (IOException | ClassNotFoundException e) {
+        } catch (IOException e) {
             e.printStackTrace();
         }
 

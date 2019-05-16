@@ -7,10 +7,10 @@
 
 <AnchorPane prefHeight="200.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.edu.agh.io.jappka.controller.AddOwnEventController">
    <children>
-      <TextField fx:id="field" layoutX="14.0" layoutY="29.0" onKeyPressed="#handleOnTextChange" prefHeight="31.0" prefWidth="135.0" promptText="Event name" />
-      <DatePicker fx:id="end" layoutX="368.0" layoutY="29.0" promptText="End date" />
-      <DatePicker fx:id="start" layoutX="164.0" layoutY="29.0" prefHeight="31.0" prefWidth="191.0" promptText="Start date" />
-      <Button layoutX="368.0" layoutY="85.0" mnemonicParsing="false" onAction="#handleBackButton" prefHeight="31.0" prefWidth="218.0" text="Back to main view" />
-      <Button layoutX="11.0" layoutY="87.0" mnemonicParsing="false" onAction="#handleAddEventAction" prefHeight="31.0" prefWidth="138.0" text="Add Event" />
+      <TextField fx:id="field" layoutX="14.0" layoutY="38.0" onKeyPressed="#handleOnTextChange" prefHeight="31.0" prefWidth="145.0" promptText="Event name" />
+      <DatePicker fx:id="end" layoutX="400.0" layoutY="38.0" prefHeight="31.0" prefWidth="191.0" promptText="End date" />
+      <DatePicker fx:id="start" layoutX="189.0" layoutY="38.0" prefHeight="31.0" prefWidth="191.0" promptText="Start date" />
+      <Button layoutX="331.0" layoutY="117.0" mnemonicParsing="false" onAction="#handleBackButton" prefHeight="31.0" prefWidth="138.0" text="Cancel" />
+      <Button layoutX="120.0" layoutY="117.0" mnemonicParsing="false" onAction="#handleAddEventAction" prefHeight="31.0" prefWidth="138.0" text="Add Event" />
    </children>
 </AnchorPane>

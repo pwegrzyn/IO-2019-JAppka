@@ -1,12 +1,12 @@
 package pl.edu.agh.io.jappka.controller;
 
+import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
@@ -15,35 +15,36 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.paint.Color;
 import javafx.stage.Stage;
-import javafx.util.StringConverter;
 import pl.edu.agh.io.jappka.activity.AbstractActivityPeriod;
+import pl.edu.agh.io.jappka.activity.ActivitySummary;
 import pl.edu.agh.io.jappka.charts.GanttChart;
 import pl.edu.agh.io.jappka.util.Utils;
 
+import java.awt.event.ActionListener;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class AppController {
 
     private Stage primaryStage;
     private Scene primaryScene;
+    private ObservableList<String> yAxisCategories;
     private ObservableMap<String, List<AbstractActivityPeriod>> obData;
-    private ActionsControllerHelper helper;
-
-    private long lastAppTime = 0;
-    private boolean wasLastAppTimeSet = false;
+    private ActionsControllerHelper actionsControllerHelper;
+    private ChartControllerHelper chartControllerHelper;
 
     private GanttChart<Number,String> mainChart;
-    private String[] categories;
 
     private NumberAxis xAxis;
     private String currentlyDisplayedDate;
     private String dateFormat;
     private String clockFormat;
     private static final int MILLISECONDS_IN_DAY = 86400000;
+
+    private Map<String,ActivitySummary> activities;
 
     @FXML
     private AnchorPane mainPane;
@@ -60,14 +61,12 @@ public class AppController {
 
     @FXML
     private MenuItem darkTheme;
-    private long firstLastAppTime;
-
-
 
     public void setPrimaryStageElements(Stage primaryStage, Scene primaryScene) {
         this.primaryStage = primaryStage;
         this.primaryScene = primaryScene;
-        this.helper = new ActionsControllerHelper(primaryStage, primaryScene);
+        this.actionsControllerHelper = new ActionsControllerHelper(primaryStage, primaryScene);
+        this.chartControllerHelper = new ChartControllerHelper();
         this.dateFormat = "MMM dd,yyyy";
         this.clockFormat = "HH:mm:ss";
         initGanttChart();
@@ -92,34 +91,42 @@ public class AppController {
         this.obData=obData;
     }
 
+    public void setActivities(Map<String,ActivitySummary> activities){
+        this.activities=activities;
+    }
+
+    public Map<String,ActivitySummary> getActivities(){
+        return this.activities;
+    }
+
     @FXML
     private void handleAddApplicationAction(ActionEvent event)  {
-        helper.handleAddApplicationAction(event, this, currentTheme);
+        actionsControllerHelper.handleAddApplicationAction(event, this, currentTheme);
     }
 
     @FXML
     private void handleGenerateReport(ActionEvent event){
-        helper.handleGenerateReport(currentTheme,obData);
+        actionsControllerHelper.handleGenerateReport(currentTheme,obData);
     }
 
     @FXML
     private void handleSave(ActionEvent event){
-        helper.handleSave(event, obData);
+        actionsControllerHelper.handleSave(event,currentTheme,this,true);
     }
 
     @FXML
-    private void handleLoad(ActionEvent event) throws Exception{
-        helper.handleLoad(event, obData);
+    private void handleLoad(ActionEvent event){
+        actionsControllerHelper.handleSave(event,currentTheme,this,false);
     }
 
     @FXML
     private void handleAddOwnEventAction(ActionEvent event){
-        helper.handleAddOwnEventAction(this, currentTheme);
+        actionsControllerHelper.handleAddOwnEventAction(this, currentTheme);
     }
 
     @FXML
     private void handleGraphColorPicker(ActionEvent event){
-        helper.handleGraphColorPicker(event);
+        actionsControllerHelper.handleGraphColorPicker(event);
     }
 
     public void backToMainView() {
@@ -218,69 +225,34 @@ public class AppController {
 
     @FXML
     private void handleShowCharts(ActionEvent event){
-        helper.handleShowCharts(event, this, currentTheme, obData);
+        actionsControllerHelper.handleShowCharts(event, this, currentTheme, obData);
     }
 
     private void initGanttChart() {
-        NumberAxis xAxis = new NumberAxis();
-        CategoryAxis yAxis = new CategoryAxis();
-        mainChart = new GanttChart<Number, String>(xAxis,yAxis);
-        this.xAxis = xAxis;
-        configureAxis(xAxis,yAxis);
-        configureChart();
-        //Add chart to the main pane
-        ObservableList list = mainPane.getChildren();
-        list.addAll(mainChart);
-
-    }
-
-    private void configureChart(){
-        mainChart.setLegendVisible(true);
-        mainChart.setBlockHeight(50);
-        mainChart.getData().clear();
-        mainChart.setCursor(Cursor.CROSSHAIR);
-        mainChart.setTitle("Usage State");
-        mainChart.setAnimated(false);
-        mainChart.setLayoutY(22.0);
-        mainChart.setPrefHeight(780);
-        mainChart.setPrefWidth(1480.0);
-        mainChart.getStylesheets().add(getClass().getResource("/ganttchart.css").toExternalForm());
-    }
-
-    private void configureAxis(NumberAxis xAxis, CategoryAxis yAxis){
-        xAxis.setLabel("Time");
-        xAxis.setTickLabelFill(Color.CHOCOLATE);
-        xAxis.setAutoRanging(false);
-        xAxis.setTickUnit(3600);
-        xAxis.setMinorTickVisible(false);
-        yAxis.setLabel("Applications");
-        yAxis.setTickLabelFill(Color.CHOCOLATE);
-        yAxis.setAutoRanging(true);
-        xAxis.setTickLabelFormatter(new StringConverter<Number>() {
-            @Override
-            public String toString(Number object) {
-                return Utils.millisecondsToCustomStrDate(object.longValue()*1000, "HH:mm");
-            }
-
-            @Override
-            public Number fromString(String string) {
-                return null;
-            }
-        });
-
-        //get initial category list
-        categories = obData.keySet().toArray(new String[0]);
-        yAxis.setCategories(FXCollections.<String>observableArrayList(Arrays.asList(categories)));
+        this.xAxis = new NumberAxis();
+        yAxisCategories = FXCollections.observableList(obData.keySet().stream().collect(Collectors.toList()));
+        mainChart = chartControllerHelper.initGanttChart(xAxis, mainPane, obData, yAxisCategories);
     }
 
     public ObservableMap<String, List<AbstractActivityPeriod>> getObData() {
         return obData;
     }
 
+    public void gatherData(){
+        for (Map.Entry<String,ActivitySummary> e : activities.entrySet()){
+            ActivitySummary a=e.getValue();
+            a.generate();
+            obData.put(e.getKey(),a.getAllPeriods());
+        }
+    }
+
     public void update(){
-        categories=obData.keySet().toArray(new String[0]);
+        String[] categories=obData.keySet().stream().toArray(String[]::new);
+        yAxisCategories.setAll(categories);
+
         CategoryAxis yAxis=(CategoryAxis) mainChart.getYAxis();
-        yAxis.setCategories(FXCollections.<String>observableArrayList(Arrays.asList(categories)));
+
+        System.out.println(yAxisCategories);
 
         ArrayList<XYChart.Series<Number, String>> s=new ArrayList<>();
         int c=0;
@@ -291,11 +263,9 @@ public class AppController {
             series.setName(categories[c]);
             c++;
             if(e.getValue().size() < 1) skipBarChartDrawing = true;
-            boolean atLeastOnePeriodHappend = false;
             if (!skipBarChartDrawing) {
                 diff = e.getValue().get(0).getStartTime()/1000;
                 for (AbstractActivityPeriod a : e.getValue()){
-                    atLeastOnePeriodHappend = true;
                     String style="status-green";
                     long start = diff;
                     long time=(a.getEndTime()-a.getStartTime())/1000;
@@ -305,29 +275,9 @@ public class AppController {
                     diff += time;
                 }
             }
-            /*Workaround to simulate drawing the last active state for PC (since it's not available until we close
-            the app and reopen it again) - we add an artificial green strip which 'chases' the app strip*/
-            if(!e.getKey().equals("PC") && atLeastOnePeriodHappend && e.getValue().size() > 1) {
-                this.lastAppTime = diff;
-                this.wasLastAppTimeSet = true;
-            } else if (!e.getKey().equals("PC") && atLeastOnePeriodHappend && e.getValue().size() == 1) {
-                this.firstLastAppTime = diff;
-                this.wasLastAppTimeSet = true;
-            }
-            if(e.getKey().equals("PC") && e.getValue().size() > 0 && this.wasLastAppTimeSet) {
-                String style="status-green";
-                long time = this.lastAppTime - diff;
-                //series.getData().add(new XYChart.Data<Number,String>(diff,series.getName(),new GanttChart.ExtraData(time,style)));
-                series.getData().add(new XYChart.Data(diff,series.getName(),new GanttChart.ExtraData(time+1,style)));
-            } else if (e.getKey().equals("PC") && e.getValue().size() < 1 && this.wasLastAppTimeSet) {
-                String style="status-green";
-                long time = this.lastAppTime - this.firstLastAppTime;
-                //series.getData().add(new XYChart.Data<Number,String>(diff,series.getName(),new GanttChart.ExtraData(time,style)));
-                series.getData().add(new XYChart.Data(this.firstLastAppTime,series.getName(),new GanttChart.ExtraData(time+1,style)));
-            }
+
             skipBarChartDrawing = false;
             s.add(series);
-            s.get(c-1).getName();
         }
 
         mainChart.setData(FXCollections.observableArrayList(s));

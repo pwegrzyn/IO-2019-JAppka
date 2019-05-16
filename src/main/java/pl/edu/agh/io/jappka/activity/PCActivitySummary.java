@@ -1,7 +1,5 @@
 package pl.edu.agh.io.jappka.activity;
 
-import pl.edu.agh.io.jappka.util.Utils;
-
 import java.util.LinkedList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -45,6 +43,10 @@ public class PCActivitySummary implements ActivitySummary {
                 }
             }
         }
+
+        newPeriod = new PCActivityPeriod(lastIterTime, System.currentTimeMillis(), AbstractActivityPeriod.Type.ON);
+        this.periods.add(newPeriod);
+
         this.wasGenerated = true;
     }
 

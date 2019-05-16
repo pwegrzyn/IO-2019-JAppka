@@ -35,9 +35,13 @@
                                 <MenuItem mnemonicParsing="false" onAction="#handleAddApplicationAction" text="Add app" />
                                 <MenuItem mnemonicParsing="false" onAction="#handleShowCharts" text="Show statistics" />
                                 <MenuItem mnemonicParsing="false" onAction="#handleGenerateReport" text="Generate Report" />
-                        <MenuItem mnemonicParsing="false" onAction="#handleSave" text="Save configuration" />
-                        <MenuItem mnemonicParsing="false" onAction="#handleLoad" text="Load configuration" />
                         <MenuItem mnemonicParsing="false" onAction="#handleAddOwnEventAction" text="Add own event" />
+                        <Menu mnemonicParsing="false" text="Configuration">
+                          <items>
+                              <MenuItem mnemonicParsing="false" onAction="#handleSave" text="Save" />
+                              <MenuItem mnemonicParsing="false" onAction="#handleLoad" text="Load existing" />
+                          </items>
+                        </Menu>
                             </items>
                         </Menu>
                         <Menu mnemonicParsing="false" text="Color themes">
