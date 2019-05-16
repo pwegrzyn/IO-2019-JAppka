@@ -23,6 +23,7 @@ dependencies {
     implementation 'net.java.dev.jna:jna-platform:5.2.0'
     implementation 'org.kie.modules:org-apache-commons-exec:6.5.0.Final'
     implementation 'com.google.code.gson:gson:2.8.5'
+    implementation 'org.apache.commons:commons-csv:1.4'
 }
 
 mainClassName = 'pl.edu.agh.io.jappka.app.App'
