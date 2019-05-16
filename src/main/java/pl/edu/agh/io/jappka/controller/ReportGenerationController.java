@@ -30,8 +30,8 @@ public class ReportGenerationController {
         this.stage = stage;
     }
 
-    public void setData(ObservableMap<String, List<AbstractActivityPeriod>> data){
-        this.dataCollection=data;
+    public void setData(ObservableMap<String, List<AbstractActivityPeriod>> data) {
+        this.dataCollection = data;
     }
 
     public void init() {
@@ -51,21 +51,21 @@ public class ReportGenerationController {
     @FXML
     private void handleGenerateReportButton(ActionEvent event) {
         if (validateInput()) {
-            long start = dateToEpoch(this.dateStart.getValue());
-            long end = dateToEpoch(this.dateEnd.getValue());
+            long start = dateToEpochMilis(this.dateStart.getValue());
+            long end = dateToEpochMilis(this.dateEnd.getValue());
             Map<String, Long> outputUsage = filterData(start, end);
 
             // TODO - parsing this to csv data
             for (String app : outputUsage.keySet()) {
-                System.out.println("APP " + app + "USAGE: " + outputUsage.get(app).toString());
+                System.out.println("APP :" + app + ", USAGE: " + outputUsage.get(app).toString()+"(ms)");
             }
             this.stage.close();
         }
     }
 
-    private long dateToEpoch(LocalDate value) {
+    private long dateToEpochMilis(LocalDate value) {
         ZoneId zoneId = ZoneId.systemDefault();
-        return value.atStartOfDay(zoneId).toEpochSecond();
+        return value.atStartOfDay(zoneId).toEpochSecond()*1000;
     }
 
     @FXML
@@ -77,11 +77,11 @@ public class ReportGenerationController {
 
         Map<String, Long> outputUsage = new HashMap<>();
 
-        for (String application : dataCollection.keySet()){
+        for (String application : dataCollection.keySet()) {
             //get all periods for the specific app
             List<AbstractActivityPeriod> activityPeriods = dataCollection.get(application);
             //Filter relevant periods
-            activityPeriods.forEach((period)-> System.out.print(application + " " +period.getStartTime() + " " + period.getEndTime()+" type:"+ period.getType()+"\n"));
+
             activityPeriods = activityPeriods.stream()
                     .filter((period) -> period.getType() == AbstractActivityPeriod.Type.FOCUSED || period.getType() == AbstractActivityPeriod.Type.ON)
                     .collect(Collectors.toList());
@@ -89,11 +89,9 @@ public class ReportGenerationController {
                 //verify which periods we want to include in report
                 Long time_to_add = calculateRelevantTime(activityPeriod, start, end);
                 //If the time is relevant
+                Long correctedUsage = outputUsage.get(application);
                 if (!time_to_add.equals(0L))
-                    if (outputUsage.get(application) == null) {
-                        outputUsage.put(application, 0L);
-                    }
-                    outputUsage.put(application, outputUsage.get(application) + time_to_add );
+                    outputUsage.put(application, (correctedUsage == null ? 0 : correctedUsage) + time_to_add);
             }
         }
         return outputUsage;
@@ -107,8 +105,8 @@ public class ReportGenerationController {
         if (this.dateStart.getValue() == null || this.dateEnd.getValue() == null) return false;
         LocalDate startDate = this.dateStart.getValue();
         LocalDate endDate = this.dateEnd.getValue();
-        if (startDate.isAfter(LocalDate.now()) || endDate.isAfter(LocalDate.now())) {
-            LOGGER.warning("Start/End Date cannot be a value after the current date!");
+        if (startDate.isAfter(LocalDate.now())) {
+            LOGGER.warning("Start Date cannot be a value after the current date!");
             return false;
         }
         if (startDate.isAfter(endDate)) {
@@ -133,7 +131,7 @@ public class ReportGenerationController {
             else
                 return activityPeriod.getEndTime() - startEpochTime;
 
-        } else if (activityPeriod.getStartTime() >= startEpochTime) {
+        } else if (activityPeriod.getStartTime() >= startEpochTime && activityPeriod.getEndTime() <= endEpochTime) {
             if (activityPeriod.getEndTime() <= endEpochTime)
                 return activityPeriod.getEndTime() - activityPeriod.getStartTime();
             else
