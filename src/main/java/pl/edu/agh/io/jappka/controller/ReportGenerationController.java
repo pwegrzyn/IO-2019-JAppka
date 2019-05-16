@@ -1,5 +1,6 @@
 package pl.edu.agh.io.jappka.controller;
 
+import com.sun.istack.internal.NotNull;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 import javafx.event.ActionEvent;
@@ -55,7 +56,7 @@ public class ReportGenerationController {
 
             // TODO - parsing this to csv data
             for (String app : outputUsage.keySet()) {
-                System.out.println("APP " + app + " USAGE: " + outputUsage.get(app).toString());
+                System.out.println("APP :" + app + ", USAGE: " + outputUsage.get(app).toString()+"(ms)");
             }
         }
 
@@ -64,7 +65,7 @@ public class ReportGenerationController {
 
     private long dateToEpochMilis(LocalDate value) {
         ZoneId zoneId = ZoneId.systemDefault();
-        return value.atStartOfDay(zoneId).toEpochSecond() * 1000;
+        return value.atStartOfDay(zoneId).toEpochSecond()*1000;
     }
 
     @FXML
@@ -80,18 +81,18 @@ public class ReportGenerationController {
             //get all periods for the specific app
             List<AbstractActivityPeriod> activityPeriods = dataCollection.get(application);
             //Filter relevant periods
+
             activityPeriods = activityPeriods.stream()
                     .filter((period) -> period.getType() == AbstractActivityPeriod.Type.FOCUSED || period.getType() == AbstractActivityPeriod.Type.ON)
                     .collect(Collectors.toList());
             for (AbstractActivityPeriod activityPeriod : activityPeriods) {
                 //verify which periods we want to include in report
                 Long time_to_add = calculateRelevantTime(activityPeriod, start, end);
-                System.out.println("TIME RECEIVED AND IT'S " + (time_to_add < 0 ? "NEGATIVE" : "POSITIVE"));
                 //If the time is relevant
-                if (!time_to_add.equals(0L)) {
-                    Long currentUsage = outputUsage.get(application);
-                    outputUsage.put(application, (currentUsage == null ? 0L : currentUsage) + time_to_add);
-                }
+                Long correctedUsage = outputUsage.get(application);
+
+                if (!time_to_add.equals(0L))
+                    outputUsage.put(application, (correctedUsage == null ? 0 : correctedUsage) + time_to_add);
             }
         }
         return outputUsage;
@@ -105,8 +106,8 @@ public class ReportGenerationController {
         if (this.dateStart.getValue() == null || this.dateEnd.getValue() == null) return false;
         LocalDate startDate = this.dateStart.getValue();
         LocalDate endDate = this.dateEnd.getValue();
-        if (startDate.isAfter(LocalDate.now()) || endDate.isAfter(LocalDate.now())) {
-            LOGGER.warning("Start/End Date cannot be a value after the current date!");
+        if (startDate.isAfter(LocalDate.now())) {
+            LOGGER.warning("Start Date cannot be a value after the current date!");
             return false;
         }
         if (startDate.isAfter(endDate)) {
@@ -121,14 +122,18 @@ public class ReportGenerationController {
     }
 
 
+    @NotNull
     private Long calculateRelevantTime(AbstractActivityPeriod activityPeriod, long startEpochTime, long endEpochTime) {
+        //need to catch all the cases and calculate precisely what we want to calculate
+        //Case 1: Period begins before startEpoch and ends after it
         if (activityPeriod.getStartTime() < startEpochTime && activityPeriod.getEndTime() > startEpochTime) {
+            //check if it ends before or after endEpochTime
             if (activityPeriod.getEndTime() > endEpochTime)
                 return endEpochTime - startEpochTime;
             else
                 return activityPeriod.getEndTime() - startEpochTime;
 
-        } else if (activityPeriod.getStartTime() >= startEpochTime && activityPeriod.getStartTime() <= endEpochTime) {
+        } else if (activityPeriod.getStartTime() >= startEpochTime && activityPeriod.getEndTime() <= endEpochTime) {
             if (activityPeriod.getEndTime() <= endEpochTime)
                 return activityPeriod.getEndTime() - activityPeriod.getStartTime();
             else
