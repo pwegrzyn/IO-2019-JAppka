@@ -2,11 +2,15 @@ package pl.edu.agh.io.jappka.controller;
 
 import javafx.application.Platform;
 import javafx.beans.binding.Bindings;
+import javafx.collections.FXCollections;
+import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.Scene;
+import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
+import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
@@ -21,11 +25,13 @@ import java.awt.event.ActionListener;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.stream.Collectors;
 
 public class AppController {
 
     private Stage primaryStage;
     private Scene primaryScene;
+    private ObservableList<String> yAxisCategories;
     private ObservableMap<String, List<AbstractActivityPeriod>> obData;
     private ActionsControllerHelper actionsControllerHelper;
     private ChartControllerHelper chartControllerHelper;
@@ -224,15 +230,12 @@ public class AppController {
 
     private void initGanttChart() {
         this.xAxis = new NumberAxis();
-        mainChart = chartControllerHelper.initGanttChart(xAxis, mainPane, obData);
+        yAxisCategories = FXCollections.observableList(obData.keySet().stream().collect(Collectors.toList()));
+        mainChart = chartControllerHelper.initGanttChart(xAxis, mainPane, obData, yAxisCategories);
     }
 
     public ObservableMap<String, List<AbstractActivityPeriod>> getObData() {
         return obData;
-    }
-
-    public void update(){
-        chartControllerHelper.update(obData, mainChart);
     }
 
     public void gatherData(){
@@ -241,5 +244,42 @@ public class AppController {
             a.generate();
             obData.put(e.getKey(),a.getAllPeriods());
         }
+    }
+
+    public void update(){
+        String[] categories=obData.keySet().stream().toArray(String[]::new);
+        yAxisCategories.setAll(categories);
+
+        CategoryAxis yAxis=(CategoryAxis) mainChart.getYAxis();
+
+        System.out.println(yAxisCategories);
+
+        ArrayList<XYChart.Series<Number, String>> s=new ArrayList<>();
+        int c=0;
+        long diff = 0;
+        boolean skipBarChartDrawing = false;
+        for (Map.Entry<String,List<AbstractActivityPeriod>> e : obData.entrySet()){
+            XYChart.Series series= new XYChart.Series();
+            series.setName(categories[c]);
+            c++;
+            if(e.getValue().size() < 1) skipBarChartDrawing = true;
+            if (!skipBarChartDrawing) {
+                diff = e.getValue().get(0).getStartTime()/1000;
+                for (AbstractActivityPeriod a : e.getValue()){
+                    String style="status-green";
+                    long start = diff;
+                    long time=(a.getEndTime()-a.getStartTime())/1000;
+                    if (a.getType()==AbstractActivityPeriod.Type.NONFOCUSED || a.getType() == AbstractActivityPeriod.Type.OFF)
+                        style="status-transparent";
+                    series.getData().add(new XYChart.Data<Number, String>(start,series.getName(),new GanttChart.ExtraData(time,style)));
+                    diff += time;
+                }
+            }
+
+            skipBarChartDrawing = false;
+            s.add(series);
+        }
+
+        mainChart.setData(FXCollections.observableArrayList(s));
     }
 }

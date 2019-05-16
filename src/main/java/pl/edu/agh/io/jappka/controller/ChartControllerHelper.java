@@ -14,58 +14,23 @@ import pl.edu.agh.io.jappka.activity.AbstractActivityPeriod;
 import pl.edu.agh.io.jappka.charts.GanttChart;
 import pl.edu.agh.io.jappka.util.Utils;
 
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.List;
-import java.util.Map;
+import java.util.*;
 
 public class ChartControllerHelper {
 
 
-    public GanttChart<Number,String> initGanttChart(NumberAxis xAxis, AnchorPane mainPane, ObservableMap<String, List<AbstractActivityPeriod>> obData) {
+    public GanttChart<Number,String> initGanttChart(
+            NumberAxis xAxis, AnchorPane mainPane,
+            ObservableMap<String, List<AbstractActivityPeriod>> obData, ObservableList<String> yAxisCategories
+    ) {
         CategoryAxis yAxis = new CategoryAxis();
         GanttChart<Number,String> mainChart = new GanttChart<>(xAxis,yAxis);
-        configureAxis(xAxis,yAxis, obData);
+        configureAxis(xAxis,yAxis, obData, yAxisCategories);
         configureChart(mainChart);
         //Add chart to the main pane
         ObservableList list = mainPane.getChildren();
         list.addAll(mainChart);
         return mainChart;
-    }
-
-    public void update(ObservableMap<String, List<AbstractActivityPeriod>> obData, GanttChart<Number,String> mainChart){
-        String[] categories=obData.keySet().stream().toArray(String[]::new);
-
-        CategoryAxis yAxis=(CategoryAxis) mainChart.getYAxis();
-        yAxis.setCategories(FXCollections.<String>observableArrayList(Arrays.asList(categories)));
-
-        ArrayList<XYChart.Series<Number, String>> s=new ArrayList<>();
-        int c=0;
-        long diff = 0;
-        boolean skipBarChartDrawing = false;
-        for (Map.Entry<String,List<AbstractActivityPeriod>> e : obData.entrySet()){
-            XYChart.Series series= new XYChart.Series();
-            series.setName(categories[c]);
-            c++;
-            if(e.getValue().size() < 1) skipBarChartDrawing = true;
-            if (!skipBarChartDrawing) {
-                diff = e.getValue().get(0).getStartTime()/1000;
-                for (AbstractActivityPeriod a : e.getValue()){
-                    String style="status-green";
-                    long start = diff;
-                    long time=(a.getEndTime()-a.getStartTime())/1000;
-                    if (a.getType()==AbstractActivityPeriod.Type.NONFOCUSED || a.getType() == AbstractActivityPeriod.Type.OFF)
-                        style="status-transparent";
-                    series.getData().add(new XYChart.Data<Number, String>(start,series.getName(),new GanttChart.ExtraData(time,style)));
-                    diff += time;
-                }
-            }
-
-            skipBarChartDrawing = false;
-            s.add(series);
-        }
-
-        mainChart.setData(FXCollections.observableArrayList(s));
     }
 
     private void configureChart(GanttChart<Number,String> mainChart){
@@ -81,7 +46,7 @@ public class ChartControllerHelper {
         mainChart.getStylesheets().add(getClass().getResource("/ganttchart.css").toExternalForm());
     }
 
-    private void configureAxis(NumberAxis xAxis, CategoryAxis yAxis, ObservableMap<String, List<AbstractActivityPeriod>> obData){
+    private void configureAxis(NumberAxis xAxis, CategoryAxis yAxis, ObservableMap<String, List<AbstractActivityPeriod>> obData, ObservableList<String> yAxisCategories){
         xAxis.setLabel("Time");
         xAxis.setTickLabelFill(Color.CHOCOLATE);
         xAxis.setAutoRanging(false);
@@ -103,8 +68,7 @@ public class ChartControllerHelper {
         });
 
         //get initial category list
-        String[] categories = obData.keySet().toArray(new String[0]);
-        yAxis.setCategories(FXCollections.<String>observableArrayList(Arrays.asList(categories)));
+        yAxis.setCategories(yAxisCategories);
     }
 
 }
