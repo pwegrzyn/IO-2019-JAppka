@@ -1,22 +1,17 @@
 package pl.edu.agh.io.jappka.controller;
 
 import javafx.beans.binding.Bindings;
-import javafx.collections.FXCollections;
-import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.Cursor;
 import javafx.scene.Scene;
-import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
-import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.AnchorPane;
 import javafx.stage.Stage;
-import pl.edu.agh.io.jappka.activity.*;
+import pl.edu.agh.io.jappka.activity.AbstractActivityPeriod;
 import pl.edu.agh.io.jappka.charts.GanttChart;
 import pl.edu.agh.io.jappka.util.Utils;
 
@@ -55,9 +50,6 @@ public class AppController {
 
     @FXML
     private MenuItem darkTheme;
-    private long firstLastAppTime;
-
-
 
     public void setPrimaryStageElements(Stage primaryStage, Scene primaryScene) {
         this.primaryStage = primaryStage;
@@ -95,7 +87,7 @@ public class AppController {
 
     @FXML
     private void handleGenerateReport(ActionEvent event){
-        actionsControllerHelper.handleGenerateReport(currentTheme);
+        actionsControllerHelper.handleGenerateReport(currentTheme,obData);
     }
 
     @FXML
