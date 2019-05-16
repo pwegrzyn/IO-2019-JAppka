@@ -7,6 +7,7 @@ import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
+import javafx.stage.Stage;
 import pl.edu.agh.io.jappka.activity.*;
 import pl.edu.agh.io.jappka.os.NativeAccessor;
 import pl.edu.agh.io.jappka.os.WindowsNativeAccessor;
@@ -23,6 +24,7 @@ public class AddAppController {
     private String appName;
     private List<String> apps;
     private NativeAccessor accessor = new WindowsNativeAccessor();
+    private Stage stage;
 
     @FXML
     public void initialize(AppController appController) {
@@ -34,6 +36,10 @@ public class AddAppController {
                 .collect(Collectors.toList());
 
         listView.getItems().setAll(apps);
+    }
+
+    public void setStage(Stage stage) {
+        this.stage = stage;
     }
 
     @FXML
@@ -50,7 +56,7 @@ public class AddAppController {
 
     @FXML
     public void handleBackButton(ActionEvent event) {
-        appController.backToMainView();
+        this.stage.close();
     }
 
     @FXML

@@ -6,8 +6,6 @@ import javafx.collections.ObservableMap;
 import javafx.stage.Stage;
 import pl.edu.agh.io.jappka.activity.*;
 import org.apache.commons.exec.OS;
-import pl.edu.agh.io.jappka.os.NativeAccessor;
-import pl.edu.agh.io.jappka.os.WindowsNativeAccessor;
 import pl.edu.agh.io.jappka.presenter.AppGUI;
 import java.util.Timer;
 import java.util.List;

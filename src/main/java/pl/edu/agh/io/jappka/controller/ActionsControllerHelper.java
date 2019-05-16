@@ -33,17 +33,19 @@ public class ActionsControllerHelper {
     public void handleAddApplicationAction(ActionEvent event, AppController appController, String currentTheme)  {
 
         try{
-            primaryStage.setTitle("Add app");
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getClassLoader().getResource("JAppka/view/addAppView.fxml"));
             AnchorPane layout = loader.load();
-
             AddAppController controller = loader.getController();
             controller.initialize(appController);
-            graphScene = new Scene(layout);
-            graphScene.getStylesheets().add(currentTheme);
-            primaryStage.setScene(graphScene);
-            primaryStage.show();
+            Scene scene = new Scene(layout);
+            Stage stage = new Stage();
+            stage.setTitle("Add Application");
+            stage.setScene(scene);
+            scene.getStylesheets().add(currentTheme);
+            controller.setStage(stage);
+            stage.setTitle("Add app");
+            stage.show();
         }
 
         catch (IOException e){
@@ -54,19 +56,20 @@ public class ActionsControllerHelper {
     public void handleShowCharts(ActionEvent event, AppController appController, String currentTheme,
                                  ObservableMap<String, List<AbstractActivityPeriod>> obData){
         try{
-            primaryStage.setTitle("Chart generation");
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getClassLoader().getResource("JAppka/view/chartView.fxml"));
             AnchorPane layout = loader.load();
-
             ChartController controller = loader.getController();
             controller.initialize(appController);
             controller.setData(obData);
             controller.drawGraph();
-            graphScene = new Scene(layout);
-            graphScene.getStylesheets().add(currentTheme);
-            primaryStage.setScene(graphScene);
-            primaryStage.show();
+            Stage stage = new Stage();
+            Scene scene = new Scene(layout);
+            scene.getStylesheets().add(currentTheme);
+            stage.setScene(scene);
+            stage.setTitle("Chart generation");
+            controller.setStage(stage);
+            stage.show();
         }
 
         catch (IOException e){
@@ -77,17 +80,18 @@ public class ActionsControllerHelper {
     public void handleAddOwnEventAction(AppController appController, String currentTheme){
 
         try{
-            primaryStage.setTitle("Adding own event");
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getClassLoader().getResource("JAppka/view/addOwnEventView.fxml"));
             AnchorPane layout = loader.load();
-
             AddOwnEventController controller = loader.getController();
             controller.initialize(appController);
-            graphScene = new Scene(layout);
-            graphScene.getStylesheets().add(currentTheme);
-            primaryStage.setScene(graphScene);
-            primaryStage.show();
+            Scene scene = new Scene(layout);
+            scene.getStylesheets().add(currentTheme);
+            Stage stage = new Stage();
+            stage.setScene(scene);
+            stage.setTitle("Adding own event");
+            controller.setStage(stage);
+            stage.show();
         }
 
         catch (IOException e){
@@ -119,7 +123,7 @@ public class ActionsControllerHelper {
         }
     }
 
-    public void handleSave(ActionEvent event,String currentTheme,AppController appController,boolean save){
+    public void handleSave(ActionEvent event, String currentTheme, AppController appController, boolean save){
         try{
             FXMLLoader loader=new FXMLLoader();
             loader.setLocation(getClass().getClassLoader().getResource("Jappka/view/save.fxml"));
@@ -133,6 +137,7 @@ public class ActionsControllerHelper {
             if (save) stage.setTitle("Configuration saving");
             else stage.setTitle("Configuration loading");
             stage.setScene(scene);
+            controller.setStage(stage);
             stage.show();
         }
 
