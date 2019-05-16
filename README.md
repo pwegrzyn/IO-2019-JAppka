@@ -9,11 +9,11 @@ Project for Software Engineering class at AGH-UST
 
 SonarQube
 =============
-###Prerequisites
+### Prerequisites
 * [SonarQube](http://www.sonarqube.org/downloads/) 7.7+
 * A gradle wrapper is included that bundles gradle. All other required plugins will be pulled by gradle as needed.
 
-###Usage
+### Usage
 * Run the following command (updating the sonar.host.url property as appropriate if needed):
   * On Unix-like systems:
     `./gradlew -Dsonar.host.url=http://myhost:9000 sonarqube`
