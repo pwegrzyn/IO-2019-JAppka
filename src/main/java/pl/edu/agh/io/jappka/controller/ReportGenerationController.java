@@ -59,8 +59,8 @@ public class ReportGenerationController {
             for (String app : outputUsage.keySet()) {
                 System.out.println("APP " + app + "USAGE: " + outputUsage.get(app).toString());
             }
+            this.stage.close();
         }
-        this.stage.close();
     }
 
     private long dateToEpoch(LocalDate value) {
@@ -90,6 +90,9 @@ public class ReportGenerationController {
                 Long time_to_add = calculateRelevantTime(activityPeriod, start, end);
                 //If the time is relevant
                 if (!time_to_add.equals(0L))
+                    if (outputUsage.get(application) == null) {
+                        outputUsage.put(application, 0L);
+                    }
                     outputUsage.put(application, outputUsage.get(application) + time_to_add );
             }
         }
