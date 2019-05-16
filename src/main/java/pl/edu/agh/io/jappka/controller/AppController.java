@@ -18,7 +18,7 @@ import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import javafx.util.StringConverter;
-import pl.edu.agh.io.jappka.activity.*;
+import pl.edu.agh.io.jappka.activity.AbstractActivityPeriod;
 import pl.edu.agh.io.jappka.charts.GanttChart;
 import pl.edu.agh.io.jappka.util.Utils;
 
@@ -99,7 +99,7 @@ public class AppController {
 
     @FXML
     private void handleGenerateReport(ActionEvent event){
-        helper.handleGenerateReport(currentTheme);
+        helper.handleGenerateReport(currentTheme,obData);
     }
 
     @FXML

@@ -95,7 +95,7 @@ public class ActionsControllerHelper {
         }
     }
 
-    public void handleGenerateReport(String currentTheme){
+    public void handleGenerateReport(String currentTheme,ObservableMap<String, List<AbstractActivityPeriod>> data){
 
         try{
             FXMLLoader loader = new FXMLLoader();
@@ -103,6 +103,7 @@ public class ActionsControllerHelper {
             AnchorPane layout = loader.load();
 
             ReportGenerationController controller = loader.getController();
+            controller.setData(data);
             Scene reportGenerationScene = new Scene(layout);
             Stage reportGenerationStage = new Stage();
             reportGenerationStage.setTitle("Report generation");
