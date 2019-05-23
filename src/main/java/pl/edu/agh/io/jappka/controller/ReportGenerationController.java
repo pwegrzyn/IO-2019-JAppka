@@ -81,6 +81,9 @@ public class ReportGenerationController {
 
     private File chooseFileToSave() {
         FileChooser fileChooser = new FileChooser();
+        //TODO: ask if we want xlsx format
+        FileChooser.ExtensionFilter CSVfilter = new FileChooser.ExtensionFilter("CSV file (*.csv)","*.csv");
+        fileChooser.getExtensionFilters().add(CSVfilter);
         fileChooser.setTitle("Save report file to...");
         fileChooser.setInitialFileName("usage_report-"+dateStart.getValue().toString()+"--"+dateEnd.getValue().toString());
         return fileChooser.showSaveDialog(stage);
@@ -150,7 +153,7 @@ public class ReportGenerationController {
     }
 
     //Headers for the csv/xlsx file
-    //Todo: If user wants specific apps, we want to adjust headers to this scenario
+    //TODO: If user wants specific apps, we want to adjust headers to this scenario
     private List<String> getHeaders(long start, long end) {
         List<String> activeApps = new ArrayList<>();
         activeApps.addAll(filterData(start, end).keySet());
