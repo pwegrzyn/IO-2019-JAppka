@@ -63,9 +63,11 @@ public class ReportGenerationController {
             try {
 
                 File initialFile = chooseFileToSave();
+                if(initialFile==null)
+                    return;
                 generateReport(startDate, endDate, initialFile,FormatChoiceBox.getValue());
             } catch (IOException ex) {
-                //TODO generate window with save file canceled, due to user's action or otherwise
+                //TODO generate window with save file canceled due to file error
                 ex.printStackTrace();
             }
             this.stage.close();
