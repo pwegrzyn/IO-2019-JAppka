@@ -5,6 +5,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
 import javafx.stage.FileChooser;
@@ -67,8 +68,12 @@ public class ReportGenerationController {
                     return;
                 generateReport(startDate, endDate, initialFile,FormatChoiceBox.getValue());
             } catch (IOException ex) {
-                //TODO generate window with save file canceled due to file error
-                ex.printStackTrace();
+                //Generate an alert
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Information dialog");
+                alert.setHeaderText("File error");
+                alert.setContentText("Error has ocurred while saving the file. Try again, or contact your administrator");
+                alert.showAndWait();
             }
             this.stage.close();
         }
