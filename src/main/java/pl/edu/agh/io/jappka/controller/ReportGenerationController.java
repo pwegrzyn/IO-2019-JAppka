@@ -1,19 +1,16 @@
 package pl.edu.agh.io.jappka.controller;
 
 import com.sun.istack.internal.NotNull;
-import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
-import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
 import pl.edu.agh.io.jappka.activity.AbstractActivityPeriod;
-import pl.edu.agh.io.jappka.report.ReportFileFormat;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -42,7 +39,6 @@ public class ReportGenerationController {
     }
 
     public void init() {
-        this.FormatChoiceBox.setItems(FXCollections.observableArrayList(ReportFileFormat.CSV, ReportFileFormat.XLSX));
     }
 
     @FXML
@@ -51,8 +47,6 @@ public class ReportGenerationController {
     @FXML
     private DatePicker dateEnd;
 
-    @FXML
-    private ChoiceBox<ReportFileFormat> FormatChoiceBox;
 
     @FXML
     private void handleGenerateReportButton(ActionEvent event) {
@@ -66,7 +60,7 @@ public class ReportGenerationController {
                 File initialFile = chooseFileToSave();
                 if(initialFile==null)
                     return;
-                generateReport(startDate, endDate, initialFile,FormatChoiceBox.getValue());
+                generateReport(startDate, endDate, initialFile);
             } catch (IOException ex) {
                 //Generate an alert
                 Alert alert = new Alert(Alert.AlertType.ERROR);
@@ -81,20 +75,21 @@ public class ReportGenerationController {
 
     private File chooseFileToSave() {
         FileChooser fileChooser = new FileChooser();
-        //TODO: ask if we want xlsx format
         FileChooser.ExtensionFilter CSVfilter = new FileChooser.ExtensionFilter("CSV file (*.csv)","*.csv");
+        FileChooser.ExtensionFilter XLSXfilter = new FileChooser.ExtensionFilter("XLSX file (*.xlsx)","*.xlsx");
         fileChooser.getExtensionFilters().add(CSVfilter);
+        fileChooser.getExtensionFilters().add(XLSXfilter);
         fileChooser.setTitle("Save report file to...");
         fileChooser.setInitialFileName("usage_report-"+dateStart.getValue().toString()+"--"+dateEnd.getValue().toString());
         return fileChooser.showSaveDialog(stage);
     }
 
-    private void generateReport(LocalDate startDate, LocalDate endDate,File file,ReportFileFormat fileFormat) throws IOException {
+    private void generateReport(LocalDate startDate, LocalDate endDate,File file) throws IOException {
 
         long start = dateToEpochMilis(startDate);
         long end = dateToEpochMilis(endDate);
 
-        createReportFile(file, fileFormat);
+        createReportFile(file);
 
 
         //Open created and truncated file
@@ -134,7 +129,7 @@ public class ReportGenerationController {
 
     }
     //TODO: utilize fileFormat in creating file
-    private void createReportFile(File file, ReportFileFormat fileFormat) {
+    private void createReportFile(File file) {
         try {
             if (!file.exists()) {
                 //create new file if does not exist
@@ -213,10 +208,6 @@ public class ReportGenerationController {
     }
 
     private boolean validateInput() {
-        if (FormatChoiceBox.getValue() == null) {
-            LOGGER.warning("Report file format not specified!");
-            return false;
-        }
         if (this.dateStart.getValue() == null || this.dateEnd.getValue() == null) return false;
         LocalDate startDate = this.dateStart.getValue();
         LocalDate endDate = this.dateEnd.getValue();
