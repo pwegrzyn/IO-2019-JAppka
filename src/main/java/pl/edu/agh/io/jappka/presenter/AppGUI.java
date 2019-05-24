@@ -2,11 +2,13 @@ package pl.edu.agh.io.jappka.presenter;
 
 import javafx.application.Platform;
 import javafx.collections.ObservableMap;
+import javafx.event.EventHandler;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
 import javafx.scene.chart.XYChart;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
+import javafx.stage.WindowEvent;
 import pl.edu.agh.io.jappka.activity.AbstractActivityPeriod;
 import pl.edu.agh.io.jappka.activity.ActivitySummary;
 import pl.edu.agh.io.jappka.controller.AppController;
@@ -37,6 +39,12 @@ public class AppGUI {
         primaryStage.setScene(scene);
         primaryStage.show();
         primaryStage.setTitle("JAppka Activity Tracker");
+
+        primaryStage.setOnCloseRequest(e ->{
+                primaryStage.close();
+                System.exit(0);
+            });
+
         controller = loader.getController();
         controller.setObData(obData);
         controller.setActivities(activities);
