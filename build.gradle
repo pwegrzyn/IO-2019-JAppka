@@ -33,6 +33,8 @@ dependencies {
     implementation 'org.kie.modules:org-apache-commons-exec:6.5.0.Final'
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'org.apache.commons:commons-csv:1.4'
+    implementation 'org.netbeans.external:org-apache-commons-io:RELEASE110'
+    compile "org.apache.poi:poi-ooxml:3.17"
 }
 
 mainClassName = 'pl.edu.agh.io.jappka.app.App'

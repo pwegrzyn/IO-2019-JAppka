@@ -9,6 +9,9 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.apache.commons.csv.CSVFormat;
 import org.apache.commons.csv.CSVPrinter;
+import org.apache.commons.io.FilenameUtils;
+import org.apache.poi.ss.usermodel.*;
+import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import pl.edu.agh.io.jappka.activity.AbstractActivityPeriod;
 
 import java.io.File;
@@ -46,7 +49,6 @@ public class ReportGenerationController {
     @FXML
     private DatePicker dateEnd;
 
-
     @FXML
     private void handleGenerateReportButton(ActionEvent event) {
 
@@ -63,7 +65,7 @@ public class ReportGenerationController {
             } catch (IOException ex) {
                 //Generate an alert
                 String header = "File generation error";
-                String content = "Error has ocurred while saving the file. Try again, or contact your administrator";
+                String content = "Error has occurred while saving the file. Try again, or contact your administrator";
                 reportGenerateDialog(header, content, Alert.AlertType.ERROR);
             }
             this.stage.close();
@@ -92,13 +94,23 @@ public class ReportGenerationController {
 
     private void generateReport(LocalDate startDate, LocalDate endDate, File file) throws IOException {
 
+        switch(FilenameUtils.getExtension(file.getAbsolutePath())) {
+            case "csv":
+                printToCsv(startDate, endDate, file);
+                break;
+            case "xlsx":
+                printToXlsx(startDate, endDate, file);
+                break;
+            default:
+                LOGGER.warning("Failed to parse the correct extension from FileChooser output file.");
+                break;
+        }
+
+    }
+
+    private void printToCsv(LocalDate startDate, LocalDate endDate, File file) throws IOException {
         long start = dateToEpochMilis(startDate);
         long end = dateToEpochMilis(endDate);
-
-        createReportFile(file);
-
-
-        //Open created and truncated file
         FileWriter out = new FileWriter(file.getAbsolutePath());
         try (CSVPrinter printer = new CSVPrinter(out, CSVFormat.DEFAULT)) {
             printer.printRecord(getHeaders(start, end));
@@ -129,39 +141,61 @@ public class ReportGenerationController {
 
                 printer.printRecord(record);
             }
-
-        }
-
-
-    }
-
-    //TODO: utilize fileFormat in creating file
-    private void createReportFile(File file) {
-        try {
-            if (!file.exists()) {
-                //create new file if does not exist
-                if (file.createNewFile())
-                    System.out.println("Creating file successful");
-                else throw new IOException("Creating file failed!");
-            } else {
-                //truncate if exists
-                FileChannel outChan = new FileOutputStream(file, true).getChannel();
-                outChan.truncate(0);
-            }
-        } catch (IOException ex) {
-            //TODO error creating or truncating file, maybe a prompt to user
-            ex.printStackTrace();
         }
     }
 
-    //Headers for the csv/xlsx file
+    // TODO: fill the workbook with report data
+    private void printToXlsx(LocalDate startDate, LocalDate endDate, File file) throws IOException {
+        long start = dateToEpochMilis(startDate);
+        long end = dateToEpochMilis(endDate);
+
+        // Init the XLSX workbook
+        Workbook workbook = new XSSFWorkbook();
+        CreationHelper createHelper = workbook.getCreationHelper();
+        Sheet sheet = workbook.createSheet("Activity Report");
+
+        // Prepare header
+        Font headerFont = workbook.createFont();
+        headerFont.setBold(true);
+        headerFont.setFontHeightInPoints((short) 14);
+        headerFont.setColor(IndexedColors.BLACK.getIndex());
+        CellStyle headerCellStyle = workbook.createCellStyle();
+        headerCellStyle.setFont(headerFont);
+
+        // Create the header (stub)
+        Row headerRow = sheet.createRow(0);
+        for(int i = 0; i < 5; i++) {
+            Cell cell = headerRow.createCell(i);
+            cell.setCellValue("Col " + i);
+            cell.setCellStyle(headerCellStyle);
+        }
+
+        // Create Cell Style for formatting Date
+        CellStyle dateCellStyle = workbook.createCellStyle();
+        dateCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("dd-MM-yyyy"));
+
+        // Actually create all rows
+        //TODO: fill in the report data
+
+        // Resize all columns to fit the data
+        for(int i = 0; i < 5; i++) {
+            sheet.autoSizeColumn(i);
+        }
+
+        // Write the output to a file
+        FileOutputStream fileOut = new FileOutputStream(file.getAbsolutePath());
+        workbook.write(fileOut);
+        fileOut.close();
+        workbook.close();
+    }
+
     //TODO: If user wants specific apps, we want to adjust headers to this scenario
     private List<String> getHeaders(long start, long end) {
         List<String> activeApps = new ArrayList<>();
         activeApps.addAll(filterData(start, end).keySet());
         activeApps.remove("PC");
         //Add the apps to the standard headers
-        List<String> headers = new ArrayList<>(Arrays.asList("DATA", "PC WLACZONY", "PC AKTYWNY"));
+        List<String> headers = new ArrayList<>(Arrays.asList("DATE", "PC ON", "PC ACTIVE"));
         headers.addAll(activeApps);
         return headers;
     }
