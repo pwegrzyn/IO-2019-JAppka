@@ -14,6 +14,7 @@ import javafx.scene.chart.XYChart;
 import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
+import javafx.scene.control.Tooltip;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
@@ -24,10 +25,12 @@ import pl.edu.agh.io.jappka.activity.CustomActivityPeriod;
 import pl.edu.agh.io.jappka.charts.GanttChart;
 import pl.edu.agh.io.jappka.util.Utils;
 
+import javax.tools.Tool;
 import java.awt.event.ActionListener;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.function.ToLongBiFunction;
 import java.util.stream.Collectors;
 
 public class AppController {
@@ -270,7 +273,8 @@ public class AppController {
                     String style = getChartStyle(a.getType());
                     long start = diff;
                     long time=(a.getEndTime()-a.getStartTime())/1000;
-                    series.getData().add(new XYChart.Data<Number, String>(start,series.getName(),new GanttChart.ExtraData(time,style)));
+                    XYChart.Data<Number, String> entry = new XYChart.Data<Number, String>(start,series.getName(),new GanttChart.ExtraData(time,style));
+                    series.getData().add(entry);
                     diff += time;
                 }
             }
@@ -280,6 +284,13 @@ public class AppController {
         }
 
         mainChart.setData(FXCollections.observableArrayList(s));
+
+        for(XYChart.Series<Number, String> series : mainChart.getData()){
+            for(XYChart.Data<Number, String> entry : series.getData()){
+                Tooltip t = new Tooltip(entry.getYValue().toString());
+                Tooltip.install(entry.getNode(), t);
+            }
+        }
     }
 
     private String getChartStyle(AbstractActivityPeriod.Type type){
