@@ -1,6 +1,5 @@
 package pl.edu.agh.io.jappka.controller;
 
-import com.sun.istack.internal.NotNull;
 import javafx.collections.ObservableMap;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
@@ -162,7 +161,7 @@ public class ReportGenerationController {
         activeApps.addAll(filterData(start, end).keySet());
         activeApps.remove("PC");
         //Add the apps to the standard headers
-        List<String> headers = new ArrayList<>(Arrays.asList("DATA", "PC WŁĄCZONY", "PC AKTYWNY"));
+        List<String> headers = new ArrayList<>(Arrays.asList("DATA", "PC WLACZONY", "PC AKTYWNY"));
         headers.addAll(activeApps);
         return headers;
     }
@@ -241,7 +240,6 @@ public class ReportGenerationController {
     }
 
     //FIXME: Test this method. Although i think it's pretty correct (cases described below)
-    @NotNull
     private Long calculateRelevantTime(AbstractActivityPeriod activityPeriod, long startEpochTime, long endEpochTime) {
         //Returns part of activity period that's exactly between start and end of epoch time
         //Case 1: Period begins before startEpoch and ends after it (intersects with it)
