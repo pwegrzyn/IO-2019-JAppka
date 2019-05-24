@@ -1,6 +1,9 @@
 package pl.edu.agh.io.jappka.util;
 
 import java.text.SimpleDateFormat;
+import java.time.LocalDateTime;
+import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.Date;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
@@ -18,6 +21,15 @@ public class Utils {
         SimpleDateFormat sdf = new SimpleDateFormat(pattern);
         Date resultdate = new Date(timeInMilliseconds);
         return sdf.format(resultdate);
+    }
+
+    public static long strDateToMillis(String date){
+        LocalDateTime localDate = LocalDateTime.parse(date, DateTimeFormatter.ofPattern("yyyy-MM-dd'T'HH:mm"));
+        return localDate.atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+    }
+
+    public static long strDateToMillis(String date, String pattern){
+        return 0;
     }
 
     public static String removeExtensionFromFilename(String filename){

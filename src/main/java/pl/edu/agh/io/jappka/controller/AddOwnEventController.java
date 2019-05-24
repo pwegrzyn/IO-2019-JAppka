@@ -8,6 +8,9 @@ import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import pl.edu.agh.io.jappka.util.DateTimePicker;
+import pl.edu.agh.io.jappka.util.Utils;
+
+import java.time.ZoneId;
 
 public class AddOwnEventController {
 
@@ -46,6 +49,14 @@ public class AddOwnEventController {
             System.out.println(eventName.getText());
             System.out.println(start.getDateTimeValue());
             System.out.println(end.getDateTimeValue());
+
+            long startTime = start.getDateTimeValue().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+            long endTime = end.getDateTimeValue().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+
+            if(startTime >= endTime) {return;}
+
+            DataController controller = appController.getDataController();
+            controller.addCustomEvent(startTime, endTime, eventName.getText());
         }
     }
 

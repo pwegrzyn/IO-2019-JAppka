@@ -15,9 +15,12 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.layout.Pane;
 import javafx.stage.Stage;
 import pl.edu.agh.io.jappka.activity.AbstractActivityPeriod;
 import pl.edu.agh.io.jappka.activity.ActivitySummary;
+import pl.edu.agh.io.jappka.activity.AppActivityPeriod;
+import pl.edu.agh.io.jappka.activity.CustomActivityPeriod;
 import pl.edu.agh.io.jappka.charts.GanttChart;
 import pl.edu.agh.io.jappka.util.Utils;
 
@@ -35,6 +38,7 @@ public class AppController {
     private ObservableMap<String, List<AbstractActivityPeriod>> obData;
     private ActionsControllerHelper actionsControllerHelper;
     private ChartControllerHelper chartControllerHelper;
+    private DataController dataController;
 
     private GanttChart<Number,String> mainChart;
 
@@ -85,6 +89,7 @@ public class AppController {
             this.primaryScene.getStylesheets().add(currentTheme);
 
         });
+        this.dataController = new DataController(this.obData);
     }
 
     public void setObData(ObservableMap<String, List<AbstractActivityPeriod>> obData){
@@ -286,4 +291,7 @@ public class AppController {
         }
     }
 
+    public DataController getDataController(){
+        return this.dataController;
+    }
 }
