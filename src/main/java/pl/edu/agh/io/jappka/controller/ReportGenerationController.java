@@ -58,33 +58,40 @@ public class ReportGenerationController {
             try {
 
                 File initialFile = chooseFileToSave();
-                if(initialFile==null)
+                if (initialFile == null)
                     return;
                 generateReport(startDate, endDate, initialFile);
             } catch (IOException ex) {
                 //Generate an alert
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Information dialog");
-                alert.setHeaderText("File error");
-                alert.setContentText("Error has ocurred while saving the file. Try again, or contact your administrator");
-                alert.showAndWait();
+                String header = "File generation error";
+                String content = "Error has ocurred while saving the file. Try again, or contact your administrator";
+                reportGenerateDialog(header, content, Alert.AlertType.ERROR);
             }
             this.stage.close();
         }
     }
 
+    private void reportGenerateDialog(String header, String content, Alert.AlertType type) {
+        String title = "Report generation dialog";
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(header);
+        alert.setContentText(content);
+        alert.showAndWait();
+    }
+
     private File chooseFileToSave() {
         FileChooser fileChooser = new FileChooser();
-        FileChooser.ExtensionFilter CSVfilter = new FileChooser.ExtensionFilter("CSV file (*.csv)","*.csv");
-        FileChooser.ExtensionFilter XLSXfilter = new FileChooser.ExtensionFilter("XLSX file (*.xlsx)","*.xlsx");
+        FileChooser.ExtensionFilter CSVfilter = new FileChooser.ExtensionFilter("CSV file (*.csv)", "*.csv");
+        FileChooser.ExtensionFilter XLSXfilter = new FileChooser.ExtensionFilter("XLSX file (*.xlsx)", "*.xlsx");
         fileChooser.getExtensionFilters().add(CSVfilter);
         fileChooser.getExtensionFilters().add(XLSXfilter);
         fileChooser.setTitle("Save report file to...");
-        fileChooser.setInitialFileName("usage_report-"+dateStart.getValue().toString()+"--"+dateEnd.getValue().toString());
+        fileChooser.setInitialFileName("usage_report-" + dateStart.getValue().toString() + "--" + dateEnd.getValue().toString());
         return fileChooser.showSaveDialog(stage);
     }
 
-    private void generateReport(LocalDate startDate, LocalDate endDate,File file) throws IOException {
+    private void generateReport(LocalDate startDate, LocalDate endDate, File file) throws IOException {
 
         long start = dateToEpochMilis(startDate);
         long end = dateToEpochMilis(endDate);
@@ -128,6 +135,7 @@ public class ReportGenerationController {
 
 
     }
+
     //TODO: utilize fileFormat in creating file
     private void createReportFile(File file) {
         try {
@@ -212,15 +220,21 @@ public class ReportGenerationController {
         LocalDate startDate = this.dateStart.getValue();
         LocalDate endDate = this.dateEnd.getValue();
         if (startDate.isAfter(LocalDate.now())) {
-            LOGGER.warning("Start Date cannot be a value after the current date!");
+            String header = "Wrong date selection";
+            String content = "Start Date cannot be a value after the current date!";
+            reportGenerateDialog(header,content, Alert.AlertType.ERROR);
             return false;
         }
         if (startDate.isAfter(endDate)) {
-            LOGGER.warning("End Date cannot be a value after the start date!");
+            String header = "Wrong date selection";
+            String content = "End Date cannot be a value after the start date!";
+            reportGenerateDialog(header,content, Alert.AlertType.ERROR);
             return false;
         }
         if (startDate.equals(endDate)) {
-            LOGGER.warning("Cannot be the same day!");
+            String header = "Wrong date selection";
+            String content = "End Date cannot the same as the start date!";
+            reportGenerateDialog(header,content, Alert.AlertType.ERROR);
             return false;
         }
         return true;
@@ -243,9 +257,9 @@ public class ReportGenerationController {
         } else if (activityPeriod.getStartTime() >= startEpochTime && activityPeriod.getEndTime() <= endEpochTime) {
 
             return activityPeriod.getEndTime() - activityPeriod.getStartTime();
-        //Case 3: it intersects with second frame (but not the first)
-        } else if (activityPeriod.getStartTime() >=startEpochTime && activityPeriod.getEndTime() > endEpochTime) {
-            return endEpochTime-activityPeriod.getStartTime();
+            //Case 3: it intersects with second frame (but not the first)
+        } else if (activityPeriod.getStartTime() >= startEpochTime && activityPeriod.getEndTime() > endEpochTime) {
+            return endEpochTime - activityPeriod.getStartTime();
         } else
             return 0L;
     }
