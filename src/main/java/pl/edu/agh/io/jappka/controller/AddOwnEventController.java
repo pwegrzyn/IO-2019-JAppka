@@ -7,6 +7,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
+import pl.edu.agh.io.jappka.util.DateTimePicker;
 
 public class AddOwnEventController {
 
@@ -17,13 +18,12 @@ public class AddOwnEventController {
     private TextField eventName;
 
     @FXML
-    private DatePicker start;
+    private DateTimePicker start;
 
     @FXML
-    private DatePicker end;
+    private DateTimePicker end;
 
     public void initialize(AppController appController) {
-
         this.appController = appController;
     }
 
@@ -36,15 +36,16 @@ public class AddOwnEventController {
         this.stage.close();
     }
 
+
     @FXML
     private void handleAddEventAction(ActionEvent event) {
-        if (start.getValue() == null || end.getValue() == null || eventName.getText() == null){
+        if (start.getValue() == null || end.getValue() == null || eventName.getText().equals("")){
             System.out.println("Rzuć tu jakimś tekstem żeby wybrać daty albo coś");
         }
         else{
             System.out.println(eventName.getText());
-            System.out.println(start.getValue());
-            System.out.println(end.getValue());
+            System.out.println(start.getDateTimeValue());
+            System.out.println(end.getDateTimeValue());
         }
     }
 

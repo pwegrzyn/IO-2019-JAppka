@@ -1,16 +1,16 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.DatePicker?>
 <?import javafx.scene.control.TextField?>
 <?import javafx.scene.layout.AnchorPane?>
+<?import pl.edu.agh.io.jappka.util.DateTimePicker?>
 
 <AnchorPane prefHeight="200.0" prefWidth="600.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.edu.agh.io.jappka.controller.AddOwnEventController">
    <children>
-      <TextField fx:id="eventName" layoutX="14.0" layoutY="38.0" prefHeight="31.0" prefWidth="145.0" promptText="Event name" />
-      <DatePicker fx:id="end" layoutX="400.0" layoutY="38.0" prefHeight="31.0" prefWidth="191.0" promptText="End date" />
-      <DatePicker fx:id="start" layoutX="189.0" layoutY="38.0" prefHeight="31.0" prefWidth="191.0" promptText="Start date" />
+      <TextField fx:id="eventName" layoutX="14.0" layoutY="38.0" prefHeight="31.0" prefWidth="160.0" promptText="Event name" />
+      <DateTimePicker fx:id="start" layoutX="212.0" layoutY="38.0" prefHeight="31.0" prefWidth="160.0" promptText="Start date" />
       <Button layoutX="331.0" layoutY="117.0" mnemonicParsing="false" onAction="#handleBackButton" prefHeight="31.0" prefWidth="138.0" text="Cancel" />
       <Button layoutX="120.0" layoutY="117.0" mnemonicParsing="false" onAction="#handleAddEventAction" prefHeight="31.0" prefWidth="138.0" text="Add Event" />
+      <DateTimePicker fx:id="end" layoutX="404.0" layoutY="38.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="31.0" prefWidth="160.0" promptText="End date" />
    </children>
 </AnchorPane>
