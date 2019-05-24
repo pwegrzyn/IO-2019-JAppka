@@ -250,10 +250,6 @@ public class AppController {
         String[] categories=obData.keySet().stream().toArray(String[]::new);
         yAxisCategories.setAll(categories);
 
-        CategoryAxis yAxis=(CategoryAxis) mainChart.getYAxis();
-
-        System.out.println(yAxisCategories);
-
         ArrayList<XYChart.Series<Number, String>> s=new ArrayList<>();
         int c=0;
         long diff = 0;
@@ -266,11 +262,9 @@ public class AppController {
             if (!skipBarChartDrawing) {
                 diff = e.getValue().get(0).getStartTime()/1000;
                 for (AbstractActivityPeriod a : e.getValue()){
-                    String style="status-green";
+                    String style = getChartStyle(a.getType());
                     long start = diff;
                     long time=(a.getEndTime()-a.getStartTime())/1000;
-                    if (a.getType()==AbstractActivityPeriod.Type.NONFOCUSED || a.getType() == AbstractActivityPeriod.Type.OFF)
-                        style="status-transparent";
                     series.getData().add(new XYChart.Data<Number, String>(start,series.getName(),new GanttChart.ExtraData(time,style)));
                     diff += time;
                 }
@@ -282,4 +276,14 @@ public class AppController {
 
         mainChart.setData(FXCollections.observableArrayList(s));
     }
+
+    private String getChartStyle(AbstractActivityPeriod.Type type){
+        if(type == AbstractActivityPeriod.Type.NONFOCUSED || type == AbstractActivityPeriod.Type.OFF){
+            return "status-transparent";
+        }
+        else{
+            return "status-green";
+        }
+    }
+
 }
