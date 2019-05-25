@@ -1,9 +1,11 @@
 package pl.edu.agh.io.jappka.controller;
 
+import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
+import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
@@ -13,6 +15,7 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import pl.edu.agh.io.jappka.activity.AbstractActivityPeriod;
+import pl.edu.agh.io.jappka.report.ReportTimeUnit;
 import pl.edu.agh.io.jappka.util.Utils;
 
 import java.io.File;
@@ -41,6 +44,7 @@ public class ReportGenerationController {
     }
 
     public void init() {
+        this.TimeUnitChoiceBox.setItems(FXCollections.observableArrayList(ReportTimeUnit.values()));
     }
 
     @FXML
@@ -48,6 +52,9 @@ public class ReportGenerationController {
 
     @FXML
     private DatePicker dateEnd;
+
+    @FXML
+    private ChoiceBox<ReportTimeUnit> TimeUnitChoiceBox;
 
     @FXML
     private void handleGenerateReportButton(ActionEvent event) {
@@ -59,7 +66,7 @@ public class ReportGenerationController {
                 File initialFile = chooseFileToSave();
                 if (initialFile == null)
                     return;
-                generateReport(startDate, endDate, initialFile);
+                generateReport(startDate, endDate, initialFile, TimeUnitChoiceBox.getValue());
             } catch (IOException ex) {
                 //Generate an alert
                 String header = "File generation error";
@@ -90,14 +97,14 @@ public class ReportGenerationController {
         return fileChooser.showSaveDialog(stage);
     }
 
-    private void generateReport(LocalDate startDate, LocalDate endDate, File file) throws IOException {
+    private void generateReport(LocalDate startDate, LocalDate endDate, File file, ReportTimeUnit timeUnit) throws IOException {
 
         switch(FilenameUtils.getExtension(file.getAbsolutePath())) {
             case "csv":
-                printToCsv(startDate, endDate, file);
+                printToCsv(startDate, endDate, file, timeUnit);
                 break;
             case "xlsx":
-                printToXlsx(startDate, endDate, file);
+                printToXlsx(startDate, endDate, file, timeUnit);
                 break;
             default:
                 LOGGER.warning("Failed to parse the correct extension from the FileChooser output file.");
@@ -106,7 +113,7 @@ public class ReportGenerationController {
 
     }
 
-    private void printToCsv(LocalDate startDate, LocalDate endDate, File file) throws IOException {
+    private void printToCsv(LocalDate startDate, LocalDate endDate, File file, ReportTimeUnit unit) throws IOException {
         long start = dateToEpochMilis(startDate);
         long end = dateToEpochMilis(endDate) + MILISECONDS_IN_DAY - 1;
         FileWriter out = new FileWriter(file.getAbsolutePath());
@@ -128,10 +135,12 @@ public class ReportGenerationController {
                 //Remove PC from all apps usage - we have it separately reported by our own label
                 reportedApps.remove("PC");
                 //Get all wanted reported apps
-                List<Long> usages = reportedApps.stream()
+                List<Double> usages = reportedApps.stream()
                         .map(concreteDayUsages::get)
+                        .map(time -> epochMillisecondsUnitConvert(time, unit))
                         .collect(Collectors.toList());
-                List<Object> record = new ArrayList<>(Arrays.asList(calculatedDay, concreteDayUsages.get("PC"), allAppsUsage));
+                List<Object> record = new ArrayList<>(Arrays.asList(calculatedDay, epochMillisecondsUnitConvert(concreteDayUsages.get("PC"), unit),
+                        epochMillisecondsUnitConvert(allAppsUsage, unit)));
                 //Remove pc's value, we got it above
                 concreteDayUsages.remove("PC");
                 record.addAll(usages);
@@ -141,7 +150,7 @@ public class ReportGenerationController {
     }
 
     // TODO: fill the workbook with report data
-    private void printToXlsx(LocalDate startDate, LocalDate endDate, File file) throws IOException {
+    private void printToXlsx(LocalDate startDate, LocalDate endDate, File file, ReportTimeUnit timeUnit) throws IOException {
         long start = dateToEpochMilis(startDate);
         long end = dateToEpochMilis(endDate);
 
@@ -245,6 +254,7 @@ public class ReportGenerationController {
 
     private boolean validateInput() {
         if (this.dateStart.getValue() == null || this.dateEnd.getValue() == null) return false;
+        if (this.TimeUnitChoiceBox.getValue() == null) return false;
         LocalDate startDate = this.dateStart.getValue();
         LocalDate endDate = this.dateEnd.getValue();
         if (startDate.isAfter(LocalDate.now())) {
@@ -290,6 +300,23 @@ public class ReportGenerationController {
         } else {
             return 0L;
         }
+    }
+
+    private double epochMillisecondsUnitConvert(long time, ReportTimeUnit targetUnit) {
+        switch (targetUnit) {
+            case MILLISECONDS:
+                return time;
+            case SECONDS:
+                return time / 1000;
+            case MINUTES:
+                return time / 1000 / 60;
+            case HOURS:
+                return time / 1000 / 60 / 60;
+            case DAYS:
+                return time / 1000 / 60 / 60 / 24;
+            default: break;
+        }
+        return Double.NaN;
     }
 
 }
