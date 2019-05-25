@@ -16,7 +16,7 @@ public class HoveredNode extends StackPane {
         setOnMouseEntered(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent mouseEvent) {
-                getChildren().setAll(label);
+                getChildren().add(0, label);
                 setCursor(Cursor.NONE);
                 toFront();
             }

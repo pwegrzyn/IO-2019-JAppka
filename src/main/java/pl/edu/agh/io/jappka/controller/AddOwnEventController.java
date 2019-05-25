@@ -7,6 +7,7 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
+import pl.edu.agh.io.jappka.Exceptions.InvalidEventException;
 import pl.edu.agh.io.jappka.util.DateTimePicker;
 import pl.edu.agh.io.jappka.util.Utils;
 
@@ -48,7 +49,12 @@ public class AddOwnEventController {
             long endTime = end.getDateTimeValue().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
             DataController controller = appController.getDataController();
-            controller.addCustomEvent(startTime, endTime, eventName.getText());
+            try {
+                controller.addCustomEvent(startTime, endTime, eventName.getText());
+            }
+            catch(InvalidEventException e){
+                System.out.println("Events are overlapping");
+            }
         }
     }
 

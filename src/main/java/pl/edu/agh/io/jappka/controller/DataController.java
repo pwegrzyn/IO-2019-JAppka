@@ -3,6 +3,7 @@ package pl.edu.agh.io.jappka.controller;
 import javafx.application.Platform;
 import javafx.concurrent.Task;
 import javafx.scene.layout.Pane;
+import pl.edu.agh.io.jappka.Exceptions.InvalidEventException;
 import pl.edu.agh.io.jappka.activity.AbstractActivityPeriod;
 import pl.edu.agh.io.jappka.activity.AppActivityPeriod;
 import pl.edu.agh.io.jappka.activity.CustomActivityPeriod;
@@ -22,12 +23,17 @@ public class DataController {
 
     }
 
-    public void addCustomEvent(long start, long end, String name){
+    public void addCustomEvent(long start, long end, String name) throws InvalidEventException {
         String key = "Custom events";
         AbstractActivityPeriod period = new CustomActivityPeriod(start, end, name);
         List<AbstractActivityPeriod> periods;
         if(data.containsKey(key)){
             periods = data.get(key);
+
+            if(checkIfOverlaps(period, periods)){
+                throw new InvalidEventException();
+            }
+
             long oldEnd = periods.get(periods.size() - 1).getEndTime();
             AbstractActivityPeriod emptyPeriod = new CustomActivityPeriod(oldEnd, start, "", AbstractActivityPeriod.Type.NONFOCUSED);
             periods.add(emptyPeriod);
@@ -37,7 +43,19 @@ public class DataController {
         }
         periods.add(period);
         data.put(key, periods);
-        removeOverlapping(period);
+    }
+
+    public boolean checkIfOverlaps(AbstractActivityPeriod period, List<AbstractActivityPeriod> periods){
+        for(AbstractActivityPeriod p : periods){
+            long start = period.getStartTime();
+            long end = period.getEndTime();
+            boolean overlaps = p.getEndTime() > start && p.getStartTime() < end;
+            if(overlaps) {
+                return true;
+            }
+        }
+
+        return false;
     }
 
     private void removeOverlapping(AbstractActivityPeriod period){
@@ -74,19 +92,9 @@ public class DataController {
                 }
             }
             Platform.runLater(() ->{
-                data.get("Discord").forEach(ep -> {
-                    System.out.println(ep.getType());
-                });
-                System.out.println(toRemove.size());
                 e.getValue().addAll(toAdd);
                 e.getValue().removeAll(toRemove);
-                System.out.println();
-                data.get("Discord").forEach(ep -> {
-                    System.out.println(ep.getType());
-                });
             });
-            System.out.println("\n\n");
-
         }
 
     }
