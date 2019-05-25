@@ -18,17 +18,25 @@ public class DataController {
         this.data = data;
     }
 
+    public void initData(){
+
+    }
+
     public void addCustomEvent(long start, long end, String name){
+        String key = "Custom events";
         AbstractActivityPeriod period = new CustomActivityPeriod(start, end, name);
         List<AbstractActivityPeriod> periods;
-        if(data.containsKey(name)){
-            periods = data.get(name);
+        if(data.containsKey(key)){
+            periods = data.get(key);
+            long oldEnd = periods.get(periods.size() - 1).getEndTime();
+            AbstractActivityPeriod emptyPeriod = new CustomActivityPeriod(oldEnd, start, "", AbstractActivityPeriod.Type.NONFOCUSED);
+            periods.add(emptyPeriod);
         }
         else{
             periods = new ArrayList<>();
         }
         periods.add(period);
-        data.put(name, periods);
+        data.put(key, periods);
         removeOverlapping(period);
     }
 

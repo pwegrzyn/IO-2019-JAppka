@@ -8,6 +8,11 @@ public class CustomActivityPeriod extends AbstractActivityPeriod{
         this.activityName = name;
     }
 
+    public CustomActivityPeriod(long start, long end, String name, AbstractActivityPeriod.Type type){
+        super(start, end, type);
+        this.activityName = name;
+    }
+
     @Override
     public String generateInfo() {
         return "";

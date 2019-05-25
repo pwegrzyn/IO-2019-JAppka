@@ -6,7 +6,9 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.chart.CategoryAxis;
 import javafx.scene.chart.NumberAxis;
@@ -15,18 +17,21 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.layout.Pane;
+import javafx.scene.layout.StackPane;
+import javafx.scene.paint.Color;
 import javafx.stage.Stage;
 import pl.edu.agh.io.jappka.activity.AbstractActivityPeriod;
 import pl.edu.agh.io.jappka.activity.ActivitySummary;
 import pl.edu.agh.io.jappka.activity.AppActivityPeriod;
 import pl.edu.agh.io.jappka.activity.CustomActivityPeriod;
 import pl.edu.agh.io.jappka.charts.GanttChart;
+import pl.edu.agh.io.jappka.charts.HoveredNode;
 import pl.edu.agh.io.jappka.util.Utils;
 
 import javax.tools.Tool;
-import java.awt.event.ActionListener;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -274,6 +279,18 @@ public class AppController {
                     long start = diff;
                     long time=(a.getEndTime()-a.getStartTime())/1000;
                     XYChart.Data<Number, String> entry = new XYChart.Data<Number, String>(start,series.getName(),new GanttChart.ExtraData(time,style));
+
+                    if(a.getType() != AbstractActivityPeriod.Type.NONFOCUSED && a.getType() != AbstractActivityPeriod.Type.OFF) {
+                        String title = "";
+                        if(a instanceof CustomActivityPeriod){
+                            CustomActivityPeriod event = (CustomActivityPeriod)a;
+                            title = event.getActivityName();
+                        }
+                        entry.setNode(new HoveredNode(
+                                Utils.millisecondsToCustomStrDate(a.getStartTime(), "HH:mm:ss"),
+                                Utils.millisecondsToCustomStrDate(a.getEndTime(), "HH:mm:ss"), title));
+                    }
+
                     series.getData().add(entry);
                     diff += time;
                 }
