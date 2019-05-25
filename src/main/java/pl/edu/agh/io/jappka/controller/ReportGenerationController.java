@@ -13,12 +13,12 @@ import org.apache.commons.io.FilenameUtils;
 import org.apache.poi.ss.usermodel.*;
 import org.apache.poi.xssf.usermodel.XSSFWorkbook;
 import pl.edu.agh.io.jappka.activity.AbstractActivityPeriod;
+import pl.edu.agh.io.jappka.util.Utils;
 
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
-import java.nio.channels.FileChannel;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
@@ -51,13 +51,11 @@ public class ReportGenerationController {
 
     @FXML
     private void handleGenerateReportButton(ActionEvent event) {
-
         if (validateInput()) {
             LocalDate startDate = this.dateStart.getValue();
             LocalDate endDate = this.dateEnd.getValue();
             // TODO - parsing this to csv data
             try {
-
                 File initialFile = chooseFileToSave();
                 if (initialFile == null)
                     return;
@@ -102,7 +100,7 @@ public class ReportGenerationController {
                 printToXlsx(startDate, endDate, file);
                 break;
             default:
-                LOGGER.warning("Failed to parse the correct extension from FileChooser output file.");
+                LOGGER.warning("Failed to parse the correct extension from the FileChooser output file.");
                 break;
         }
 
@@ -110,35 +108,33 @@ public class ReportGenerationController {
 
     private void printToCsv(LocalDate startDate, LocalDate endDate, File file) throws IOException {
         long start = dateToEpochMilis(startDate);
-        long end = dateToEpochMilis(endDate);
+        long end = dateToEpochMilis(endDate) + MILISECONDS_IN_DAY - 1;
         FileWriter out = new FileWriter(file.getAbsolutePath());
         try (CSVPrinter printer = new CSVPrinter(out, CSVFormat.DEFAULT)) {
             printer.printRecord(getHeaders(start, end));
-            int days = (int) ((end - start) / MILISECONDS_IN_DAY);
-            //FIXME: remove this
+            int days = (int) ((end - start) / MILISECONDS_IN_DAY) + 1;
             System.out.println("Generating report for " + days + " days");
             //get all apps we want to include in the report
             List<String> reportedApps = new ArrayList<>(filterData(start, end).keySet());
-
             //Iterate through days we want reported
             for (int i = 0; i < days; i++) {
-                //Filter the data accordingly to day processed
-                Map<String, Long> concreteDayUsages = filterData(start + (i * MILISECONDS_IN_DAY), end + (i * MILISECONDS_IN_DAY));
+                long nextDayStart = start + (i * MILISECONDS_IN_DAY);
+                long nextDayEnd = nextDayStart + MILISECONDS_IN_DAY - 1;
+                System.out.println("Calculating usage for next day, start: " + Utils.millisecondsToStringDate(nextDayStart)
+                        + ", end: " + Utils.millisecondsToStringDate(nextDayEnd));
+                Map<String, Long> concreteDayUsages = filterData(nextDayStart, nextDayEnd);
                 LocalDate calculatedDay = startDate.plusDays(i);
                 long allAppsUsage = getAppsUsage(concreteDayUsages);
                 //Remove PC from all apps usage - we have it separately reported by our own label
                 reportedApps.remove("PC");
                 //Get all wanted reported apps
-
                 List<Long> usages = reportedApps.stream()
                         .map(concreteDayUsages::get)
                         .collect(Collectors.toList());
-
                 List<Object> record = new ArrayList<>(Arrays.asList(calculatedDay, concreteDayUsages.get("PC"), allAppsUsage));
                 //Remove pc's value, we got it above
                 concreteDayUsages.remove("PC");
                 record.addAll(usages);
-
                 printer.printRecord(record);
             }
         }
@@ -211,7 +207,7 @@ public class ReportGenerationController {
         return wholeActivity[0];
     }
 
-    //Returns miliseconds (pretty obvious imo)
+    //Returns milliseconds representation of the start of the day `value`
     private long dateToEpochMilis(LocalDate value) {
         ZoneId zoneId = ZoneId.systemDefault();
         return value.atStartOfDay(zoneId).toEpochSecond() * 1000;
@@ -222,7 +218,7 @@ public class ReportGenerationController {
         this.stage.close();
     }
 
-    //FIXME: need to test this method
+    // This was one was fine
     private Map<String, Long> filterData(long start, long end) {
 
         Map<String, Long> outputUsage = new HashMap<>();
@@ -242,7 +238,6 @@ public class ReportGenerationController {
                 Long correctedUsage = outputUsage.get(application);
 
                 outputUsage.put(application, (correctedUsage == null ? 0 : correctedUsage) + timeDelta);
-
             }
         }
         return outputUsage;
@@ -273,27 +268,28 @@ public class ReportGenerationController {
         return true;
     }
 
-    //FIXME: Test this method. Although i think it's pretty correct (cases described below)
+    // Should be ok now
     private Long calculateRelevantTime(AbstractActivityPeriod activityPeriod, long startEpochTime, long endEpochTime) {
         //Returns part of activity period that's exactly between start and end of epoch time
         //Case 1: Period begins before startEpoch and ends after it (intersects with it)
         if (activityPeriod.getStartTime() < startEpochTime && activityPeriod.getEndTime() > startEpochTime) {
             //Case 1.1: it intersects with both of period frames, thus the whole epoch time frame is our interest
-            if (activityPeriod.getEndTime() > endEpochTime)
+            if (activityPeriod.getEndTime() > endEpochTime) {
                 return endEpochTime - startEpochTime;
+            }
                 //or it ends before the end of time frame, so we are interested in it's ending point and distance to beginning
-            else
+            else {
                 return activityPeriod.getEndTime() - startEpochTime;
-
+            }
             //Case 2: It does not intersect with first time frame nor the second
         } else if (activityPeriod.getStartTime() >= startEpochTime && activityPeriod.getEndTime() <= endEpochTime) {
-
             return activityPeriod.getEndTime() - activityPeriod.getStartTime();
             //Case 3: it intersects with second frame (but not the first)
-        } else if (activityPeriod.getStartTime() >= startEpochTime && activityPeriod.getEndTime() > endEpochTime) {
+        } else if (activityPeriod.getStartTime() >= startEpochTime && activityPeriod.getEndTime() > endEpochTime && activityPeriod.getStartTime() <= endEpochTime) {
             return endEpochTime - activityPeriod.getStartTime();
-        } else
+        } else {
             return 0L;
+        }
     }
 
 }
