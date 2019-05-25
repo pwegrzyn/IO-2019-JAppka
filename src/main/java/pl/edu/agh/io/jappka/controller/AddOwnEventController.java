@@ -42,23 +42,31 @@ public class AddOwnEventController {
 
     @FXML
     private void handleAddEventAction(ActionEvent event) {
-        if (start.getValue() == null || end.getValue() == null || eventName.getText().equals("")){
-            System.out.println("Rzuć tu jakimś tekstem żeby wybrać daty albo coś");
-        }
-        else{
-            System.out.println(eventName.getText());
-            System.out.println(start.getDateTimeValue());
-            System.out.println(end.getDateTimeValue());
-
+        if(addEventParametersAreOk())
+        {
             long startTime = start.getDateTimeValue().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
             long endTime = end.getDateTimeValue().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
-
-            if(startTime >= endTime) {return;}
 
             DataController controller = appController.getDataController();
             controller.addCustomEvent(startTime, endTime, eventName.getText());
         }
     }
 
+    private boolean addEventParametersAreOk(){
+        if (start.getValue() == null || end.getValue() == null || eventName.getText().equals("")){
+            System.out.println("One of the values is null");
+            // TODO Tutaj Mati możesz mniej więcej to samo wypisać
+            return false;
+        }
+        long startTime = start.getDateTimeValue().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+        long endTime = end.getDateTimeValue().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
+
+        if(startTime >= endTime){
+            System.out.println("End time lower than start time.");
+            // TODO Tu też
+            return false;
+        }
+        return true;
+    }
 
 }
