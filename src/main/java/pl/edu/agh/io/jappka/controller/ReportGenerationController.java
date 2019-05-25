@@ -175,7 +175,7 @@ public class ReportGenerationController {
         CellStyle dateCellStyle = workbook.createCellStyle();
         dateCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("dd-MM-yyyy"));
 
-        // Some slight changes where introduced here when re-using the generation code for the csv, be careful when refactoring
+        // Some slight changes were introduced here when re-using the generation code for the csv, be careful when refactoring
         int totalColumns = 0;
         int days = (int) ((end - start) / MILISECONDS_IN_DAY) + 1;
         List<String> reportedApps = new ArrayList<>(filterData(start, end).keySet());
@@ -259,7 +259,7 @@ public class ReportGenerationController {
         this.stage.close();
     }
 
-    // This was one was fine
+    // This one was fine
     private Map<String, Long> filterData(long start, long end) {
 
         Map<String, Long> outputUsage = new HashMap<>();
@@ -334,6 +334,7 @@ public class ReportGenerationController {
         }
     }
 
+    // convert milliseconds to a new given time unit
     private double epochMillisecondsUnitConvert(long time, ReportTimeUnit targetUnit) {
         switch (targetUnit) {
             case MILLISECONDS:
