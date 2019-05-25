@@ -61,7 +61,6 @@ public class ReportGenerationController {
         if (validateInput()) {
             LocalDate startDate = this.dateStart.getValue();
             LocalDate endDate = this.dateEnd.getValue();
-            // TODO - parsing this to csv data
             try {
                 File initialFile = chooseFileToSave();
                 if (initialFile == null)
@@ -120,15 +119,12 @@ public class ReportGenerationController {
         try (CSVPrinter printer = new CSVPrinter(out, CSVFormat.DEFAULT)) {
             printer.printRecord(getHeaders(start, end));
             int days = (int) ((end - start) / MILISECONDS_IN_DAY) + 1;
-            System.out.println("Generating report for " + days + " days");
             //get all apps we want to include in the report
             List<String> reportedApps = new ArrayList<>(filterData(start, end).keySet());
             //Iterate through days we want reported
             for (int i = 0; i < days; i++) {
                 long nextDayStart = start + (i * MILISECONDS_IN_DAY);
                 long nextDayEnd = nextDayStart + MILISECONDS_IN_DAY - 1;
-                System.out.println("Calculating usage for next day, start: " + Utils.millisecondsToStringDate(nextDayStart)
-                        + ", end: " + Utils.millisecondsToStringDate(nextDayEnd));
                 Map<String, Long> concreteDayUsages = filterData(nextDayStart, nextDayEnd);
                 LocalDate calculatedDay = startDate.plusDays(i);
                 long allAppsUsage = getAppsUsage(concreteDayUsages);
@@ -149,10 +145,7 @@ public class ReportGenerationController {
         }
     }
 
-    // TODO: fill the workbook with report data
-    private void printToXlsx(LocalDate startDate, LocalDate endDate, File file, ReportTimeUnit timeUnit) throws IOException {
-        long start = dateToEpochMilis(startDate);
-        long end = dateToEpochMilis(endDate);
+    private void printToXlsx(LocalDate startDate, LocalDate endDate, File file, ReportTimeUnit unit) throws IOException {
 
         // Init the XLSX workbook
         Workbook workbook = new XSSFWorkbook();
@@ -167,11 +160,14 @@ public class ReportGenerationController {
         CellStyle headerCellStyle = workbook.createCellStyle();
         headerCellStyle.setFont(headerFont);
 
-        // Create the header (stub)
+        // Create the headers
+        long start = dateToEpochMilis(startDate);
+        long end = dateToEpochMilis(endDate) + MILISECONDS_IN_DAY - 1;
+        List<String> headers = getHeaders(start, end);
         Row headerRow = sheet.createRow(0);
-        for(int i = 0; i < 5; i++) {
+        for(int i = 0; i < headers.size(); i++) {
             Cell cell = headerRow.createCell(i);
-            cell.setCellValue("Col " + i);
+            cell.setCellValue(headers.get(i));
             cell.setCellStyle(headerCellStyle);
         }
 
@@ -179,11 +175,47 @@ public class ReportGenerationController {
         CellStyle dateCellStyle = workbook.createCellStyle();
         dateCellStyle.setDataFormat(createHelper.createDataFormat().getFormat("dd-MM-yyyy"));
 
-        // Actually create all rows
-        //TODO: fill in the report data
+        // Some slight changes where introduced here when re-using the generation code for the csv, be careful when refactoring
+        int totalColumns = 0;
+        int days = (int) ((end - start) / MILISECONDS_IN_DAY) + 1;
+        List<String> reportedApps = new ArrayList<>(filterData(start, end).keySet());
+        for (int i = 0; i < days; i++) {
+            long nextDayStart = start + (i * MILISECONDS_IN_DAY);
+            long nextDayEnd = nextDayStart + MILISECONDS_IN_DAY - 1;
+            Map<String, Long> concreteDayUsages = filterData(nextDayStart, nextDayEnd);
+            reportedApps.remove("PC");
+            long allAppsUsage = getAppsUsage(concreteDayUsages);
+            List<Double> usages = reportedApps.stream()
+                    .map(concreteDayUsages::get)
+                    .map(time -> epochMillisecondsUnitConvert(time, unit))
+                    .collect(Collectors.toList());
+            List<Object> record = new ArrayList<>(Arrays.asList(Utils.millisecondsToCustomStrDate(nextDayStart, "dd-MM-yyyy"),
+                    epochMillisecondsUnitConvert(concreteDayUsages.get("PC"), unit),
+                    epochMillisecondsUnitConvert(allAppsUsage, unit)));
+            concreteDayUsages.remove("PC");
+            record.addAll(usages);
 
-        // Resize all columns to fit the data
-        for(int i = 0; i < 5; i++) {
+            Row newRow = sheet.createRow(i + 1);
+            int column = 0;
+            for (Object recordElement : record) {
+                Cell newCell = newRow.createCell(column++);
+                if (recordElement instanceof String) {
+                    newCell.setCellValue((String) recordElement);
+                } else if (recordElement instanceof Double) {
+                    newCell.setCellValue((Double) recordElement);
+                } else {
+                    LOGGER.warning("Incompatible record element type encountered in XLSX report generator: "
+                            + recordElement.getClass().toString());
+                    continue;
+                }
+            }
+            if (totalColumns < column) {
+                totalColumns = column;
+            }
+        }
+
+        // Resize all columns to fit the content size
+        for(int i = 0; i < totalColumns; i++) {
             sheet.autoSizeColumn(i);
         }
 
