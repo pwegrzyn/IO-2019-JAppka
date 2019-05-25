@@ -130,6 +130,9 @@ public class SaveController {
         } else {
             handleChooseFileToLoad(fileChooser);
         }
+        if (this.file != null) {
+            ((Button) this.stage.getScene().lookup("#saveButton")).setDisable(false);
+        }
     }
 
     private void handleChooseFileToLoad(FileChooser fileChooser) {
