@@ -99,7 +99,7 @@ public class ActionsControllerHelper {
         }
     }
 
-    public void handleGenerateReport(String currentTheme,ObservableMap<String, List<AbstractActivityPeriod>> data){
+    public void handleGenerateReport(String currentTheme,ObservableMap<String, List<AbstractActivityPeriod>> data, AppController appController){
 
         try{
             FXMLLoader loader = new FXMLLoader();
@@ -114,7 +114,7 @@ public class ActionsControllerHelper {
             reportGenerationStage.setScene(reportGenerationScene);
             reportGenerationScene.getStylesheets().add(currentTheme);
             controller.setStage(reportGenerationStage);
-            controller.init();
+            controller.init(appController);
             reportGenerationStage.show();
         }
 

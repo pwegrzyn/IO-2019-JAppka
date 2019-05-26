@@ -59,6 +59,10 @@ public class AppController {
     @FXML
     private MenuItem defaultTheme;
 
+    public String getCurrentTheme() {
+        return currentTheme;
+    }
+
     @FXML
     private MenuItem darkTheme;
 
@@ -106,7 +110,7 @@ public class AppController {
 
     @FXML
     private void handleGenerateReport(ActionEvent event){
-        actionsControllerHelper.handleGenerateReport(currentTheme,obData);
+        actionsControllerHelper.handleGenerateReport(currentTheme,obData, this);
     }
 
     @FXML

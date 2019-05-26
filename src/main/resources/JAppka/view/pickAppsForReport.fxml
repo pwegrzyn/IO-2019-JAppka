@@ -1,0 +1,27 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<?import javafx.scene.control.Button?>
+<?import javafx.scene.control.Label?>
+<?import javafx.scene.control.ListView?>
+<?import javafx.scene.control.TextField?>
+<?import javafx.scene.layout.AnchorPane?>
+<?import javafx.scene.text.Font?>
+
+<AnchorPane prefHeight="523.0" prefWidth="422.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.edu.agh.io.jappka.controller.PickAppsForReportController">
+   <children>
+      <TextField fx:id="appNameField" layoutX="87.0" layoutY="27.0" onKeyPressed="#handleOnTextChange" prefHeight="43.0" prefWidth="248.0" promptText="App name" />
+      <ListView fx:id="selectAppsView" layoutX="87.0" layoutY="77.0" onKeyPressed="#handleSelectApp" onMouseClicked="#handleOnAppClicked" prefHeight="157.0" prefWidth="248.0" />
+      <Button fx:id="addAppButton" alignment="CENTER" disable="true" layoutX="158.0" layoutY="234.0" mnemonicParsing="false" onAction="#handleAddButton" prefHeight="31.0" prefWidth="85.0" text="Add app">
+         <font>
+            <Font size="15.0" />
+         </font>
+      </Button>
+      <ListView fx:id="appsChosenView" layoutX="87.0" layoutY="314.0" prefHeight="157.0" prefWidth="248.0" />
+      <Label layoutX="159.0" layoutY="294.0" text="Apps chosen:">
+         <font>
+            <Font size="14.0" />
+         </font>
+      </Label>
+      <Button layoutX="179.0" layoutY="478.0" mnemonicParsing="false" onAction="#handleDoneButton" text="Done" />
+   </children>
+</AnchorPane>

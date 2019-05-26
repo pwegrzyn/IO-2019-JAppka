@@ -69,7 +69,12 @@ public class AddAppController {
 
     @FXML
     public void handleOnClick(javafx.scene.input.MouseEvent mouseEvent) {
-        appName = listView.getSelectionModel().getSelectedItem().toString();
+        try {
+            appName = listView.getSelectionModel().getSelectedItem().toString();
+        }
+        catch (NullPointerException ex) {
+            return;
+        }
         field.setText(appName);
         AddButton.setDisable(false);
     }

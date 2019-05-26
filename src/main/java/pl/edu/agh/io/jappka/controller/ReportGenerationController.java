@@ -4,9 +4,12 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
+import javafx.scene.Scene;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ChoiceBox;
 import javafx.scene.control.DatePicker;
+import javafx.scene.layout.AnchorPane;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.apache.commons.csv.CSVFormat;
@@ -37,6 +40,9 @@ public class ReportGenerationController {
     private ObservableMap<String, List<AbstractActivityPeriod>> dataCollection;
     private final long MILISECONDS_IN_DAY = 86_400_000;
 
+    private AppController appController;
+    private Set<String> appsChosen = new HashSet<>();
+
     public void setStage(Stage stage) {
         this.stage = stage;
     }
@@ -45,8 +51,19 @@ public class ReportGenerationController {
         this.dataCollection = data;
     }
 
-    public void init() {
+    public void init(AppController appController) {
+        this.appController = appController;
+        for(String app : dataCollection.keySet())
+            this.appsChosen.add(app);
         this.TimeUnitChoiceBox.setItems(FXCollections.observableArrayList(ReportTimeUnit.values()));
+    }
+
+    public Set<String> getAppsChosen() {
+        return appsChosen;
+    }
+
+    public void setAppsChosen(Set<String> appsChosen) {
+        this.appsChosen = appsChosen;
     }
 
     @FXML
@@ -276,7 +293,6 @@ public class ReportGenerationController {
         workbook.close();
     }
 
-    //TODO: If user wants specific apps, we want to adjust headers to this scenario
     private List<String> getHeaders(long start, long end) {
         List<String> activeApps = new ArrayList<>();
         activeApps.addAll(filterData(start, end).keySet());
@@ -314,7 +330,7 @@ public class ReportGenerationController {
 
         Map<String, Long> outputUsage = new HashMap<>();
 
-        for (String application : dataCollection.keySet()) {
+        for (String application : this.appsChosen) {
             //Get all periods for one application
             List<AbstractActivityPeriod> activityPeriods = dataCollection.get(application);
             //Filter periods which are active
@@ -322,6 +338,7 @@ public class ReportGenerationController {
                     .filter((period) -> period.getType() == AbstractActivityPeriod.Type.FOCUSED || period.getType() == AbstractActivityPeriod.Type.ON)
                     .collect(Collectors.toList());
 
+            outputUsage.put(application, 0L);
             for (AbstractActivityPeriod activityPeriod : activityPeriods) {
                 //Get time delta (the amount of period between start and end epoch time)
                 Long timeDelta = calculateRelevantTime(activityPeriod, start, end);
@@ -400,6 +417,30 @@ public class ReportGenerationController {
             default: break;
         }
         return Double.NaN;
+    }
+    @FXML
+    public void handlePickAppsForReportButton(){
+        try{
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getClassLoader().getResource("JAppka/view/pickAppsForReport.fxml"));
+            AnchorPane layout = loader.load();
+
+            PickAppsForReportController controller = loader.getController();
+            Scene pickAppsForReportScene = new Scene(layout);
+            Stage pickAppsForReportStage = new Stage();
+            pickAppsForReportStage.setTitle("Select applications for a report");
+            pickAppsForReportStage.setScene(pickAppsForReportScene);
+            pickAppsForReportScene.getStylesheets().add(appController.getCurrentTheme());
+            controller.setStage(pickAppsForReportStage);
+
+            Set<String> allAppsInPeriod = dataCollection.keySet();
+            controller.initialize(appController,allAppsInPeriod, this);
+            pickAppsForReportStage.show();
+        }
+
+        catch (IOException e){
+            e.printStackTrace();
+        }
     }
 
 }
