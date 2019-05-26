@@ -54,36 +54,32 @@ public class AddOwnEventController {
                 controller.addCustomEvent(startTime, endTime, eventName.getText());
             }
             catch(InvalidEventException e){
-                Alert alert = new Alert(Alert.AlertType.ERROR);
-                alert.setTitle("Error");
-                alert.setHeaderText("Error while adding event");
-                alert.setContentText("Events are overlapping!");
-                alert.showAndWait();
+                showPopUpDialog(Alert.AlertType.ERROR, "Error", "Error while adding event", "Events are overlapping!");
             }
         }
     }
 
     private boolean addEventParametersAreOk(){
         if (start.getValue() == null || end.getValue() == null || eventName.getText().equals("")){
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("Error while adding event");
-            alert.setContentText("One of the values is null");
-            alert.showAndWait();
+            showPopUpDialog(Alert.AlertType.ERROR, "Error", "Error while adding event", "One of the values is null");
             return false;
         }
         long startTime = start.getDateTimeValue().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
         long endTime = end.getDateTimeValue().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
         if(startTime >= endTime){
-            Alert alert = new Alert(Alert.AlertType.ERROR);
-            alert.setTitle("Error");
-            alert.setHeaderText("Error while adding event");
-            alert.setContentText("End time is not later than start time.");
-            alert.showAndWait();
+            showPopUpDialog(Alert.AlertType.ERROR, "Error", "Error while adding event", "End time is not later than start time.");
             return false;
         }
         return true;
+    }
+
+    private void showPopUpDialog(Alert.AlertType type, String title, String headerText, String contentText) {
+        Alert alert = new Alert(type);
+        alert.setTitle(title);
+        alert.setHeaderText(headerText);
+        alert.setContentText(contentText);
+        alert.showAndWait();
     }
 
 }
