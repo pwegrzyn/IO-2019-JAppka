@@ -2,6 +2,7 @@ package pl.edu.agh.io.jappka.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Alert;
 import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -53,23 +54,33 @@ public class AddOwnEventController {
                 controller.addCustomEvent(startTime, endTime, eventName.getText());
             }
             catch(InvalidEventException e){
-                System.out.println("Events are overlapping");
+                Alert alert = new Alert(Alert.AlertType.ERROR);
+                alert.setTitle("Error");
+                alert.setHeaderText("Error while adding event");
+                alert.setContentText("Events are overlapping!");
+                alert.showAndWait();
             }
         }
     }
 
     private boolean addEventParametersAreOk(){
         if (start.getValue() == null || end.getValue() == null || eventName.getText().equals("")){
-            System.out.println("One of the values is null");
-            // TODO Tutaj Mati możesz mniej więcej to samo wypisać
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Error while adding event");
+            alert.setContentText("One of the values is null");
+            alert.showAndWait();
             return false;
         }
         long startTime = start.getDateTimeValue().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
         long endTime = end.getDateTimeValue().atZone(ZoneId.systemDefault()).toInstant().toEpochMilli();
 
         if(startTime >= endTime){
-            System.out.println("End time lower than start time.");
-            // TODO Tu też
+            Alert alert = new Alert(Alert.AlertType.ERROR);
+            alert.setTitle("Error");
+            alert.setHeaderText("Error while adding event");
+            alert.setContentText("End time is not later than start time.");
+            alert.showAndWait();
             return false;
         }
         return true;
