@@ -22,6 +22,8 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.FileWriter;
 import java.io.IOException;
+import java.text.DateFormat;
+import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
 import java.util.*;
@@ -135,14 +137,56 @@ public class ReportGenerationController {
                         .map(concreteDayUsages::get)
                         .map(time -> epochMillisecondsUnitConvert(time, unit))
                         .collect(Collectors.toList());
-                List<Object> record = new ArrayList<>(Arrays.asList(calculatedDay, epochMillisecondsUnitConvert(concreteDayUsages.get("PC"), unit),
-                        epochMillisecondsUnitConvert(allAppsUsage, unit)));
+                List<String> pcTurnOnAndOffTimes = calculatePCOnOffTimes(nextDayStart, nextDayEnd);
+                List<Object> record = new ArrayList<>(
+                        Arrays.asList(calculatedDay,
+                                epochMillisecondsUnitConvert(concreteDayUsages.get("PC"), unit),
+                                epochMillisecondsUnitConvert(allAppsUsage, unit),
+                                (pcTurnOnAndOffTimes == null ? "-" : pcTurnOnAndOffTimes.get(0)),
+                                (pcTurnOnAndOffTimes == null ? "-" : pcTurnOnAndOffTimes.get(1))
+                        ));
                 //Remove pc's value, we got it above
                 concreteDayUsages.remove("PC");
                 record.addAll(usages);
                 printer.printRecord(record);
             }
         }
+    }
+
+    private List<String> calculatePCOnOffTimes(long dateStart, long dateEnd){
+        /*
+        * List<String> [0] -PC turn on time
+        * List<String> [1] -PC turn off time
+        * */
+
+        List<AbstractActivityPeriod> activityPeriods = dataCollection.get("PC");
+        activityPeriods = activityPeriods.stream().filter((activityPeriod) -> {
+            if(activityPeriod.getEndTime() <= dateStart){
+                return false;
+            }
+            if(activityPeriod.getStartTime() >= dateEnd){
+                return false;
+            }
+            return true;
+        }).collect(Collectors.toList());
+
+        if(activityPeriods.isEmpty()){
+            return null;
+        }
+
+        long start = activityPeriods.get(0).getStartTime();
+        long end = activityPeriods.get(activityPeriods.size()-1).getEndTime();
+
+        start = (start < dateStart ? dateStart : start);
+        end = (end < dateEnd ? end : dateEnd);
+
+        DateFormat dateFormat = new SimpleDateFormat("HH:mm:ss");
+
+        return new ArrayList<>(Arrays.asList(
+                dateFormat.format(new Date(start)),
+                dateFormat.format(new Date(end))
+        ));
+
     }
 
     private void printToXlsx(LocalDate startDate, LocalDate endDate, File file, ReportTimeUnit unit) throws IOException {
@@ -189,9 +233,15 @@ public class ReportGenerationController {
                     .map(concreteDayUsages::get)
                     .map(time -> epochMillisecondsUnitConvert(time, unit))
                     .collect(Collectors.toList());
-            List<Object> record = new ArrayList<>(Arrays.asList(Utils.millisecondsToCustomStrDate(nextDayStart, "dd-MM-yyyy"),
-                    epochMillisecondsUnitConvert(concreteDayUsages.get("PC"), unit),
-                    epochMillisecondsUnitConvert(allAppsUsage, unit)));
+            List<String> pcTurnOnAndOffTimes = calculatePCOnOffTimes(nextDayStart, nextDayEnd);
+            List<Object> record = new ArrayList<>(
+                    Arrays.asList(
+                            Utils.millisecondsToCustomStrDate(nextDayStart, "dd-MM-yyyy"),
+                            epochMillisecondsUnitConvert(concreteDayUsages.get("PC"), unit),
+                            epochMillisecondsUnitConvert(allAppsUsage, unit),
+                            (pcTurnOnAndOffTimes == null ? "-" : pcTurnOnAndOffTimes.get(0)),
+                            (pcTurnOnAndOffTimes == null ? "-" : pcTurnOnAndOffTimes.get(1))
+                            ));
             concreteDayUsages.remove("PC");
             record.addAll(usages);
 
@@ -232,7 +282,7 @@ public class ReportGenerationController {
         activeApps.addAll(filterData(start, end).keySet());
         activeApps.remove("PC");
         //Add the apps to the standard headers
-        List<String> headers = new ArrayList<>(Arrays.asList("DATE", "PC ON", "PC ACTIVE"));
+        List<String> headers = new ArrayList<>(Arrays.asList("DATE", "PC ON", "PC ACTIVE", "START TIME", "END TIME"));
         headers.addAll(activeApps);
         return headers;
     }
