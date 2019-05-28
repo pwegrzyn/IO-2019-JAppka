@@ -256,8 +256,6 @@ public class AppController {
 
         CategoryAxis yAxis=(CategoryAxis) mainChart.getYAxis();
 
-        System.out.println(yAxisCategories);
-
         ArrayList<XYChart.Series<Number, String>> s=new ArrayList<>();
         int c=0;
         long diff = 0;

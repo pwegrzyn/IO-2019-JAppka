@@ -9,6 +9,7 @@ import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.paint.Color;
+import javafx.scene.text.Font;
 import javafx.util.StringConverter;
 import pl.edu.agh.io.jappka.activity.AbstractActivityPeriod;
 import pl.edu.agh.io.jappka.charts.GanttChart;
@@ -46,13 +47,11 @@ public class ChartControllerHelper {
         mainChart.getStylesheets().add(getClass().getResource("/ganttchart.css").toExternalForm());
     }
 
-    private void configureAxis(NumberAxis xAxis, CategoryAxis yAxis, ObservableMap<String, List<AbstractActivityPeriod>> obData, ObservableList<String> yAxisCategories){
-        xAxis.setLabel("Time");
+    private void configureAxis(NumberAxis xAxis, CategoryAxis yAxis, ObservableMap<String, List<AbstractActivityPeriod>> obData, ObservableList<String> yAxisCategories) {
         xAxis.setTickLabelFill(Color.CHOCOLATE);
         xAxis.setAutoRanging(false);
         xAxis.setTickUnit(3600);
         xAxis.setMinorTickVisible(false);
-        yAxis.setLabel("Applications");
         yAxis.setTickLabelFill(Color.CHOCOLATE);
         yAxis.setAutoRanging(true);
         xAxis.setTickLabelFormatter(new StringConverter<Number>() {
@@ -69,6 +68,10 @@ public class ChartControllerHelper {
 
         //get initial category list
         yAxis.setCategories(yAxisCategories);
+
+        // Make the fonts a little bigger than default
+        xAxis.setTickLabelFont(new Font(15));
+        yAxis.setTickLabelFont(new Font(15));
     }
 
 }
