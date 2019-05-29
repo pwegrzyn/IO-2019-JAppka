@@ -47,6 +47,7 @@ public class AppController {
     private ActionsControllerHelper actionsControllerHelper;
     private ChartControllerHelper chartControllerHelper;
     private DataController dataController;
+    private ObservableList<XYChart.Series<Number, String>> chartData;
 
     private GanttChart<Number,String> mainChart;
 
@@ -244,7 +245,9 @@ public class AppController {
     private void initGanttChart() {
         this.xAxis = new NumberAxis();
         yAxisCategories = FXCollections.observableList(obData.keySet().stream().collect(Collectors.toList()));
+        chartData = FXCollections.observableArrayList();
         mainChart = chartControllerHelper.initGanttChart(xAxis, mainPane, obData, yAxisCategories);
+        mainChart.setData(chartData);
     }
 
     public ObservableMap<String, List<AbstractActivityPeriod>> getObData() {
@@ -263,7 +266,7 @@ public class AppController {
         String[] categories=obData.keySet().stream().toArray(String[]::new);
         yAxisCategories.setAll(categories);
 
-        ArrayList<XYChart.Series<Number, String>> s=new ArrayList<>();
+        chartData.clear();
         int c=0;
         long diff = 0;
         boolean skipBarChartDrawing = false;
@@ -297,10 +300,8 @@ public class AppController {
             }
 
             skipBarChartDrawing = false;
-            s.add(series);
+            chartData.add(series);
         }
-
-        mainChart.setData(FXCollections.observableArrayList(s));
 
         for(XYChart.Series<Number, String> series : mainChart.getData()){
             for(XYChart.Data<Number, String> entry : series.getData()){

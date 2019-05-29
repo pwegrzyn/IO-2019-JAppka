@@ -1,10 +1,13 @@
 package pl.edu.agh.io.jappka.activity;
 
+import javax.swing.plaf.nimbus.State;
 import java.io.*;
+import java.util.List;
 import java.util.Timer;
 import java.util.TimerTask;
 import java.util.logging.Level;
 import java.util.logging.Logger;
+import java.util.stream.Collectors;
 
 public abstract class AbstractActivityTracker implements ActivityTracker {
 
@@ -13,13 +16,13 @@ public abstract class AbstractActivityTracker implements ActivityTracker {
     private String dataDirectoryPath = "data/";
     private String appStateFilePath;
     private String activityDataDirectoryPath = dataDirectoryPath + "activity/";
-    protected int refreshRateTickInSeconds;
     private Timer timer;
+    int refreshRateTickInSeconds;
 
-    protected ActivityState currentState;
-    protected StateTransitionEvent.Type activeState, inactiveState;
+    ActivityState currentState;
+    StateTransitionEvent.Type activeState, inactiveState;
 
-    public AbstractActivityTracker(StateTransitionEvent.Type activeState, StateTransitionEvent.Type inactiveState, String fileName){
+    AbstractActivityTracker(StateTransitionEvent.Type activeState, StateTransitionEvent.Type inactiveState, String fileName){
         this.timer = new Timer(true);
         this.refreshRateTickInSeconds = 1;
 
@@ -38,12 +41,12 @@ public abstract class AbstractActivityTracker implements ActivityTracker {
         return this.currentState.getActivityStream();
     }
 
-    protected boolean checkIfAppStateFileExist() {
+    boolean checkIfAppStateFileExist() {
         File file = new File(this.appStateFilePath);
         return file.exists() && !file.isDirectory();
     }
 
-    protected void createAppStateFile() throws IOException {
+    void createAppStateFile() throws IOException {
         new File(this.activityDataDirectoryPath).mkdirs();
         File file = new File(this.appStateFilePath);
         file.createNewFile();
@@ -58,14 +61,13 @@ public abstract class AbstractActivityTracker implements ActivityTracker {
             outputStream.writeObject(this.currentState);
         } catch(Exception e) {
             LOGGER.log(Level.SEVERE,"Fatal error occurred while persisting app state!", e);
-            return;
         } finally {
             outputStream.close();
             fileOutputStream.close();
         }
     }
 
-    protected void recoverAppState() throws IOException {
+    void recoverAppState() throws IOException {
         FileInputStream inputStream = new FileInputStream(this.appStateFilePath);
         ObjectInputStream objectInputStream = new ObjectInputStream(inputStream);
         try {
@@ -79,7 +81,7 @@ public abstract class AbstractActivityTracker implements ActivityTracker {
         addRecoveryEvents();
     }
 
-    protected void schedulePersistenceAction() {
+    void schedulePersistenceAction() {
         timer.scheduleAtFixedRate(new TimerTask() {
             @Override
             public void run() {
@@ -93,9 +95,17 @@ public abstract class AbstractActivityTracker implements ActivityTracker {
         }, 0, this.refreshRateTickInSeconds * 1000);
     }
 
-    protected void addActivityToState(long time, StateTransitionEvent.Type type) {
+    void addActivityToState(long time, StateTransitionEvent.Type type) {
         StateTransitionEvent newEvent = new StateTransitionEvent(type, time);
         this.currentState.getActivityStream().appendEvent(newEvent);
+    }
+
+    public void removeEvents(long from, long to){
+        List<StateTransitionEvent> events = getActivityStream().getEvents();
+        List<StateTransitionEvent> toRemove = events.stream()
+                .filter(e -> e.getFiringTime() > from && e.getFiringTime() < to)
+                .collect(Collectors.toList());
+        events.removeAll(toRemove);
     }
 
     protected abstract void initializeAppState() throws IOException;
