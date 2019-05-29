@@ -36,7 +36,7 @@ public class ChartControllerHelper {
         mainChart.setLegendVisible(true);
         mainChart.setBlockHeight(50);
         mainChart.getData().clear();
-        mainChart.setCursor(Cursor.CROSSHAIR);
+        mainChart.setCursor(Cursor.DEFAULT);
         mainChart.setTitle("Usage State");
         mainChart.setAnimated(false);
         mainChart.setLayoutY(22.0);

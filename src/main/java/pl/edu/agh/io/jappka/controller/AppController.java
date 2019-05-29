@@ -6,6 +6,7 @@ import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.chart.NumberAxis;
 import javafx.scene.chart.XYChart;
@@ -61,6 +62,12 @@ public class AppController {
     @FXML
     private MenuItem defaultTheme;
 
+    @FXML
+    private Button GoForwardsDay;
+
+    @FXML
+    private Button GoBackwardsDay;
+
     public String getCurrentTheme() {
         return currentTheme;
     }
@@ -92,6 +99,8 @@ public class AppController {
 
         });
         this.dataController = new DataController(this.obData);
+        this.GoBackwardsDay.setCursor(Cursor.HAND);
+        this.GoForwardsDay.setCursor(Cursor.HAND);
     }
 
     public void setObData(ObservableMap<String, List<AbstractActivityPeriod>> obData){
