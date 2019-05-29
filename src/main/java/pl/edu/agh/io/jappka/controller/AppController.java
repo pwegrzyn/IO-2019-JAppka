@@ -5,6 +5,7 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
 import javafx.event.ActionEvent;
+import javafx.event.EventHandler;
 import javafx.fxml.FXML;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
@@ -14,7 +15,9 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tooltip;
+import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
+import javafx.scene.media.AudioClip;
 import javafx.stage.Stage;
 import pl.edu.agh.io.jappka.activity.AbstractActivityPeriod;
 import pl.edu.agh.io.jappka.activity.ActivitySummary;
@@ -23,6 +26,7 @@ import pl.edu.agh.io.jappka.charts.GanttChart;
 import pl.edu.agh.io.jappka.charts.HoveredNode;
 import pl.edu.agh.io.jappka.util.Utils;
 
+import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
@@ -99,8 +103,26 @@ public class AppController {
 
         });
         this.dataController = new DataController(this.obData);
+
+        // Buttons Customization
         this.GoBackwardsDay.setCursor(Cursor.HAND);
         this.GoForwardsDay.setCursor(Cursor.HAND);
+        this.GoForwardsDay.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                AudioClip audioClip = new AudioClip(Paths.get("src/main/resources/sound/button_click.wav")
+                        .toUri().toString());
+                audioClip.play();
+            }
+        });
+        this.GoBackwardsDay.setOnMouseClicked(new EventHandler<MouseEvent>() {
+            @Override
+            public void handle(MouseEvent event) {
+                AudioClip audioClip = new AudioClip(Paths.get("src/main/resources/sound/button_click.wav")
+                        .toUri().toString());
+                audioClip.play();
+            }
+        });
     }
 
     public void setObData(ObservableMap<String, List<AbstractActivityPeriod>> obData){
