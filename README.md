@@ -14,11 +14,12 @@ SonarQube
 * A gradle wrapper is included that bundles gradle. All other required plugins will be pulled by gradle as needed.
 
 ### Usage
-* Run the following command (updating the sonar.host.url property as appropriate if needed):
+* Start the local instance of the SonarQube server (`...\sonarqube-7.7\bin\windows-x86-64\StartSonar.bat`)
+* Run the following command in the project root:
   * On Unix-like systems:
-    `./gradlew -Dsonar.host.url=http://myhost:9000 sonarqube`
+    `./gradlew -Dsonar.host.url=http://localhost:9000 sonarqube`
   * On Windows:
-    `.\gradle.bat -Dsonar.host.url=http://myhost:9000 sonarqube`
+    `.\gradle.bat -Dsonar.host.url=http://localhost:9000 sonarqube`
 * Or you can just use the default host.url:
     * On Windows:
         `.\gradle.bat sonarqube`
