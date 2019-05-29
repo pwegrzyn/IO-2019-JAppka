@@ -125,10 +125,14 @@ public class SaveController {
                 new File(System.getProperty("user.home"))
         );
         fileChooser.getExtensionFilters().addAll(new FileChooser.ExtensionFilter( "JSON", "*.json"));
+        fileChooser.setInitialFileName("japkka_config");
         if(save) {
             handleChooseFileToSave(fileChooser);
         } else {
             handleChooseFileToLoad(fileChooser);
+        }
+        if (this.file != null) {
+            ((Button) this.stage.getScene().lookup("#saveButton")).setDisable(false);
         }
     }
 

@@ -3,6 +3,7 @@ package pl.edu.agh.io.jappka.controller;
 import javafx.collections.ObservableMap;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
+import javafx.scene.control.Button;
 import javafx.scene.control.ListView;
 import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
@@ -23,6 +24,7 @@ public class AddAppController {
 
     @FXML private TextField field;
     @FXML private ListView listView;
+    @FXML private Button AddButton;
     private String appName;
     private List<String> apps;
     private NativeAccessor accessor = new WindowsNativeAccessor();
@@ -57,6 +59,7 @@ public class AddAppController {
         obData.put(appName,newSummary.getAllPeriods());
         this.appController.setObData(obData);
         this.appController.setActivities(activities);
+        AddButton.setDisable(true);
     }
 
     @FXML
@@ -66,8 +69,14 @@ public class AddAppController {
 
     @FXML
     public void handleOnClick(javafx.scene.input.MouseEvent mouseEvent) {
-        appName = listView.getSelectionModel().getSelectedItem().toString();
+        try {
+            appName = listView.getSelectionModel().getSelectedItem().toString();
+        }
+        catch (NullPointerException ex) {
+            return;
+        }
         field.setText(appName);
+        AddButton.setDisable(false);
     }
 
     public void handleOnTextChange(KeyEvent keyEvent) {

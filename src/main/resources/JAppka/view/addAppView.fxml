@@ -12,7 +12,7 @@
          <font>
             <Font size="15.0" />
          </font></Button>
-        <Button alignment="CENTER" layoutX="189.0" layoutY="447.0" mnemonicParsing="false" onAction="#handleAddButton" prefHeight="31.0" prefWidth="85.0" text="Add app">
+        <Button id="AddButton" fx:id="AddButton" alignment="CENTER" disable="true" layoutX="189.0" layoutY="447.0" mnemonicParsing="false" onAction="#handleAddButton" prefHeight="31.0" prefWidth="85.0" text="Add app">
          <font>
             <Font size="15.0" />
          </font></Button>

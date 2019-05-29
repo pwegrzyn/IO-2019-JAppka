@@ -7,7 +7,7 @@
 
 <AnchorPane prefHeight="196.0" prefWidth="412.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.edu.agh.io.jappka.controller.SaveController">
    <children>
-      <Button fx:id="saveButton" layoutX="280.0" layoutY="143.0" mnemonicParsing="false" onAction="#save" prefHeight="42.0" prefWidth="118.0" />
+      <Button fx:id="saveButton" disable="true" layoutX="280.0" layoutY="143.0" mnemonicParsing="false" onAction="#save" prefHeight="42.0" prefWidth="118.0" />
       <Label alignment="CENTER" layoutX="97.0" layoutY="32.0" prefHeight="21.0" prefWidth="232.0" text="Configuration file:" textAlignment="CENTER">
          <font>
             <Font size="15.0" />

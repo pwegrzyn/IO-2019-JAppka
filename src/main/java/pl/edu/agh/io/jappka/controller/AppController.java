@@ -72,6 +72,10 @@ public class AppController {
     @FXML
     private MenuItem defaultTheme;
 
+    public String getCurrentTheme() {
+        return currentTheme;
+    }
+
     @FXML
     private MenuItem darkTheme;
 
@@ -120,7 +124,7 @@ public class AppController {
 
     @FXML
     private void handleGenerateReport(ActionEvent event){
-        actionsControllerHelper.handleGenerateReport(currentTheme,obData);
+        actionsControllerHelper.handleGenerateReport(currentTheme,obData, this);
     }
 
     @FXML
@@ -267,6 +271,9 @@ public class AppController {
         yAxisCategories.setAll(categories);
 
         chartData.clear();
+        /*CategoryAxis yAxis=(CategoryAxis) mainChart.getYAxis();
+        ArrayList<XYChart.Series<Number, String>> s=new ArrayList<>();*/
+
         int c=0;
         long diff = 0;
         boolean skipBarChartDrawing = false;
