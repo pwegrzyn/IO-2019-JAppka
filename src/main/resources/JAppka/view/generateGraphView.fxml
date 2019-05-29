@@ -10,9 +10,9 @@
 <AnchorPane prefHeight="302.0" prefWidth="500" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.edu.agh.io.jappka.controller.ReportGenerationController">
    <children>
       <DatePicker fx:id="dateStart" layoutX="131.0" layoutY="34.0" prefHeight="31.0" prefWidth="238.0" promptText="Please choose start date" />
-      <Button layoutX="71.0" layoutY="246.0" mnemonicParsing="false" onAction="#handleCancel" prefHeight="31.0" prefWidth="129.0" text="Cancel" />
+      <Button layoutX="77.0" layoutY="246.0" mnemonicParsing="false" onAction="#handleCancel" prefHeight="31.0" prefWidth="129.0" text="Cancel" />
       <DatePicker fx:id="dateEnd" layoutX="131.0" layoutY="80.0" prefHeight="31.0" prefWidth="238.0" promptText="Please choose end date" />
-      <Button layoutX="269.0" layoutY="246.0" mnemonicParsing="false" onAction="#handleGenerateReportButton" prefHeight="31.0" prefWidth="129.0" text="Generate" />
+      <Button layoutX="305.0" layoutY="246.0" mnemonicParsing="false" onAction="#handleGenerateReportButton" prefHeight="31.0" prefWidth="129.0" text="Generate" />
       <ChoiceBox id="TimeUnitChoiceBox" fx:id="TimeUnitChoiceBox" layoutX="219.0" layoutY="129.0" prefWidth="150.0" />
       <Label layoutX="131.0" layoutY="133.0" text="Time Unit">
          <font>

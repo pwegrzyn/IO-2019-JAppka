@@ -52,6 +52,7 @@ public class AddOwnEventController {
             catch(InvalidEventException e){
                 showPopUpDialog(Alert.AlertType.ERROR, "Error", "Error while adding event", "Events are overlapping!");
             }
+             this.stage.close();
         }
     }
 
