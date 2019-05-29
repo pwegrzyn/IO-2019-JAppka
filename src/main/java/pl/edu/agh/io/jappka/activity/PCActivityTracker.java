@@ -1,9 +1,6 @@
 package pl.edu.agh.io.jappka.activity;
 
 import java.io.*;
-import java.util.Timer;
-import java.util.TimerTask;
-
 
 public class PCActivityTracker extends AbstractActivityTracker {
 

@@ -1,8 +1,5 @@
 package pl.edu.agh.io.jappka.controller;
 
-import com.google.gson.Gson;
-import com.google.gson.reflect.TypeToken;
-import com.google.gson.stream.JsonReader;
 import javafx.collections.ObservableMap;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
@@ -12,12 +9,8 @@ import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import pl.edu.agh.io.jappka.activity.*;
 
-import java.io.FileReader;
 import java.io.IOException;
-import java.io.PrintWriter;
-import java.util.ArrayList;
 import java.util.List;
-import java.util.Map;
 
 public class ActionsControllerHelper {
 

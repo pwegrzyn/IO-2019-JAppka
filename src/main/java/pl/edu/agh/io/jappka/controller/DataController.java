@@ -1,8 +1,6 @@
 package pl.edu.agh.io.jappka.controller;
 
 import javafx.application.Platform;
-import javafx.concurrent.Task;
-import javafx.scene.layout.Pane;
 import pl.edu.agh.io.jappka.Exceptions.InvalidEventException;
 import pl.edu.agh.io.jappka.activity.AbstractActivityPeriod;
 import pl.edu.agh.io.jappka.activity.AppActivityPeriod;

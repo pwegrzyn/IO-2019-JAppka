@@ -3,14 +3,10 @@ package pl.edu.agh.io.jappka.controller;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Alert;
-import javafx.scene.control.DatePicker;
 import javafx.scene.control.TextField;
-import javafx.scene.input.KeyCode;
-import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
 import pl.edu.agh.io.jappka.Exceptions.InvalidEventException;
 import pl.edu.agh.io.jappka.util.DateTimePicker;
-import pl.edu.agh.io.jappka.util.Utils;
 
 import java.time.ZoneId;
 

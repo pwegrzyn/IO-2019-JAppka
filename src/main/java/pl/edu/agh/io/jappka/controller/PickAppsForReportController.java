@@ -1,6 +1,5 @@
 package pl.edu.agh.io.jappka.controller;
 
-import javafx.collections.ObservableMap;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
 import javafx.scene.control.Button;
@@ -9,13 +8,8 @@ import javafx.scene.control.TextField;
 import javafx.scene.input.KeyCode;
 import javafx.scene.input.KeyEvent;
 import javafx.stage.Stage;
-import pl.edu.agh.io.jappka.activity.*;
-import pl.edu.agh.io.jappka.os.NativeAccessor;
-import pl.edu.agh.io.jappka.os.WindowsNativeAccessor;
 
 import java.util.HashSet;
-import java.util.List;
-import java.util.Map;
 import java.util.Set;
 import java.util.stream.Collectors;
 

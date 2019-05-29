@@ -1,6 +1,5 @@
 package pl.edu.agh.io.jappka.activity;
 
-import javax.swing.plaf.nimbus.State;
 import java.io.*;
 import java.util.List;
 import java.util.Timer;
