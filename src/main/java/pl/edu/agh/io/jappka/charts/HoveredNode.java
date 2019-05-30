@@ -17,7 +17,6 @@ public class HoveredNode extends StackPane {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 getChildren().add(0, label);
-                setCursor(Cursor.NONE);
                 toFront();
             }
         });
@@ -25,7 +24,6 @@ public class HoveredNode extends StackPane {
             @Override
             public void handle(MouseEvent mouseEvent) {
                 getChildren().clear();
-                setCursor(Cursor.CROSSHAIR);
             }
         });
     }
