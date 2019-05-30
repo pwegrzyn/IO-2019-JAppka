@@ -115,6 +115,7 @@ public class AppController {
             public void handle(MouseEvent event) {
                 AudioClip audioClip = new AudioClip(Paths.get("src/main/resources/sound/button_click.wav")
                         .toUri().toString());
+                audioClip.setVolume(0.05);
                 audioClip.play();
             }
         });
@@ -123,6 +124,7 @@ public class AppController {
             public void handle(MouseEvent event) {
                 AudioClip audioClip = new AudioClip(Paths.get("src/main/resources/sound/button_click.wav")
                         .toUri().toString());
+                audioClip.setVolume(0.05);
                 audioClip.play();
             }
         });
