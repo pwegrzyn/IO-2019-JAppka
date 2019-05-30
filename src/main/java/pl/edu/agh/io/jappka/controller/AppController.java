@@ -297,8 +297,6 @@ public class AppController {
         yAxisCategories.setAll(categories);
 
         chartData.clear();
-        /*CategoryAxis yAxis=(CategoryAxis) mainChart.getYAxis();
-        ArrayList<XYChart.Series<Number, String>> s=new ArrayList<>();*/
 
         int c=0;
         long diff = 0;
@@ -323,8 +321,10 @@ public class AppController {
                             title = event.getActivityName();
                         }
                         entry.setNode(new HoveredNode(
-                                Utils.millisecondsToCustomStrDate(a.getStartTime(), "HH:mm:ss"),
-                                Utils.millisecondsToCustomStrDate(a.getEndTime(), "HH:mm:ss"), title));
+                                a.getStartTime(),
+                                a.getEndTime(),
+                                title,
+                                this));
                     }
 
                     series.getData().add(entry);
@@ -351,6 +351,19 @@ public class AppController {
         else{
             return "status-green";
         }
+    }
+
+    public void removePeriod(long start, long end, String title){
+        List<AbstractActivityPeriod> customEvents = obData.get("Custom");
+
+        Optional<AbstractActivityPeriod> period = customEvents.stream()
+                .filter(e -> e.getStartTime() == start && e.getEndTime() == end).findFirst();
+
+        if(period.isPresent()){
+            customEvents.remove(period.get());
+            this.dataController.getCustomEventManager().persist(customEvents);
+        }
+
     }
 
     public DataController getDataController(){
