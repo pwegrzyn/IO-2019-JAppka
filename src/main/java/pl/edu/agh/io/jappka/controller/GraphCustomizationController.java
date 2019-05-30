@@ -58,8 +58,12 @@ public class GraphCustomizationController {
         this.ColorChoiceBox.valueProperty().addListener(new ChangeListener<GraphAppColor>() {
             @Override
             public void changed(ObservableValue<? extends GraphAppColor> observable, GraphAppColor oldValue, GraphAppColor newValue) {
-                GraphCustomizationController.this.colorChoice.put(GraphCustomizationController.this
-                        .BarsListView.getSelectionModel().getSelectedItem().toString(), newValue);
+                try {
+                    GraphCustomizationController.this.colorChoice.put(GraphCustomizationController.this
+                            .BarsListView.getSelectionModel().getSelectedItem().toString(), newValue);
+                } catch (NullPointerException e) {
+                    return;
+                }
             }
         });
     }
