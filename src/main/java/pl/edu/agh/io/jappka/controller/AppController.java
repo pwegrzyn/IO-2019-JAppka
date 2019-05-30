@@ -28,6 +28,9 @@ import pl.edu.agh.io.jappka.charts.GanttChart;
 import pl.edu.agh.io.jappka.charts.HoveredNode;
 import pl.edu.agh.io.jappka.util.Utils;
 
+import java.io.BufferedReader;
+import java.io.File;
+import java.io.FileReader;
 import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -46,6 +49,10 @@ public class AppController {
     private ChartControllerHelper chartControllerHelper;
     private DataController dataController;
     private ObservableList<XYChart.Series<Number, String>> chartData;
+
+    private String dataDirectoryPath = "data/";
+    private String lastConfigLocation = dataDirectoryPath + "last_config_location.txt";;
+    private String activityDataDirectoryPath = dataDirectoryPath + "activity/";
 
     private GanttChart<Number,String> mainChart;
 
@@ -134,6 +141,27 @@ public class AppController {
 
         // Show Init Help Screen when the main GUI loads
         showInitHelpScreen();
+
+        // Check if can load last config file
+        tryToLoadConfigFile();
+    }
+
+    private void tryToLoadConfigFile() {
+        if (fileExists()) {
+            try {
+                BufferedReader reader = new BufferedReader(new FileReader(this.lastConfigLocation));
+                String line;
+                List<String> records = new ArrayList<String>();
+                while ((line = reader.readLine()) != null) {
+                    records.add(line);
+                }
+                reader.close();
+                this.tryToLoadAutomatically(records.get(0));
+            }
+            catch (Exception e) {
+                return;
+            }
+        }
     }
 
     private void showInitHelpScreen() {
@@ -193,6 +221,10 @@ public class AppController {
     @FXML
     private void handleLoad(ActionEvent event){
         actionsControllerHelper.handleSave(event,currentTheme,this,false);
+    }
+
+    private void tryToLoadAutomatically(String configFileLocation) {
+        actionsControllerHelper.handleLoadAutomatically(this, configFileLocation);
     }
 
     @FXML
@@ -401,4 +433,10 @@ public class AppController {
     public DataController getDataController(){
         return this.dataController;
     }
+
+    private boolean fileExists() {
+        File file = new File(this.lastConfigLocation);
+        return file.exists() && !file.isDirectory();
+    }
+
 }

@@ -12,14 +12,8 @@ import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import pl.edu.agh.io.jappka.activity.*;
 
-import java.io.File;
-import java.io.FileNotFoundException;
-import java.io.FileReader;
-import java.io.PrintWriter;
-import java.util.ArrayList;
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
+import java.io.*;
+import java.util.*;
 import java.util.logging.Logger;
 
 public class SaveController {
@@ -36,6 +30,9 @@ public class SaveController {
     private boolean save;
     private Stage stage;
     private File file;
+    private String dataDirectoryPath = "data/";
+    private String appStateFilePath = dataDirectoryPath + "last_config_location.txt";;
+    private String activityDataDirectoryPath = dataDirectoryPath + "activity/";
 
     public void initialize(AppController appController, boolean save){
         this.appController=appController;
@@ -63,9 +60,44 @@ public class SaveController {
             } catch (Exception e){
                 e.printStackTrace();
             }
+            persistLastSaveLocation();
         }
         else load();
         this.stage.close();
+    }
+
+    private void persistLastSaveLocation() {
+        if (fileExists()) {
+            try{
+                FileWriter fw = new FileWriter(this.appStateFilePath);
+                fw.write(this.file.getAbsolutePath());
+                fw.close();
+            } catch(Exception e) {
+                LOGGER.warning("Error while persisting last config file save");
+                return;
+            }
+        } else {
+            try {
+                createAppStateFile();
+                FileWriter fw = new FileWriter(this.appStateFilePath);
+                fw.write(this.file.getAbsolutePath());
+                fw.close();
+            } catch (IOException e) {
+                LOGGER.warning("Error while creating last config file save");
+                return;
+            }
+        }
+    }
+
+    private void createAppStateFile() throws IOException {
+        new File(this.activityDataDirectoryPath).mkdirs();
+        File file = new File(this.appStateFilePath);
+        file.createNewFile();
+    }
+
+    private boolean fileExists() {
+        File file = new File(this.appStateFilePath);
+        return file.exists() && !file.isDirectory();
     }
 
     private boolean containsApp(String name,ObservableMap<String,List<AbstractActivityPeriod>> obData){
@@ -81,13 +113,16 @@ public class SaveController {
         try {
             reader=new JsonReader(new FileReader(this.file.getAbsoluteFile()));
         } catch(FileNotFoundException e) {
-            LOGGER.severe("This file does not exists!");
             return;
         }
         ArrayList<String> apps=gson.fromJson(reader,new TypeToken<List<String>>(){}.getType());
 
-        for (Map.Entry<String,List<AbstractActivityPeriod>> e : obData.entrySet()){
-            if ((!e.getKey().equals("PC"))) obData.remove(e.getKey());
+        try {
+            for (Map.Entry<String,List<AbstractActivityPeriod>> e : obData.entrySet()){
+                if ((!e.getKey().equals("PC"))) obData.remove(e.getKey());
+            }
+        } catch (ConcurrentModificationException e) {
+            return;
         }
 
         Map<String,ActivitySummary> activities=new HashMap<>();
@@ -147,5 +182,15 @@ public class SaveController {
         if (this.file != null) {
             this.chosenFile.textProperty().set(file.getAbsolutePath());
         }
+    }
+
+    public void loadAutomatically(String configFileLocation) {
+        this.file = new File(configFileLocation);
+        try {
+            load();
+        } catch (Exception e) {
+            LOGGER.warning("Error while automatically loading config file");
+        }
+        this.file = null;
     }
 }

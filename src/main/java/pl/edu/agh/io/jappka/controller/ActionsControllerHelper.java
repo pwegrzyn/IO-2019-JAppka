@@ -178,4 +178,22 @@ public class ActionsControllerHelper {
         }
 
     }
+
+    public void handleLoadAutomatically(AppController appController, String configFileLocation){
+        try{
+            FXMLLoader loader=new FXMLLoader();
+            loader.setLocation(getClass().getClassLoader().getResource("Jappka/view/save.fxml"));
+            AnchorPane layout=loader.load();
+            SaveController controller=loader.getController();
+            controller.initialize(appController,false);
+            Scene scene=new Scene(layout);
+            Stage stage=new Stage();
+            stage.setScene(scene);
+            controller.setStage(stage);
+            controller.loadAutomatically(configFileLocation);
+        }
+        catch (IOException e){
+            e.printStackTrace();
+        }
+    }
 }
