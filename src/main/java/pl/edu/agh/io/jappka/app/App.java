@@ -1,6 +1,7 @@
 package pl.edu.agh.io.jappka.app;
 
 import javafx.application.Application;
+import javafx.application.Platform;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 import javafx.stage.Stage;
@@ -40,6 +41,9 @@ public class App extends Application {
 
         Map<String, ActivitySummary> activities=new HashMap<>();
         activities.put("PC",PCSummary);
+
+        // To allow minimizing to tray
+        Platform.setImplicitExit(false);
 
         AppGUI gui = new AppGUI(primaryStage,obData,activities);
         gui.initApplication();

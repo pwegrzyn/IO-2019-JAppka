@@ -11,12 +11,19 @@ import pl.edu.agh.io.jappka.activity.AbstractActivityPeriod;
 import pl.edu.agh.io.jappka.activity.ActivitySummary;
 import pl.edu.agh.io.jappka.controller.AppController;
 
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
 import java.io.IOException;
 import java.nio.file.Paths;
+import java.util.EventListener;
 import java.util.List;
 import java.util.Map;
+import java.util.logging.Logger;
 
 public class AppGUI {
+
+    private static final Logger LOGGER = Logger.getLogger(AppGUI.class.getName());
     private Stage primaryStage;
     private ObservableMap<String, List<AbstractActivityPeriod>> obData;
     private AppController controller;
@@ -41,15 +48,60 @@ public class AppGUI {
         // Set app icon
         primaryStage.getIcons().add(new Image(Paths.get("src/main/resources/image/icon2.png").toUri().toString()));
 
+        // DO NOT Call System.exit(), since the tray icon needs to stay
         primaryStage.setOnCloseRequest(e ->{
-                primaryStage.close();
-                System.exit(0);
-            });
+            primaryStage.close();
+        });
+
         primaryStage.setResizable(false);
         controller = loader.getController();
         controller.setObData(obData);
         controller.setActivities(activities);
         controller.setPrimaryStageElements(primaryStage, scene);
+
+        // Add Tray Icon
+        // Check the SystemTray is supported
+        if (!SystemTray.isSupported()) {
+            LOGGER.warning("System Tray is not supported on this OS version");
+            return;
+        }
+
+        // Get the System Tray
+        final PopupMenu popup = new PopupMenu();
+        java.awt.Image image = Toolkit.getDefaultToolkit().getImage("src/main/resources/image/icon3.png");
+        final TrayIcon trayIcon = new TrayIcon(image, "JAppka Activity Tracker");
+        final SystemTray tray = SystemTray.getSystemTray();
+
+        // Create a pop-up menu components
+        MenuItem displayMenu = new MenuItem("Display");
+        displayMenu.addActionListener(e -> {
+            Platform.runLater(() -> primaryStage.show());
+        });
+
+        MenuItem exitItem = new MenuItem("Exit");
+        exitItem.addActionListener(new ActionListener() {
+            @Override
+            public void actionPerformed(ActionEvent e) {
+                System.exit(0);
+            }
+        });
+
+        //Add components to pop-up menu
+        popup.add(displayMenu);
+        popup.add(exitItem);
+
+        trayIcon.setPopupMenu(popup);
+
+        trayIcon.addActionListener(e -> {
+            Platform.runLater(() -> primaryStage.show());
+        });
+
+        try {
+            tray.add(trayIcon);
+        } catch (AWTException e) {
+            LOGGER.warning("Tray Icon could not be added");
+            return;
+        }
     }
 
     public void gatherData(){
