@@ -169,8 +169,8 @@ public class AppController {
     }
 
     @FXML
-    private void handleGraphColorPicker(ActionEvent event){
-        actionsControllerHelper.handleGraphColorPicker(event);
+    private void handleGraphCustomization(ActionEvent event){
+        actionsControllerHelper.handleGraphCustomization(event, this.currentTheme);
     }
 
     public void backToMainView() {

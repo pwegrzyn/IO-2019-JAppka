@@ -33,6 +33,8 @@ public class ActionsControllerHelper {
             controller.initialize(appController);
             Scene scene = new Scene(layout);
             Stage stage = new Stage();
+            stage.setAlwaysOnTop(true);
+            stage.setResizable(false);
             stage.setTitle("Add Application");
             stage.setScene(scene);
             scene.getStylesheets().add(currentTheme);
@@ -57,6 +59,8 @@ public class ActionsControllerHelper {
             controller.setData(obData);
             controller.drawGraph();
             Stage stage = new Stage();
+            stage.setAlwaysOnTop(true);
+            stage.setResizable(false);
             Scene scene = new Scene(layout);
             scene.getStylesheets().add(currentTheme);
             stage.setScene(scene);
@@ -81,6 +85,8 @@ public class ActionsControllerHelper {
             Scene scene = new Scene(layout);
             scene.getStylesheets().add(currentTheme);
             Stage stage = new Stage();
+            stage.setAlwaysOnTop(true);
+            stage.setResizable(false);
             stage.setScene(scene);
             stage.setTitle("Adding own event");
             controller.setStage(stage);
@@ -103,6 +109,8 @@ public class ActionsControllerHelper {
             controller.setData(data);
             Scene reportGenerationScene = new Scene(layout);
             Stage reportGenerationStage = new Stage();
+            reportGenerationStage.setAlwaysOnTop(true);
+            reportGenerationStage.setResizable(false);
             reportGenerationStage.setTitle("Report generation");
             reportGenerationStage.setScene(reportGenerationScene);
             reportGenerationScene.getStylesheets().add(currentTheme);
@@ -123,10 +131,11 @@ public class ActionsControllerHelper {
             AnchorPane layout=loader.load();
             SaveController controller=loader.getController();
             controller.initialize(appController,save);
-
             Scene scene=new Scene(layout);
             scene.getStylesheets().add(currentTheme);
             Stage stage=new Stage();
+            stage.setAlwaysOnTop(true);
+            stage.setResizable(false);
             if (save) stage.setTitle("Configuration saving");
             else stage.setTitle("Configuration loading");
             stage.setScene(scene);
@@ -139,20 +148,23 @@ public class ActionsControllerHelper {
         }
     }
 
-    public void handleGraphColorPicker(ActionEvent event){
+    public void handleGraphCustomization(ActionEvent event, String currentTheme){
         try{
             FXMLLoader loader = new FXMLLoader();
-            loader.setLocation(getClass().getClassLoader().getResource("JAppka/popups/graphColorPicker.fxml"));
-            GridPane colorPickerLayout = loader.load();
-            Stage colorPickerStage= new Stage();
-            Scene colorPickerScene = new Scene(colorPickerLayout,500,300);
-            colorPickerStage.setScene(colorPickerScene);
-            colorPickerStage.setTitle("Grid's color scheme");
-            GraphColorPickerController colorPickerController = loader.getController();
-            colorPickerController.setStage(colorPickerStage);
-            colorPickerStage.show();
-        }catch(IOException e){
-            System.out.println("Exception occurred when loading graph color picker's FXML file, Reason: ");
+            loader.setLocation(getClass().getClassLoader().getResource("JAppka/view/graphCustomization.fxml"));
+            AnchorPane customizerLayout = loader.load();
+            Stage customizerStage= new Stage();
+            customizerStage.setAlwaysOnTop(true);
+            customizerStage.setResizable(false);
+            Scene customizerScene = new Scene(customizerLayout,600,400);
+            customizerScene.getStylesheets().add(currentTheme);
+            customizerStage.setScene(customizerScene);
+            customizerStage.setTitle("Graph customization");
+            GraphCustomizationController customizationController = loader.getController();
+            customizationController.setStage(customizerStage);
+            customizerStage.show();
+        }catch(Exception e){
+            System.out.println("Exception occurred when loading graph customizer's FXML file, Reason: ");
             e.printStackTrace();
         }
 

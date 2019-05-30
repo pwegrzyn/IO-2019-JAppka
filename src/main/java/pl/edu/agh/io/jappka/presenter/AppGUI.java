@@ -40,7 +40,7 @@ public class AppGUI {
                 primaryStage.close();
                 System.exit(0);
             });
-
+        primaryStage.setResizable(false);
         controller = loader.getController();
         controller.setObData(obData);
         controller.setActivities(activities);

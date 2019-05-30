@@ -2,26 +2,26 @@ package pl.edu.agh.io.jappka.controller;
 
 import javafx.event.ActionEvent;
 import javafx.fxml.FXML;
-import javafx.scene.control.ColorPicker;
+import javafx.scene.control.Button;
 import javafx.stage.Stage;
 
-public class GraphColorPickerController {
-    @FXML
-    ColorPicker activeColorPicker;
-    @FXML
-    ColorPicker inactiveColorPicker;
-    @FXML
-    ColorPicker otherColorPicker;
+public class GraphCustomizationController {
 
     private Stage stage;
 
     @FXML
-    private void handleChangeColors(ActionEvent event) {
+    private Button CancelButton;
 
-    }
+    @FXML
+    private Button ApplyButton;
 
     @FXML
     private void handleCancel(ActionEvent event) {
+        this.stage.close();
+    }
+
+    @FXML
+    private void handleApply(ActionEvent event) {
         this.stage.close();
     }
 

@@ -44,7 +44,7 @@
                         </Menu>
                             </items>
                         </Menu>
-                        <Menu mnemonicParsing="false" text="Color Themes">
+                        <Menu mnemonicParsing="false" text="Customization">
                             <items>
                                 <Menu mnemonicParsing="false" text="Change App Color Theme">
                                     <items>
@@ -52,7 +52,7 @@
                                         <MenuItem fx:id="darkTheme" mnemonicParsing="false" text="Dark" />
                                     </items>
                                 </Menu>
-                                <MenuItem mnemonicParsing="false" onAction="#handleGraphColorPicker" text="Change Graph's Color Scheme" />
+                                <MenuItem mnemonicParsing="false" onAction="#handleGraphCustomization" text="Main Graph Customization" />
                             </items>
                         </Menu>
                     </menus>

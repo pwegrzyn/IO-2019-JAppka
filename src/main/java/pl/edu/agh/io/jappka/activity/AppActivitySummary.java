@@ -33,7 +33,7 @@ public class AppActivitySummary implements ActivitySummary {
         long lastIterTime = -1;
         AbstractActivityPeriod newPeriod;
         StateTransitionEvent.Type lastType = StateTransitionEvent.Type.NONFOCUSED;
-        // FIXME: check if this try-catch doesn't mess up the class
+        // FIXME: check if this try-catch doesn't mess up the class (previously only for-loop)
         try {
             for (StateTransitionEvent event : this.activityStream.getEvents()) {
                 if(firstIter) {
