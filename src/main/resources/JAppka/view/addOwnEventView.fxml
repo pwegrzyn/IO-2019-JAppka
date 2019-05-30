@@ -8,12 +8,12 @@
 
 <AnchorPane prefHeight="296.0" prefWidth="431.0" xmlns="http://javafx.com/javafx/8.0.172-ea" xmlns:fx="http://javafx.com/fxml/1" fx:controller="pl.edu.agh.io.jappka.controller.AddOwnEventController">
    <children>
-      <TextField fx:id="eventName" layoutX="136.0" layoutY="57.0" prefHeight="31.0" prefWidth="160.0" promptText="Event name" />
-      <DateTimePicker fx:id="start" layoutX="136.0" layoutY="123.0" prefHeight="31.0" prefWidth="160.0" promptText="Start date" />
+      <TextField fx:id="eventName" layoutX="96.0" layoutY="57.0" prefHeight="31.0" prefWidth="220.0" promptText="Event name" />
+      <DateTimePicker fx:id="start" layoutX="96.0" layoutY="123.0" prefHeight="31.0" prefWidth="220.0" promptText="Start date" />
       <Button layoutX="41.0" layoutY="242.0" mnemonicParsing="false" onAction="#handleBackButton" prefHeight="31.0" prefWidth="138.0" text="Cancel" />
       <Button layoutX="258.0" layoutY="242.0" mnemonicParsing="false" onAction="#handleAddEventAction" prefHeight="31.0" prefWidth="138.0" text="Add Event" />
-      <DateTimePicker fx:id="end" layoutX="136.0" layoutY="162.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="31.0" prefWidth="160.0" promptText="End date" />
-      <Label layoutX="135.0" layoutY="40.0" text="Event Name" />
-      <Label layoutX="136.0" layoutY="106.0" text="Time Frame" />
+      <DateTimePicker fx:id="end" layoutX="96.0" layoutY="162.0" maxHeight="-Infinity" maxWidth="-Infinity" prefHeight="31.0" prefWidth="220.0" promptText="End date" />
+      <Label layoutX="166.0" layoutY="36.0" text="Event Name" />
+      <Label layoutX="167.0" layoutY="102.0" text="Time Frame" />
    </children>
 </AnchorPane>
