@@ -155,7 +155,7 @@ public class ActionsControllerHelper {
         }
     }
 
-    public void handleGraphCustomization(ActionEvent event, String currentTheme){
+    public void handleGraphCustomization(ActionEvent event, String currentTheme, AppController appController){
         try{
             FXMLLoader loader = new FXMLLoader();
             loader.setLocation(getClass().getClassLoader().getResource("JAppka/view/graphCustomization.fxml"));
@@ -163,14 +163,14 @@ public class ActionsControllerHelper {
             Stage customizerStage= new Stage();
             customizerStage.setAlwaysOnTop(true);
             customizerStage.setResizable(false);
-            Scene customizerScene = new Scene(customizerLayout,600,400);
+            Scene customizerScene = new Scene(customizerLayout,543,482);
             customizerScene.getStylesheets().add(currentTheme);
             customizerStage.setScene(customizerScene);
             customizerStage.getIcons().add(new Image(Paths.get("src/main/resources/image/icon2.png").toUri().toString()));
             customizerStage.setTitle("Graph customization");
             GraphCustomizationController customizationController = loader.getController();
             customizationController.setStage(customizerStage);
-            customizationController.inti();
+            customizationController.init(appController);
             customizerStage.show();
         }catch(Exception e){
             System.out.println("Exception occurred when loading graph customizer's FXML file, Reason: ");

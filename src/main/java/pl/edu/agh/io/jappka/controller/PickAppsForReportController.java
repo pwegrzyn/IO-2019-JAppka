@@ -36,7 +36,7 @@ public class PickAppsForReportController {
         this.appController=appController;
         this.reportGenerationController = reportGenerationController;
         for(String app : allAppsInPeriod)
-            this.apps.add(app);
+            if (!app.equals("PC")) this.apps.add(app);
         selectAppsView.getItems().setAll(apps);
     }
 

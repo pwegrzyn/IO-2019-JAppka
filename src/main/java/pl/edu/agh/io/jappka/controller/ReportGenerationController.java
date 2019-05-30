@@ -308,7 +308,7 @@ public class ReportGenerationController {
         //Looks weird, but lambdas require the variable reference to be final
         final long[] wholeActivity = {0};
         usageForDay.entrySet().forEach((entry) -> {
-            if (!Objects.equals(entry.getKey(), "PC"))
+            if (!Objects.equals(entry.getKey(), "PC") && !Objects.equals(entry.getKey(), "Custom"))
                 wholeActivity[0] += entry.getValue();
         });
         return wholeActivity[0];
@@ -435,6 +435,8 @@ public class ReportGenerationController {
 
             Set<String> allAppsInPeriod = dataCollection.keySet();
             controller.initialize(appController,allAppsInPeriod, this);
+            pickAppsForReportStage.setResizable(false);
+            pickAppsForReportStage.setAlwaysOnTop(true);
             pickAppsForReportStage.show();
         }
 

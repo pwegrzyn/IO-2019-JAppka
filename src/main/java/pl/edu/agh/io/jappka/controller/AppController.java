@@ -64,6 +64,8 @@ public class AppController {
 
     private Map<String,ActivitySummary> activities;
 
+    private List<String> appsOrderOnGraph;
+
     @FXML
     private AnchorPane mainPane;
 
@@ -91,6 +93,7 @@ public class AppController {
     private MenuItem darkTheme;
 
     public void setPrimaryStageElements(Stage primaryStage, Scene primaryScene) {
+        this.appsOrderOnGraph = new LinkedList<>();
         this.primaryStage = primaryStage;
         this.primaryScene = primaryScene;
         this.actionsControllerHelper = new ActionsControllerHelper(primaryStage, primaryScene);
@@ -195,6 +198,10 @@ public class AppController {
         this.dataController = new DataController(obData);
     }
 
+    public void setAppsOrderOnGraph(List<String> ordered) {
+        this.appsOrderOnGraph = ordered;
+    }
+
     public void setActivities(Map<String,ActivitySummary> activities){
         this.activities=activities;
     }
@@ -234,7 +241,7 @@ public class AppController {
 
     @FXML
     private void handleGraphCustomization(ActionEvent event){
-        actionsControllerHelper.handleGraphCustomization(event, this.currentTheme);
+        actionsControllerHelper.handleGraphCustomization(event, this.currentTheme, this);
     }
 
     public void backToMainView() {
@@ -357,7 +364,16 @@ public class AppController {
     }
 
     public void update(){
-        String[] categories=obData.keySet().stream().toArray(String[]::new);
+
+        // Order the apps on the graph according to user specification
+        Map<String, List<AbstractActivityPeriod>> obDataSorted = null;
+        if (obDataContainsSameKeysAsOrderList()) {
+            obDataSorted = sortGraphEntries();
+        } else {
+            obDataSorted = obData;
+        }
+
+        String[] categories=obDataSorted.keySet().stream().toArray(String[]::new);
         yAxisCategories.setAll(categories);
 
         chartData.clear();
@@ -365,7 +381,7 @@ public class AppController {
         int c=0;
         long diff = 0;
         boolean skipBarChartDrawing = false;
-        for (Map.Entry<String,List<AbstractActivityPeriod>> e : obData.entrySet()){
+        for (Map.Entry<String,List<AbstractActivityPeriod>> e : obDataSorted.entrySet()){
             XYChart.Series series= new XYChart.Series();
             series.setName(categories[c]);
             c++;
@@ -406,6 +422,30 @@ public class AppController {
                 Tooltip.install(entry.getNode(), t);
             }
         }
+    }
+
+    public boolean obDataContainsSameKeysAsOrderList() {
+        if (this.appsOrderOnGraph == null || this.obData == null) return false;
+        if (this.appsOrderOnGraph.size() != this.obData.size()) return false;
+        for (Map.Entry<String, List<AbstractActivityPeriod>> entry : this.obData.entrySet()) {
+            boolean found = false;
+            for (String appName : this.appsOrderOnGraph) {
+                if (appName.equals(entry.getKey())) {
+                    found = true;
+                    break;
+                }
+            }
+            if (!found) return false;
+        }
+        return true;
+    }
+
+    public LinkedHashMap<String, List<AbstractActivityPeriod>> sortGraphEntries() {
+        LinkedHashMap<String, List<AbstractActivityPeriod>> result = new LinkedHashMap<>();
+        for (String appName : this.appsOrderOnGraph) {
+            result.put(appName, this.obData.get(appName));
+        }
+        return result;
     }
 
     private String getChartStyle(AbstractActivityPeriod.Type type){

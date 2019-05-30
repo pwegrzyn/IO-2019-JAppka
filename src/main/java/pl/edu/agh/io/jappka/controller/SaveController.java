@@ -53,7 +53,16 @@ public class SaveController {
         }
         if (save){
             List<String> apps=new ArrayList<String>();
-            for (Map.Entry<String,List<AbstractActivityPeriod>> e : obData.entrySet()) apps.add(e.getKey());
+
+            // Taking care of saving the order of apps on the graph
+            Map<String, List<AbstractActivityPeriod>> obDataSorted = null;
+            if (this.appController.obDataContainsSameKeysAsOrderList()) {
+                obDataSorted = this.appController.sortGraphEntries();
+            } else {
+                obDataSorted = obData;
+            }
+
+            for (Map.Entry<String,List<AbstractActivityPeriod>> e : obDataSorted.entrySet()) apps.add(e.getKey());
             String json=new Gson().toJson(apps);
             try (PrintWriter out=new PrintWriter(this.file)){
                 out.println(json);
@@ -116,6 +125,9 @@ public class SaveController {
             return;
         }
         ArrayList<String> apps=gson.fromJson(reader,new TypeToken<List<String>>(){}.getType());
+
+        // Taking care of restoring proper ordering
+        this.appController.setAppsOrderOnGraph(apps);
 
         try {
             for (Map.Entry<String,List<AbstractActivityPeriod>> e : obData.entrySet()){

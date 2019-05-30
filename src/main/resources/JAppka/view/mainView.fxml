@@ -33,7 +33,6 @@
                         <Menu mnemonicParsing="false" text="Actions">
                             <items>
                                 <MenuItem mnemonicParsing="false" onAction="#handleAddApplicationAction" text="Add App" />
-                                <MenuItem mnemonicParsing="false" onAction="#handleShowCharts" text="Show Statistics" />
                                 <MenuItem mnemonicParsing="false" onAction="#handleGenerateReport" text="Generate Report" />
                         <MenuItem mnemonicParsing="false" onAction="#handleAddOwnEventAction" text="Add Custom Event" />
                         <Menu mnemonicParsing="false" text="Configuration">

@@ -25,3 +25,8 @@ SonarQube
         `.\gradle.bat sonarqube`
         
 Visit `http://localhost:9000/projects?sort=-analysis_date` to view the report
+
+Known Issues
+=============
+* Currently it's not allowed to add a new app while having the Graph Customization Menu open and having
+edited the ListView there.
