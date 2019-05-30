@@ -44,6 +44,9 @@ public class AppActivityTracker extends AbstractActivityTracker {
 
     @Override
     protected void addRecoveryEvents() {
+        // FIXME check if this lane doesn't break the rest
+        if (this.currentState.getLastHeartbeat() == null) return;
+
         long lastHeartbeatTime = this.currentState.getLastHeartbeat().getValue();
         addActivityToState(lastHeartbeatTime, this.inactiveState);
 

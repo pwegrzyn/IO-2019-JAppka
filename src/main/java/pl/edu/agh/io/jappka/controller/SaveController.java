@@ -94,6 +94,7 @@ public class SaveController {
         activities.put("PC",appController.getActivities().get("PC"));
 
         for (String e : apps){
+            if(e.equals("Custom")) continue;
             if (!containsApp(e,obData)){
                 ActivityTracker newTracker=new AppActivityTracker(e);
                 newTracker.track();
@@ -106,6 +107,7 @@ public class SaveController {
         }
         appController.setObData(obData);
         appController.setActivities(activities);
+        appController.getDataController().loadPreviousEvents();
         return;
     }
 

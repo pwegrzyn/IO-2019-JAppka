@@ -22,6 +22,7 @@ import javafx.stage.Stage;
 import pl.edu.agh.io.jappka.activity.AbstractActivityPeriod;
 import pl.edu.agh.io.jappka.activity.ActivitySummary;
 import pl.edu.agh.io.jappka.activity.CustomActivityPeriod;
+import pl.edu.agh.io.jappka.activity.CustomEventManager;
 import pl.edu.agh.io.jappka.charts.GanttChart;
 import pl.edu.agh.io.jappka.charts.HoveredNode;
 import pl.edu.agh.io.jappka.util.Utils;
@@ -102,7 +103,9 @@ public class AppController {
             this.primaryScene.getStylesheets().add(currentTheme);
 
         });
+
         this.dataController = new DataController(this.obData);
+        this.dataController.loadPreviousEvents();
 
         // Buttons Customization
         this.GoBackwardsDay.setCursor(Cursor.HAND);
@@ -127,6 +130,7 @@ public class AppController {
 
     public void setObData(ObservableMap<String, List<AbstractActivityPeriod>> obData){
         this.obData=obData;
+        this.dataController = new DataController(obData);
     }
 
     public void setActivities(Map<String,ActivitySummary> activities){

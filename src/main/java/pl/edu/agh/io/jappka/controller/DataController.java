@@ -5,27 +5,31 @@ import pl.edu.agh.io.jappka.Exceptions.InvalidEventException;
 import pl.edu.agh.io.jappka.activity.AbstractActivityPeriod;
 import pl.edu.agh.io.jappka.activity.AppActivityPeriod;
 import pl.edu.agh.io.jappka.activity.CustomActivityPeriod;
+import pl.edu.agh.io.jappka.activity.CustomEventManager;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 
 public class DataController {
+
     private Map<String, List<AbstractActivityPeriod>> data;
+    private CustomEventManager customEventManager;
+    private String customEventsKey = "Custom";
 
     public DataController(Map<String, List<AbstractActivityPeriod>> data){
+
         this.data = data;
+        this.customEventManager = new CustomEventManager();
     }
 
-    public void initData(){
-
-    }
+    public void initData() {}
 
     public void addCustomEvent(long start, long end, String name) throws InvalidEventException {
-        String key = "Custom events";
+        String key = this.customEventsKey;
         AbstractActivityPeriod period = new CustomActivityPeriod(start, end, name);
         List<AbstractActivityPeriod> periods;
-        if(data.containsKey(key)){
+        if(data.containsKey(key) && data.get(key).size() > 0){
             periods = data.get(key);
 
             if(checkIfOverlaps(period, periods)){
@@ -41,6 +45,7 @@ public class DataController {
         }
         periods.add(period);
         data.put(key, periods);
+        this.customEventManager.persist(periods);
     }
 
     public boolean checkIfOverlaps(AbstractActivityPeriod period, List<AbstractActivityPeriod> periods){
@@ -54,6 +59,13 @@ public class DataController {
         }
 
         return false;
+    }
+
+    public void loadPreviousEvents() {
+        List<AbstractActivityPeriod> previousPeriods = this.customEventManager.load();
+        if (previousPeriods != null) {
+            this.data.put(this.customEventsKey, previousPeriods);
+        }
     }
 
     private void removeOverlapping(AbstractActivityPeriod period){

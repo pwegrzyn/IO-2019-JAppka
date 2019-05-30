@@ -1,6 +1,8 @@
 package pl.edu.agh.io.jappka.activity;
 
-public abstract class AbstractActivityPeriod {
+import java.io.Serializable;
+
+public abstract class AbstractActivityPeriod implements Serializable {
 
     protected final long startTime;
     protected final long endTime;
