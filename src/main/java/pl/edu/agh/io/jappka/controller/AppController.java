@@ -7,6 +7,7 @@ import javafx.collections.ObservableMap;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
+import javafx.fxml.FXMLLoader;
 import javafx.scene.Cursor;
 import javafx.scene.Scene;
 import javafx.scene.chart.NumberAxis;
@@ -15,6 +16,7 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tooltip;
+import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.media.AudioClip;
@@ -22,7 +24,6 @@ import javafx.stage.Stage;
 import pl.edu.agh.io.jappka.activity.AbstractActivityPeriod;
 import pl.edu.agh.io.jappka.activity.ActivitySummary;
 import pl.edu.agh.io.jappka.activity.CustomActivityPeriod;
-import pl.edu.agh.io.jappka.activity.CustomEventManager;
 import pl.edu.agh.io.jappka.charts.GanttChart;
 import pl.edu.agh.io.jappka.charts.HoveredNode;
 import pl.edu.agh.io.jappka.util.Utils;
@@ -31,10 +32,12 @@ import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.*;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class AppController {
 
+    private static final Logger LOGGER = Logger.getLogger(AppController.class.getName());
     private Stage primaryStage;
     private Scene primaryScene;
     private ObservableList<String> yAxisCategories;
@@ -128,6 +131,35 @@ public class AppController {
                 audioClip.play();
             }
         });
+
+        // Show Init Help Screen when the main GUI loads
+        showInitHelpScreen();
+    }
+
+    private void showInitHelpScreen() {
+        try{
+            FXMLLoader loader = new FXMLLoader();
+            loader.setLocation(getClass().getClassLoader().getResource("JAppka/view/initHelpScreen.fxml"));
+            AnchorPane layout = loader.load();
+            Stage stage = new Stage();
+            stage.setAlwaysOnTop(true);
+            stage.setResizable(false);
+            Scene scene = new Scene(layout,400,850);
+            scene.getStylesheets().add(currentTheme);
+            stage.setScene(scene);
+            stage.getIcons().add(new Image(Paths.get("src/main/resources/image/icon2.png").toUri().toString()));
+            stage.setTitle("Welcome To JAppka Activity Tracker");
+            InitHelpScreenController controller = loader.getController();
+            controller.init();
+            if (controller.shouldSkipWindow()) {
+                return;
+            }
+            controller.setStage(stage);
+            stage.show();
+        }catch(Exception e){
+            LOGGER.warning("Exception occurred when loading Init Help Screen");
+            return;
+        }
     }
 
     public void setObData(ObservableMap<String, List<AbstractActivityPeriod>> obData){

@@ -1,4 +1,4 @@
-package pl.edu.agh.io.jappka.os;
+package pl.edu.agh.io.jappka.Exceptions;
 
 public class UnsupportedOsException extends Exception {
 
