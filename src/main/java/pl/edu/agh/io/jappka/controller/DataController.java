@@ -53,7 +53,7 @@ public class DataController {
             long start = period.getStartTime();
             long end = period.getEndTime();
             boolean overlaps = p.getEndTime() > start && p.getStartTime() < end;
-            if(overlaps) {
+            if(overlaps && p.getType() != AbstractActivityPeriod.Type.NONFOCUSED) {
                 return true;
             }
         }
@@ -107,5 +107,9 @@ public class DataController {
             });
         }
 
+    }
+
+    public CustomEventManager getCustomEventManager() {
+        return customEventManager;
     }
 }
