@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 
 <?import javafx.scene.control.Button?>
-<?import javafx.scene.control.ColorPicker?>
+<?import javafx.scene.control.ChoiceBox?>
 <?import javafx.scene.control.Label?>
 <?import javafx.scene.control.ListView?>
 <?import javafx.scene.layout.AnchorPane?>
@@ -14,20 +14,20 @@
             <Font size="28.0" />
          </font>
       </Label>
-      <Button fx:id="ApplyButton" layoutX="303.0" layoutY="407.0" mnemonicParsing="false" onAction="#handleApply" prefHeight="38.0" prefWidth="145.0" text="Apply">
+      <Button fx:id="ApplyButton" layoutX="289.0" layoutY="418.0" mnemonicParsing="false" onAction="#handleApply" prefHeight="38.0" prefWidth="145.0" text="Apply">
          <font>
             <Font size="15.0" />
          </font>
       </Button>
-      <Button fx:id="CancelButton" layoutX="98.0" layoutY="407.0" mnemonicParsing="false" onAction="#handleCancel" prefHeight="38.0" prefWidth="145.0" text="Cancel">
+      <Button fx:id="CancelButton" layoutX="109.0" layoutY="418.0" mnemonicParsing="false" onAction="#handleCancel" prefHeight="38.0" prefWidth="145.0" text="Cancel">
          <font>
             <Font size="15.0" />
          </font>
       </Button>
-      <ListView fx:id="BarsListView" layoutX="109.0" layoutY="86.0" onMouseClicked="#handleOnClick" prefHeight="250.0" prefWidth="325.0" />
-      <ColorPicker fx:id="ColorChoiceBox" layoutX="285.0" layoutY="356.0" prefHeight="25.0" prefWidth="149.0" />
-      <Label layoutX="112.0" layoutY="360.0" text="Color" />
-      <Label layoutX="56.0" layoutY="46.0" text="(Drag and Drop apps in the list to the left to change its' order on the main graph)" wrapText="true" />
+      <ListView fx:id="BarsListView" layoutX="109.0" layoutY="86.0" onMouseClicked="#handleOnClick" prefHeight="279.0" prefWidth="325.0" />
+      <Label layoutX="112.0" layoutY="381.0" text="Color" />
+      <Label layoutX="56.0" layoutY="46.0" text="(Drag and Drop apps in the list below to change its' order on the main graph)" wrapText="true" />
       <Label layoutX="126.0" layoutY="63.0" text="(Select an app and change its color on the main graph)" />
+      <ChoiceBox id="ColorChoiceBox" fx:id="ColorChoiceBox" layoutX="284.0" layoutY="377.0" prefWidth="150.0" />
    </children>
 </AnchorPane>

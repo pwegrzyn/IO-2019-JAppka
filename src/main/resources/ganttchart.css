@@ -7,3 +7,19 @@
 .status-blue {
     -fx-background-color:rgba(0,0,128,0.7);
 }
+
+.status-yellow {
+    -fx-background-color:rgba(240, 234, 49, 0.7);
+}
+
+.status-red {
+    -fx-background-color:rgba(128, 0, 0, 0.7);
+}
+
+.status-black {
+    -fx-background-color:rgba(0, 0, 0, 0.7);
+}
+
+.status-pink {
+    -fx-background-color:rgba(228, 107, 244, 0.7);
+}

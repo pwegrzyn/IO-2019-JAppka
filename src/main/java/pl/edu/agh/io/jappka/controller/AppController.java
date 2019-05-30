@@ -25,6 +25,7 @@ import pl.edu.agh.io.jappka.activity.AbstractActivityPeriod;
 import pl.edu.agh.io.jappka.activity.ActivitySummary;
 import pl.edu.agh.io.jappka.activity.CustomActivityPeriod;
 import pl.edu.agh.io.jappka.charts.GanttChart;
+import pl.edu.agh.io.jappka.charts.GraphAppColor;
 import pl.edu.agh.io.jappka.charts.HoveredNode;
 import pl.edu.agh.io.jappka.util.Utils;
 
@@ -66,6 +67,16 @@ public class AppController {
 
     private List<String> appsOrderOnGraph;
 
+    public Map<String, GraphAppColor> getColorMapping() {
+        return colorMapping;
+    }
+
+    public void setColorMapping(Map<String, GraphAppColor> colorMapping) {
+        this.colorMapping = colorMapping;
+    }
+
+    private Map<String, GraphAppColor> colorMapping;
+
     @FXML
     private AnchorPane mainPane;
 
@@ -94,6 +105,7 @@ public class AppController {
 
     public void setPrimaryStageElements(Stage primaryStage, Scene primaryScene) {
         this.appsOrderOnGraph = new LinkedList<>();
+        this.colorMapping = new HashMap<>();
         this.primaryStage = primaryStage;
         this.primaryScene = primaryScene;
         this.actionsControllerHelper = new ActionsControllerHelper(primaryStage, primaryScene);
@@ -389,7 +401,7 @@ public class AppController {
             if (!skipBarChartDrawing) {
                 diff = e.getValue().get(0).getStartTime()/1000;
                 for (AbstractActivityPeriod a : e.getValue()){
-                    String style = getChartStyle(a.getType());
+                    String style = getChartStyle(a.getType(), e.getKey());
                     long start = diff;
                     long time=(a.getEndTime()-a.getStartTime())/1000;
                     XYChart.Data<Number, String> entry = new XYChart.Data<Number, String>(start,series.getName(),new GanttChart.ExtraData(time,style));
@@ -448,12 +460,22 @@ public class AppController {
         return result;
     }
 
-    private String getChartStyle(AbstractActivityPeriod.Type type){
+    private String getChartStyle(AbstractActivityPeriod.Type type, String app){
         if(type == AbstractActivityPeriod.Type.NONFOCUSED || type == AbstractActivityPeriod.Type.OFF){
             return "status-transparent";
         }
-        else{
+        if (this.colorMapping.get(app) == null) {
             return "status-green";
+        }
+        GraphAppColor color = this.colorMapping.get(app);
+        switch (color) {
+            case Red: return "status-red";
+            case Green: return "status-green";
+            case Blue: return "status-blue";
+            case Pink: return "status-pink";
+            case Black: return "status-black";
+            case Yellow: return "status-yellow";
+            default: return "status-green";
         }
     }
 

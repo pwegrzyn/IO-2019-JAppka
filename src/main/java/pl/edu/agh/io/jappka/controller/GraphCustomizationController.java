@@ -1,9 +1,12 @@
 package pl.edu.agh.io.jappka.controller;
 
 import com.google.common.collect.Lists;
+import javafx.beans.value.ChangeListener;
+import javafx.beans.value.ObservableValue;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.event.ActionEvent;
+import javafx.event.EventType;
 import javafx.fxml.FXML;
 import javafx.geometry.Pos;
 import javafx.scene.Cursor;
@@ -13,11 +16,9 @@ import javafx.scene.input.DragEvent;
 import javafx.scene.input.Dragboard;
 import javafx.scene.input.TransferMode;
 import javafx.stage.Stage;
+import pl.edu.agh.io.jappka.charts.GraphAppColor;
 
-import java.util.ArrayList;
-import java.util.LinkedList;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 public class GraphCustomizationController {
 
@@ -34,9 +35,11 @@ public class GraphCustomizationController {
     private ListView<String> BarsListView;
 
     @FXML
-    private ColorPicker ColorPicker;
+    private ChoiceBox<GraphAppColor> ColorChoiceBox;
 
     private final ObservableList<String> appNames = FXCollections.observableArrayList();
+
+    private Map<String, GraphAppColor> colorChoice;
 
     public void init(AppController appController) {
         // Init the apps list
@@ -46,6 +49,19 @@ public class GraphCustomizationController {
 
         this.BarsListView.getItems().forEach(appName -> this.appNames.add(appName));
         this.BarsListView.setCellFactory(param -> new AppCell());
+
+        // Init Color box
+        this.ColorChoiceBox.setItems(FXCollections.observableArrayList(GraphAppColor.values()));
+
+        // Handle colors
+        this.colorChoice = new HashMap<>();
+        this.ColorChoiceBox.valueProperty().addListener(new ChangeListener<GraphAppColor>() {
+            @Override
+            public void changed(ObservableValue<? extends GraphAppColor> observable, GraphAppColor oldValue, GraphAppColor newValue) {
+                GraphCustomizationController.this.colorChoice.put(GraphCustomizationController.this
+                        .BarsListView.getSelectionModel().getSelectedItem().toString(), newValue);
+            }
+        });
     }
 
     @FXML
@@ -56,6 +72,7 @@ public class GraphCustomizationController {
     @FXML
     private void handleApply(ActionEvent event) {
         this.appController.setAppsOrderOnGraph(Lists.reverse(new LinkedList<>(this.BarsListView.getItems())));
+        this.appController.setColorMapping(this.colorChoice);
         this.stage.close();
     }
 
@@ -72,7 +89,16 @@ public class GraphCustomizationController {
         catch (NullPointerException ex) {
             return;
         }
+        if (this.colorChoice.get(appName) != null) {
+            this.ColorChoiceBox.getSelectionModel().select(this.colorChoice.get(appName));
+        } else if (this.appController.getColorMapping().get(appName) != null) {
+            this.ColorChoiceBox.getSelectionModel().select(this.appController.getColorMapping().get(appName));
+        } else {
+            this.ColorChoiceBox.getSelectionModel().select(GraphAppColor.Green);
+        }
     }
+
+
 
 
     private class AppCell extends ListCell<String> {
