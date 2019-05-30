@@ -11,6 +11,7 @@ import javafx.scene.control.Label;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import pl.edu.agh.io.jappka.activity.*;
+import pl.edu.agh.io.jappka.charts.GraphAppColor;
 
 import java.io.*;
 import java.util.*;
@@ -52,6 +53,9 @@ public class SaveController {
             return;
         }
         if (save){
+
+            List<Object> fields = new ArrayList<>();
+
             List<String> apps=new ArrayList<String>();
 
             // Taking care of saving the order of apps on the graph
@@ -63,12 +67,17 @@ public class SaveController {
             }
 
             for (Map.Entry<String,List<AbstractActivityPeriod>> e : obDataSorted.entrySet()) apps.add(e.getKey());
-            String json=new Gson().toJson(apps);
+            fields.add(apps);
+
+            fields.add(this.appController.getColorMapping());
+
+            String json=new Gson().toJson(fields);
             try (PrintWriter out=new PrintWriter(this.file)){
                 out.println(json);
             } catch (Exception e){
                 e.printStackTrace();
             }
+
             persistLastSaveLocation();
         }
         else load();
@@ -116,7 +125,7 @@ public class SaveController {
         return false;
     }
 
-    public void load() throws Exception{
+    /*public void load() throws Exception{
         Gson gson=new Gson();
         JsonReader reader=null;
         try {
@@ -124,6 +133,7 @@ public class SaveController {
         } catch(FileNotFoundException e) {
             return;
         }
+
         ArrayList<String> apps=gson.fromJson(reader,new TypeToken<List<String>>(){}.getType());
 
         // Taking care of restoring proper ordering
@@ -156,6 +166,64 @@ public class SaveController {
         appController.setActivities(activities);
         appController.getDataController().loadPreviousEvents();
         return;
+    }*/
+
+    public void load() throws Exception{
+        Gson gson=new Gson();
+        JsonReader reader=null;
+        try {
+            reader=new JsonReader(new FileReader(this.file.getAbsoluteFile()));
+        } catch(FileNotFoundException e) {
+            return;
+        }
+
+        ArrayList<Object> fields = gson.fromJson(reader, new TypeToken<List<Object>>(){}.getType());
+
+        // Taking care of restoring proper ordering
+        this.appController.setAppsOrderOnGraph((List<String>) fields.get(0));
+
+        try {
+            for (Map.Entry<String,List<AbstractActivityPeriod>> e : obData.entrySet()){
+                if ((!e.getKey().equals("PC"))) obData.remove(e.getKey());
+            }
+        } catch (ConcurrentModificationException e) {
+            return;
+        }
+
+        Map<String,ActivitySummary> activities=new HashMap<>();
+        activities.put("PC",appController.getActivities().get("PC"));
+
+        for (String e : (List<String>) fields.get(0)){
+            if(e.equals("Custom")) continue;
+            if (!containsApp(e,obData)){
+                ActivityTracker newTracker=new AppActivityTracker(e);
+                newTracker.track();
+
+                ActivitySummary newSummary=new AppActivitySummary(newTracker.getActivityStream(),e);
+                newSummary.generate();
+                obData.put(e,newSummary.getAllPeriods());
+                activities.put(e,newSummary);
+            }
+        }
+        appController.setObData(obData);
+        appController.setActivities(activities);
+        appController.getDataController().loadPreviousEvents();
+
+        // Recover colors
+        Map<String, String> colorMappingStr = (Map<String, String>) fields.get(1);
+        Map<String, GraphAppColor> colorMapping = new HashMap<>();
+        for (Map.Entry<String, String> entry : colorMappingStr.entrySet()) {
+            switch (entry.getValue()) {
+                case "Red": colorMapping.put(entry.getKey(), GraphAppColor.Red); break;
+                case "Green": colorMapping.put(entry.getKey(), GraphAppColor.Green); break;
+                case "Blue": colorMapping.put(entry.getKey(), GraphAppColor.Blue); break;
+                case "Black": colorMapping.put(entry.getKey(), GraphAppColor.Black); break;
+                case "Yellow": colorMapping.put(entry.getKey(), GraphAppColor.Yellow); break;
+                case "Pink": colorMapping.put(entry.getKey(), GraphAppColor.Pink); break;
+                default: break;
+            }
+        }
+        appController.setColorMapping(colorMapping);
     }
 
     @FXML
