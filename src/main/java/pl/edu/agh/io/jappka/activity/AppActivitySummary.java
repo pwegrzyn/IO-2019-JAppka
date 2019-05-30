@@ -1,11 +1,14 @@
 package pl.edu.agh.io.jappka.activity;
 
+import java.util.ConcurrentModificationException;
 import java.util.LinkedList;
 import java.util.List;
+import java.util.logging.Logger;
 import java.util.stream.Collectors;
 
 public class AppActivitySummary implements ActivitySummary {
 
+    private final static Logger LOGGER = Logger.getLogger(AppActivitySummary.class.getName());
     private ActivityStream activityStream;
     private List<AbstractActivityPeriod> periods;
     private boolean wasGenerated;
@@ -30,19 +33,24 @@ public class AppActivitySummary implements ActivitySummary {
         long lastIterTime = -1;
         AbstractActivityPeriod newPeriod;
         StateTransitionEvent.Type lastType = StateTransitionEvent.Type.NONFOCUSED;
-        for (StateTransitionEvent event : this.activityStream.getEvents()) {
-            if(firstIter) {
-                lastIterTime = event.getFiringTime();
-                firstIter = false;
-                lastType = event.getType();
-            } else {
-                if(lastType != event.getType()) {
-                    newPeriod = new AppActivityPeriod(lastIterTime, event.getFiringTime(), getPeriodType(lastType), this.appName);
-                    this.periods.add(newPeriod);
+        // FIXME: check if this try-catch doesn't mess up the class
+        try {
+            for (StateTransitionEvent event : this.activityStream.getEvents()) {
+                if(firstIter) {
                     lastIterTime = event.getFiringTime();
+                    firstIter = false;
                     lastType = event.getType();
+                } else {
+                    if(lastType != event.getType()) {
+                        newPeriod = new AppActivityPeriod(lastIterTime, event.getFiringTime(), getPeriodType(lastType), this.appName);
+                        this.periods.add(newPeriod);
+                        lastIterTime = event.getFiringTime();
+                        lastType = event.getType();
+                    }
                 }
             }
+        } catch (ConcurrentModificationException exception) {
+            LOGGER.warning("Concurrently modifying app activity stream");
         }
         if(!this.activityStream.getEvents().isEmpty()){
             StateTransitionEvent lastEvent = this.activityStream.getEvents().get(this.activityStream.getEvents().size() - 1);
