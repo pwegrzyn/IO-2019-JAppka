@@ -162,6 +162,7 @@ public class ActionsControllerHelper {
             customizerStage.setTitle("Graph customization");
             GraphCustomizationController customizationController = loader.getController();
             customizationController.setStage(customizerStage);
+            customizationController.inti();
             customizerStage.show();
         }catch(Exception e){
             System.out.println("Exception occurred when loading graph customizer's FXML file, Reason: ");
