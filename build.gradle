@@ -1,3 +1,4 @@
+
 plugins {
     id "jacoco"
     id 'java'
@@ -13,6 +14,7 @@ version '1.0-SNAPSHOT'
 
 sourceCompatibility = 1.8
 
+// Sonar scanning
 sonarqube {
     properties {
         property 'sonar.projectName', 'JAppka'
@@ -22,6 +24,13 @@ sonarqube {
 repositories {
     mavenCentral()
     jcenter()
+}
+
+//create a single Jar with all dependencies
+jar {
+    manifest {
+        attributes 'Implementation-Title': 'JAppka-Activity-Tracker', 'Implementation-Version': version, 'Main-Class': 'pl.edu.agh.io.jappka.app.App'
+    }
 }
 
 dependencies {
@@ -51,6 +60,7 @@ Piotr Ćwiklicki
 Tomasz Rejowski
 """
 
+// Jacoco Settings for Sonar
 jacocoTestReport {
     reports {
         xml.enabled true

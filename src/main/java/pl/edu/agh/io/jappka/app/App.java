@@ -10,50 +10,59 @@ import org.apache.commons.exec.OS;
 import pl.edu.agh.io.jappka.presenter.AppGUI;
 
 import java.util.*;
+import java.util.logging.Level;
+import java.util.logging.Logger;
 
 
 public class App extends Application {
+
+    private final static Logger LOGGER = Logger.getLogger(App.class.getName());
 
     public static void main(String[] args) {
         launch(args);
     }
 
     @Override
-    public void start(Stage primaryStage) throws Exception {
-        if (!OS.isFamilyWindows()) {
-            System.err.println("Unsupported Operating System found!");
-            quit();
-        }
-
-        Timer timer = new Timer(true);
-
-        ActivityTracker PCtracker = new PCActivityTracker();
-        PCtracker.track();
-
-        ActivitySummary PCSummary = new PCActivitySummary(PCtracker.getActivityStream());
-        PCSummary.generate();
-
-        Map<String, List<AbstractActivityPeriod>> data = new HashMap<>();
-        data.put("PC", PCSummary.getAllPeriods());
-
-        ObservableMap<String, List<AbstractActivityPeriod>> obData = FXCollections.observableHashMap();
-        obData.putAll(data);
-
-        Map<String, ActivitySummary> activities=new HashMap<>();
-        activities.put("PC",PCSummary);
-
-        // To allow minimizing to tray
-        Platform.setImplicitExit(false);
-
-        AppGUI gui = new AppGUI(primaryStage,obData,activities);
-        gui.initApplication();
-
-        timer.scheduleAtFixedRate(new TimerTask() {
-            @Override
-            public void run() {
-                gui.gatherData();
+    public void start(Stage primaryStage) {
+        try {
+            if (!OS.isFamilyWindows()) {
+                LOGGER.severe("Unsupported Operating System found!");
+                System.exit(1);
             }
-        }, 0, 1000);
+
+            Timer timer = new Timer(true);
+
+            ActivityTracker PCtracker = new PCActivityTracker();
+            PCtracker.track();
+
+            ActivitySummary PCSummary = new PCActivitySummary(PCtracker.getActivityStream());
+            PCSummary.generate();
+
+            Map<String, List<AbstractActivityPeriod>> data = new HashMap<>();
+            data.put("PC", PCSummary.getAllPeriods());
+
+            ObservableMap<String, List<AbstractActivityPeriod>> obData = FXCollections.observableHashMap();
+            obData.putAll(data);
+
+            Map<String, ActivitySummary> activities=new HashMap<>();
+            activities.put("PC",PCSummary);
+
+            // To allow minimizing to tray
+            Platform.setImplicitExit(false);
+
+            AppGUI gui = new AppGUI(primaryStage,obData,activities);
+            gui.initApplication();
+
+            timer.scheduleAtFixedRate(new TimerTask() {
+                @Override
+                public void run() {
+                    gui.gatherData();
+                }
+            }, 0, 1000);
+        } catch (Exception e) {
+            LOGGER.log(Level.SEVERE, "Fatal error during runtime!", e);
+            System.exit(1);
+        }
     }
 
     @Override
