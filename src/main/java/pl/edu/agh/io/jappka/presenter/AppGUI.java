@@ -2,20 +2,20 @@ package pl.edu.agh.io.jappka.presenter;
 
 import javafx.application.Platform;
 import javafx.collections.ObservableMap;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.scene.layout.BorderPane;
 import javafx.stage.Stage;
 import pl.edu.agh.io.jappka.activity.AbstractActivityPeriod;
 import pl.edu.agh.io.jappka.activity.ActivitySummary;
 import pl.edu.agh.io.jappka.controller.AppController;
 
+import javax.imageio.ImageIO;
 import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.logging.Logger;
@@ -45,7 +45,8 @@ public class AppGUI {
         primaryStage.setTitle("JAppka Activity Tracker");
 
         // Set app icon
-        primaryStage.getIcons().add(new Image(Paths.get("src/main/resources/image/icon2.png").toUri().toString()));
+        java.awt.image.BufferedImage imageIcon = ImageIO.read(getClass().getClassLoader().getResource("image/icon2.png"));
+        primaryStage.getIcons().add(SwingFXUtils.toFXImage(imageIcon, null));
 
         // DO NOT Call System.exit(), since the tray icon needs to stay
         primaryStage.setOnCloseRequest(e ->{
@@ -67,7 +68,7 @@ public class AppGUI {
 
         // Get the System Tray
         final PopupMenu popup = new PopupMenu();
-        java.awt.Image image = Toolkit.getDefaultToolkit().getImage("src/main/resources/image/icon3.png");
+        java.awt.Image image = ImageIO.read(getClass().getClassLoader().getResource("image/icon3.png"));
         final TrayIcon trayIcon = new TrayIcon(image, "JAppka Activity Tracker");
         final SystemTray tray = SystemTray.getSystemTray();
 

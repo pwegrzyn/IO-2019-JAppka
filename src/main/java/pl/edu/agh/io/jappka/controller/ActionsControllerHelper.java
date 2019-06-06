@@ -1,17 +1,16 @@
 package pl.edu.agh.io.jappka.controller;
 
 import javafx.collections.ObservableMap;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Scene;
-import javafx.scene.image.Image;
 import javafx.scene.layout.AnchorPane;
-import javafx.scene.layout.GridPane;
 import javafx.stage.Stage;
 import pl.edu.agh.io.jappka.activity.*;
 
+import javax.imageio.ImageIO;
 import java.io.IOException;
-import java.nio.file.Paths;
 import java.util.List;
 
 public class ActionsControllerHelper {
@@ -35,7 +34,7 @@ public class ActionsControllerHelper {
             controller.initialize(appController);
             Scene scene = new Scene(layout);
             Stage stage = new Stage();
-            stage.getIcons().add(new Image(Paths.get("src/main/resources/image/icon2.png").toUri().toString()));
+            setIcon(stage);
             stage.setAlwaysOnTop(true);
             stage.setResizable(false);
             stage.setTitle("Add Application");
@@ -62,7 +61,7 @@ public class ActionsControllerHelper {
             controller.setData(obData);
             controller.drawGraph();
             Stage stage = new Stage();
-            stage.getIcons().add(new Image(Paths.get("src/main/resources/image/icon2.png").toUri().toString()));
+            setIcon(stage);
             stage.setAlwaysOnTop(true);
             stage.setResizable(false);
             Scene scene = new Scene(layout);
@@ -89,7 +88,7 @@ public class ActionsControllerHelper {
             Scene scene = new Scene(layout);
             scene.getStylesheets().add(currentTheme);
             Stage stage = new Stage();
-            stage.getIcons().add(new Image(Paths.get("src/main/resources/image/icon2.png").toUri().toString()));
+            setIcon(stage);
             stage.setAlwaysOnTop(true);
             stage.setResizable(false);
             stage.setScene(scene);
@@ -114,7 +113,7 @@ public class ActionsControllerHelper {
             controller.setData(data);
             Scene reportGenerationScene = new Scene(layout);
             Stage reportGenerationStage = new Stage();
-            reportGenerationStage.getIcons().add(new Image(Paths.get("src/main/resources/image/icon2.png").toUri().toString()));
+            setIcon(reportGenerationStage);
             reportGenerationStage.setAlwaysOnTop(true);
             reportGenerationStage.setResizable(false);
             reportGenerationStage.setTitle("Report generation");
@@ -140,7 +139,7 @@ public class ActionsControllerHelper {
             Scene scene=new Scene(layout);
             scene.getStylesheets().add(currentTheme);
             Stage stage=new Stage();
-            stage.getIcons().add(new Image(Paths.get("src/main/resources/image/icon2.png").toUri().toString()));
+            setIcon(stage);
             stage.setAlwaysOnTop(true);
             stage.setResizable(false);
             if (save) stage.setTitle("Configuration saving");
@@ -166,7 +165,7 @@ public class ActionsControllerHelper {
             Scene customizerScene = new Scene(customizerLayout,543,482);
             customizerScene.getStylesheets().add(currentTheme);
             customizerStage.setScene(customizerScene);
-            customizerStage.getIcons().add(new Image(Paths.get("src/main/resources/image/icon2.png").toUri().toString()));
+            setIcon(customizerStage);
             customizerStage.setTitle("Graph customization");
             GraphCustomizationController customizationController = loader.getController();
             customizationController.setStage(customizerStage);
@@ -195,5 +194,10 @@ public class ActionsControllerHelper {
         catch (IOException e){
             e.printStackTrace();
         }
+    }
+
+    private void setIcon(Stage stage) throws IOException {
+        java.awt.image.BufferedImage imageIcon = ImageIO.read(getClass().getClassLoader().getResource("image/icon2.png"));
+        stage.getIcons().add(SwingFXUtils.toFXImage(imageIcon, null));
     }
 }

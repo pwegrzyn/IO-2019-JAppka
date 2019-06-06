@@ -4,6 +4,7 @@ import javafx.beans.binding.Bindings;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.collections.ObservableMap;
+import javafx.embed.swing.SwingFXUtils;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.fxml.FXML;
@@ -16,7 +17,6 @@ import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.MenuItem;
 import javafx.scene.control.Tooltip;
-import javafx.scene.image.Image;
 import javafx.scene.input.MouseEvent;
 import javafx.scene.layout.AnchorPane;
 import javafx.scene.media.AudioClip;
@@ -29,9 +29,12 @@ import pl.edu.agh.io.jappka.charts.GraphAppColor;
 import pl.edu.agh.io.jappka.charts.HoveredNode;
 import pl.edu.agh.io.jappka.util.Utils;
 
+import javax.imageio.ImageIO;
+import java.applet.Applet;
 import java.io.BufferedReader;
 import java.io.File;
 import java.io.FileReader;
+import java.net.URISyntaxException;
 import java.nio.file.Paths;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
@@ -80,11 +83,11 @@ public class AppController {
     @FXML
     private AnchorPane mainPane;
 
-    private String currentTheme = "/defaulttheme.css";
+    private String currentTheme = "defaulttheme.css";
     private List<String> themesList = new LinkedList<String>(){
         {
-            add("/defaulttheme.css");
-            add("/darktheme.css");
+            add("defaulttheme.css");
+            add("darktheme.css");
         }
     };
     @FXML
@@ -117,13 +120,13 @@ public class AppController {
         initGraphDataBoundaries();
         this.primaryScene.getStylesheets().add(currentTheme);
         this.defaultTheme.setOnAction(e->{
-            this.currentTheme = "/defaulttheme.css";
+            this.currentTheme = "defaulttheme.css";
             this.primaryScene.getStylesheets().removeAll(themesList);
             this.primaryScene.getStylesheets().add(currentTheme);
 
         });
         this.darkTheme.setOnAction(e->{
-            this.currentTheme = "/darktheme.css";
+            this.currentTheme = "darktheme.css";
             this.primaryScene.getStylesheets().removeAll(themesList);
             this.primaryScene.getStylesheets().add(currentTheme);
 
@@ -138,19 +141,13 @@ public class AppController {
         this.GoForwardsDay.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                AudioClip audioClip = new AudioClip(Paths.get("src/main/resources/sound/button_click.wav")
-                        .toUri().toString());
-                audioClip.setVolume(0.05);
-                audioClip.play();
+                playSound();
             }
         });
         this.GoBackwardsDay.setOnMouseClicked(new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                AudioClip audioClip = new AudioClip(Paths.get("src/main/resources/sound/button_click.wav")
-                        .toUri().toString());
-                audioClip.setVolume(0.05);
-                audioClip.play();
+                playSound();
             }
         });
 
@@ -159,6 +156,18 @@ public class AppController {
 
         // Check if can load last config file
         tryToLoadConfigFile();
+    }
+
+    private void playSound() {
+        AudioClip audioClip = null;
+        try {
+            audioClip = new AudioClip(getClass().getClassLoader().getResource("sound/button_click.wav").toURI().toString());
+        } catch (URISyntaxException e) {
+            LOGGER.warning("Error while loading audio file!");
+            return;
+        }
+        audioClip.setVolume(0.05);
+        audioClip.play();
     }
 
     private void tryToLoadConfigFile() {
@@ -190,7 +199,8 @@ public class AppController {
             Scene scene = new Scene(layout,400,850);
             scene.getStylesheets().add(currentTheme);
             stage.setScene(scene);
-            stage.getIcons().add(new Image(Paths.get("src/main/resources/image/icon2.png").toUri().toString()));
+            java.awt.image.BufferedImage imageIcon = ImageIO.read(getClass().getClassLoader().getResource("image/icon2.png"));
+            stage.getIcons().add(SwingFXUtils.toFXImage(imageIcon, null));
             stage.setTitle("Welcome To JAppka Activity Tracker");
             InitHelpScreenController controller = loader.getController();
             controller.init();

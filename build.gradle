@@ -27,10 +27,15 @@ repositories {
 }
 
 //create a single Jar with all dependencies
-jar {
+task fatJar(type: Jar) {
     manifest {
-        attributes 'Implementation-Title': 'JAppka-Activity-Tracker', 'Implementation-Version': version, 'Main-Class': 'pl.edu.agh.io.jappka.app.App'
+        attributes 'Implementation-Title': 'JAppka',
+                'Implementation-Version': version,
+                'Main-Class': 'pl.edu.agh.io.jappka.app.App'
     }
+    baseName = project.name + '-all'
+    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
+    with jar
 }
 
 dependencies {
