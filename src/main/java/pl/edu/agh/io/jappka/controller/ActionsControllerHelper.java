@@ -132,7 +132,7 @@ public class ActionsControllerHelper {
     public void handleSave(ActionEvent event, String currentTheme, AppController appController, boolean save){
         try{
             FXMLLoader loader=new FXMLLoader();
-            loader.setLocation(getClass().getClassLoader().getResource("Jappka/view/save.fxml"));
+            loader.setLocation(getClass().getClassLoader().getResource("JAppka/view/save.fxml"));
             AnchorPane layout=loader.load();
             SaveController controller=loader.getController();
             controller.initialize(appController,save);
@@ -181,7 +181,7 @@ public class ActionsControllerHelper {
     public void handleLoadAutomatically(AppController appController, String configFileLocation){
         try{
             FXMLLoader loader=new FXMLLoader();
-            loader.setLocation(getClass().getClassLoader().getResource("Jappka/view/save.fxml"));
+            loader.setLocation(getClass().getClassLoader().getResource("JAppka/view/save.fxml"));
             AnchorPane layout=loader.load();
             SaveController controller=loader.getController();
             controller.initialize(appController,false);

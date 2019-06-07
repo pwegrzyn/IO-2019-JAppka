@@ -36,7 +36,7 @@ public class AppGUI {
 
     public void initApplication() throws IOException {
         FXMLLoader loader = new FXMLLoader();
-        loader.setLocation(getClass().getClassLoader().getResource("Jappka/view/mainView.fxml"));
+        loader.setLocation(getClass().getClassLoader().getResource("JAppka/view/mainView.fxml"));
         BorderPane rootLayout = loader.load();
 
         Scene scene = new Scene(rootLayout);
