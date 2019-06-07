@@ -25,10 +25,12 @@ public class App extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
-            if (!OS.isFamilyWindows()) {
+            // TODO: find out why this now out-commented call below fucks our fatJar
+            /*if (!OS.isFamilyWindows()) {
+                System.out.println("Inside if");
                 LOGGER.severe("Unsupported Operating System found!");
                 System.exit(1);
-            }
+            }*/
 
             Timer timer = new Timer(true);
 

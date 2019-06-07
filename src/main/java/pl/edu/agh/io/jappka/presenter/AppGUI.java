@@ -38,7 +38,6 @@ public class AppGUI {
         FXMLLoader loader = new FXMLLoader();
         loader.setLocation(getClass().getClassLoader().getResource("JAppka/view/mainView.fxml"));
         BorderPane rootLayout = loader.load();
-
         Scene scene = new Scene(rootLayout);
         primaryStage.setScene(scene);
         primaryStage.show();
