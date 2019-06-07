@@ -29,6 +29,7 @@ import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.time.LocalDate;
 import java.time.ZoneId;
+import java.time.format.DateTimeFormatter;
 import java.util.*;
 import java.util.logging.Logger;
 import java.util.stream.Collectors;
@@ -56,6 +57,14 @@ public class ReportGenerationController {
         for(String app : dataCollection.keySet())
             this.appsChosen.add(app);
         this.TimeUnitChoiceBox.setItems(FXCollections.observableArrayList(ReportTimeUnit.values()));
+
+        // Set default values for dates
+        LocalDate currentDate = LocalDate.now();
+        this.dateStart.setValue(currentDate.minusDays(1));
+        this.dateEnd.setValue(currentDate);
+
+        // Pick default time unit
+        this.TimeUnitChoiceBox.setValue(ReportTimeUnit.SECONDS);
     }
 
     public Set<String> getAppsChosen() {
