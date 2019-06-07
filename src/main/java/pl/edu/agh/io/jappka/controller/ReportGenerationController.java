@@ -101,6 +101,7 @@ public class ReportGenerationController {
         alert.setTitle(title);
         alert.setHeaderText(header);
         alert.setContentText(content);
+        alert.initOwner(this.stage);
         alert.showAndWait();
     }
 
