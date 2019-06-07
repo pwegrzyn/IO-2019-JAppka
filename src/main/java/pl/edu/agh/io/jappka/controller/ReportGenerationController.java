@@ -378,12 +378,6 @@ public class ReportGenerationController {
             reportGenerateDialog(header,content, Alert.AlertType.ERROR);
             return false;
         }
-        if (startDate.equals(endDate)) {
-            String header = "Wrong date selection";
-            String content = "End Date cannot the same as the start date!";
-            reportGenerateDialog(header,content, Alert.AlertType.ERROR);
-            return false;
-        }
         return true;
     }
 
