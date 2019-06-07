@@ -76,6 +76,7 @@ public class AddOwnEventController {
         alert.setTitle(title);
         alert.setHeaderText(headerText);
         alert.setContentText(contentText);
+        alert.initOwner(this.stage);
         alert.showAndWait();
     }
 
