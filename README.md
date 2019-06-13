@@ -28,5 +28,9 @@ Visit `http://localhost:9000/projects?sort=-analysis_date` to view the report
 
 Known Issues
 =============
-* Currently it's not allowed to add a new app while having the Graph Customization Menu open and having
+* Currently it's not possible to add a new app while having the Graph Customization Menu open and having
 edited the ListView there.
+* Occasionally a day may be skipped when switching days in the main view
+* Need to reproduce the specific error the client has experienced when adding new apps after loading configuration and fix it
+* Configuration loading does not remove apps already listed in the main view which are not present in the config file (probably intended?)
+* The build process error is probably a Travis-side error (see [this](https://travis-ci.community/t/install-of-oraclejdk11-is-failing/1856/2) for more details)

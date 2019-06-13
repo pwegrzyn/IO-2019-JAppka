@@ -26,16 +26,17 @@ repositories {
     jcenter()
 }
 
+mainClassName = 'pl.edu.agh.io.jappka.app.App'
+
 //create a single Jar with all dependencies
-task fatJar(type: Jar) {
+jar {
     manifest {
-        attributes 'Implementation-Title': 'JAppka',
-                'Implementation-Version': version,
-                'Main-Class': 'pl.edu.agh.io.jappka.app.App'
+        attributes "Main-Class": "$mainClassName"
     }
-    baseName = project.name + '-all'
-    from { configurations.compile.collect { it.isDirectory() ? it : zipTree(it) } }
-    with jar
+
+    from {
+        configurations.runtime.collect { it.isDirectory() ? it : zipTree(it) }
+    }
 }
 
 dependencies {
@@ -43,15 +44,13 @@ dependencies {
     testCompile group: 'junit', name: 'junit', version: '4.12'
     testImplementation 'junit:junit:4.12'
     implementation 'net.java.dev.jna:jna:5.2.0'
-    implementation 'net.java.dev.jna:jna-platform:5.2.0'
+    compile 'net.java.dev.jna:jna-platform:5.2.0'
     implementation 'org.kie.modules:org-apache-commons-exec:6.5.0.Final'
     implementation 'com.google.code.gson:gson:2.8.5'
     implementation 'org.apache.commons:commons-csv:1.4'
     implementation 'org.netbeans.external:org-apache-commons-io:RELEASE110'
     compile "org.apache.poi:poi-ooxml:3.17"
 }
-
-mainClassName = 'pl.edu.agh.io.jappka.app.App'
 
 description = """
 Project for Software Engineering course at AGH UST 2019
