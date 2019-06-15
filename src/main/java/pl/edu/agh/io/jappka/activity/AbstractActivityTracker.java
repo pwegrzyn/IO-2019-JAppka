@@ -23,7 +23,7 @@ public abstract class AbstractActivityTracker implements ActivityTracker {
 
     AbstractActivityTracker(StateTransitionEvent.Type activeState, StateTransitionEvent.Type inactiveState, String fileName){
         this.timer = new Timer(true);
-        this.refreshRateTickInSeconds = 1;
+        this.refreshRateTickInSeconds = 10;
 
         this.activeState = activeState;
         this.inactiveState = inactiveState;

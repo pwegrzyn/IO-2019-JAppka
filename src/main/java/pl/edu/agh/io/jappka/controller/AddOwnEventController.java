@@ -8,6 +8,7 @@ import javafx.stage.Stage;
 import pl.edu.agh.io.jappka.Exceptions.InvalidEventException;
 import pl.edu.agh.io.jappka.util.DateTimePicker;
 
+import java.time.LocalDateTime;
 import java.time.ZoneId;
 
 public class AddOwnEventController {
@@ -26,6 +27,8 @@ public class AddOwnEventController {
 
     public void initialize(AppController appController) {
         this.appController = appController;
+        this.start.setDateTimeValue(LocalDateTime.now().minusHours(1));
+        this.end.setDateTimeValue(LocalDateTime.now());
     }
 
     public void setStage(Stage stage) {

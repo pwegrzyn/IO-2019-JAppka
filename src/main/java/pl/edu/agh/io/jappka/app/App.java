@@ -6,7 +6,6 @@ import javafx.collections.FXCollections;
 import javafx.collections.ObservableMap;
 import javafx.stage.Stage;
 import pl.edu.agh.io.jappka.activity.*;
-import org.apache.commons.exec.OS;
 import pl.edu.agh.io.jappka.presenter.AppGUI;
 
 import java.util.*;
@@ -25,7 +24,7 @@ public class App extends Application {
     @Override
     public void start(Stage primaryStage) {
         try {
-            // TODO: find out why this now out-commented call below fucks our fatJar
+            // TODO: find out why this call fails in a jar
             /*if (!OS.isFamilyWindows()) {
                 System.out.println("Inside if");
                 LOGGER.severe("Unsupported Operating System found!");
@@ -60,7 +59,7 @@ public class App extends Application {
                 public void run() {
                     gui.gatherData();
                 }
-            }, 0, 1000);
+            }, 0, 10000);
         } catch (Exception e) {
             LOGGER.log(Level.SEVERE, "Fatal error during runtime!", e);
             System.exit(1);
